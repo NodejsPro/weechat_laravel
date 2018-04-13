@@ -1,0 +1,19 @@
+{
+  "name": "chatbot",
+  "description": "chatbot project",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "vendor/bower_dl"
+  ],
+  "dependencies": {
+    "jquery": "^1.9.1",
+    "bootstrap": "^3.3.6",
+    "font-awesome": "fontawesome#^4.6.3",
+    "bootstrap-select": "*",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "bootstrap-fileinput" : "*",
+    "moment-timezone" : "*",
+    "bootstrap-colorpicker" : "^2.5.1"
+  }
+}
