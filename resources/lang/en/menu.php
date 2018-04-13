@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'logout' => 'Logout',
+    'user_list' => 'User list',
+    'user_management' => 'Users',
+    'bot_list'     => 'Bot list',
+    'bot_management'     => 'Bots',
+    'bot_setting'     => 'Bot setting',
+    'manage_file'     => 'Media file',
+    'library'        => 'Keyword Matching',
+    'scenario'     => 'Scenario',
+    'persistent_menu'     => 'Persistent menu',
+    'notification'  => 'Broadcast',
+    'variable'  => 'Variable',
+    'api' => 'API',
+    'support' => 'Help',
+    'user_test' => 'Test user',
+    'report' => 'Report',
+    'system_setting' => 'System setting',
+    'mail' => 'Mail',
+    'conversations' => 'Conversations',
+    'scenario_list'  => 'Scenario list',
+    'template_list' => 'Templates',
+    'payment' => 'Payment',
+    'management' => 'Management',
+];

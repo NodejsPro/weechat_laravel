@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'logout' => 'ออกจากระบบ',
+    'user_list' => 'รายชื่อผู้ใช้',
+    'user_management' => 'ผู้ใช้',
+    'bot_list'     => 'รายการ Bot',
+    'bot_management'     => 'Bots',
+    'bot_setting'     => 'การตั้งค่า Bot',
+    'manage_file'     => 'ไฟล์มีเดีย',
+    'library'        => 'การจับคู่คำสำคัญ',
+    'scenario'     => 'สถานการณ์',
+    'persistent_menu'     => 'เมนูแบบถาวร',
+    'notification'  => 'ออกอากาศ',
+    'variable'  => 'ตัวแปร',
+    'api' => 'API',
+    'support' => 'ช่วย',
+    'user_test' => 'ทดสอบผู้ใช้',
+    'report' => 'รายงาน',
+    'system_setting' => 'การตั้งค่าระบบ',
+    'mail' => 'อีเมล',
+    'conversations' => 'การสนทนา',
+    'scenario_list'  => 'รายการ สถานการณ์ ',
+    'template_list' => 'แม่แบบ',
+    'payment' => 'การชำระเงิน',
+    'management' => 'Management',
+];

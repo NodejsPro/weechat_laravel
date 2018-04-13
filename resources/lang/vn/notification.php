@@ -1,0 +1,27 @@
+<?php
+
+return [
+    'name' => 'Tên thông báo',
+    'time'     => 'Thời gian',
+    'scenario' => 'Kịch bản',
+    'repeats'  => 'Lặp lại',
+    'repeat_every'  => 'Số lần lặp lại',
+    'repeat_on'  => 'Lặp lại vào',
+    'start_on'  => 'Thời gian bắt đầu',
+    'empty_list' => 'Không có dữ liệu',
+    'send_count' => 'Số người được gửi thông báo',
+    'read_count' => 'Số người dùng đã đọc thông báo',
+    'time_of_message' => 'Thời gian gửi thông báo',
+    'repeat_every_discription' => 'một lần trong :number ngày',
+    'sellect_scenario' => '※ Không chọn được kịch bản bắt đầu chat bằng user.',
+    'scenario_name' => 'Tên kịch bản',
+    'error_scenario' => '※Thông báo với tin nhắn quảng cáo trong vùng khoanh đỏ đã bị lỗi nên không gửi được.',
+    'scenario_drop' => '※Kịch bản này đã bị xóa.',
+    'scenario_start_by_user' => '※Kịch bản bắt đầu chát bằng user.',
+    'mss_error_scenario' => '※Không thể thay đổi trạng thái đối với các tin nhắn quảng cáo bị lỗi.',
+    'mss_error_repeat_on' => 'Bạn phải chọn thứ trong tuần!',
+    'repeat_weekly' => 'Hàng tuần vào',
+    'mss_number_user' => 'Có :number user thỏa mãn điều kiện lọc.',
+    'mss_total_user' => 'Có tất cả :number user sẽ nhận được thông báo này',
+    'comma' => ', ',
+];

@@ -20,6 +20,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('/account/update', 'UserController@accountUpdate');
     Route::post('/user/getListUser', ['uses' => 'UserController@getListUser', 'as' => 'user.list']);
     Route::resource('user', 'UserController');
+    Route::resource('bot', 'BotController');
     Route::resource('account', 'UserController@index');
 });
 Route::get('/', 'Auth\LoginController@showLoginForm');

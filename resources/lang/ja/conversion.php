@@ -1,0 +1,30 @@
+<?php
+
+return [
+    'rate' => 'CVR',
+    'time_line' => 'CV日別推移',
+    'lang' => '言語',
+    'time' => 'コンバージョンまでの期間',
+    'device' => 'デバイス',
+    'os' => 'OS',
+    'browser' => 'ブラウザー',
+    'percentage' => 'シナリオの進捗',
+    'other' => '他',
+    'less_than_1minute' => '1分未満',
+    'more_than_10minute' => '10分以上',
+    'minute' => '分',
+    'cv' => 'CV',
+    'entry' => 'エントリー',
+//    device
+    'pc' => 'デスクトップ',
+    'mobile' => 'モバイル',
+    'tablet' => 'タブレット',
+    'total' => '合計',
+    'total_entry' => 'Entry',
+    'overall' => '全体',
+    'question' => 'Q',
+    'bounce' => 'Bounce',
+    'bounce_percentage' => '離脱率',
+    "answer" => "回答率",
+    'cv_percentage' => 'CVの割合',
+];

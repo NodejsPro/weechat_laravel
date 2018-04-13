@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'failed' => 'These credentials do not match our records.',
-    'throttle' => 'Too many login attempts. Please try again in :seconds seconds.',
-
+    'failed'   => 'There is no record matching the authentication information.',
+    'throttle' => 'Too many login attempts.:seconds Please try after ～seconds.',
+    'pending_approval' => 'Pending Approval',
 ];

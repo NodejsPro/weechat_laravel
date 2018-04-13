@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'name' => 'プッシュメッセージ名',
+    'time'     => 'Time',
+    'scenario' => 'シナリオ指定',
+    'repeats'  => '繰り返し',
+    'repeat_every'  => '繰り返す間隔',
+    'repeat_on'  => '曜日',
+    'start_on'  => '開始',
+    'empty_list' => 'データがありません。',
+    'send_count' => '配信ユーザー数',
+    'read_count' => '既読ユーザー数',
+    'time_of_message' => '配信日時',
+    'comma' => ', ',
+    'repeat_weekly' => '毎週',
+    'repeat_daily' => '',
+    'repeat_every_discription' => ':number日ごと',
+    'sellect_scenario' => '※ユーザーの発言が先頭になっているシナリオは選択できません。',
+    'scenario_name' => 'シナリオ名',
+    'error_scenario' => '※以下の赤い枠で囲まれるプッシュメッセージはエラーが発生している為、配信出来なくなりました。',
+    'scenario_drop' => '※指定したシナリオが削除されました。',
+    'scenario_start_by_user' => '※シナリオの先頭がユーザーの発言になっています。',
+    'mss_error_scenario' => '※エラーが発生したプッシュメッセージをステータス変更出来ません。',
+    'mss_error_repeat_on' => 'Must choose a day of the week!',
+    'mss_number_user' => '指定した条件を満たしたユーザー数は:number人です。',
+    'mss_total_user' => 'こちらのプッシュ通知を:number人にお届けします。',
+];

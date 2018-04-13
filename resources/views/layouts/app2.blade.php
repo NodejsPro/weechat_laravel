@@ -4,13 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
     <title>@section('title')  {{Config::get('app.name')}} @show</title>
     @section('meta_keywords')
         <meta name="keywords" content="CHATBOT"/>
     @show @section('meta_author')
         <meta name="author" content="hailt"/>
-        <link href="{{ elixir('css/app.css') }}" rel="stylesheet">
+        <link href="{{ mix('build/css/app.css') }}" rel="stylesheet">
     @yield('styles')
 
     <!-- Fonts -->
@@ -24,7 +23,7 @@
         <![endif]-->
         <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
         <!-- Scripts -->
-        <script src="{{ elixir('js/app.js') }}"></script>
+        <script src="{{ mix('build/js/app.js') }}"></script>
         <link rel="shortcut icon" href="{{{ URL::asset('favicon.ico') }}}">
         <style>
             @if (Cookie::get('locale') == 'vn')

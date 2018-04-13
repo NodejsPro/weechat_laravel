@@ -25,11 +25,11 @@
                                 <th >{{{ trans('field.company_name') }}}</th>
                                 <th>{{{trans('field.authority')}}}</th>
                                 <th>{{{trans('add_user.sns_type')}}}</th>
-                                @if($login_user->authority == $authority['admin'])
+                                @if($login_user->authority == $authority['supper_admin'])
                                     <th >{{{ trans('field.user_number') }}}</th>
                                 @endif
                                 <th >{{{ trans('field.bot_number') }}}</th>
-                                @if($login_user->authority == $authority['admin'])
+                                @if($login_user->authority == $authority['supper_admin'])
                                     <th >{{{ trans('field.user_create') }}}</th>
                                 @endif
                                 <th>{{{trans('field.white_list_domain')}}}</th>
@@ -46,7 +46,7 @@
             </section>
         </div>
     </div>
-    @include('modals.user_delete')
+{{--    @include('modals.user_delete')--}}
 @endsection
 @section('scripts2')
 

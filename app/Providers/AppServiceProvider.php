@@ -14,6 +14,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         //
+        view()->share('authority', config('constants.authority'));
+
     }
 
     /**

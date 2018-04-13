@@ -1,15 +1,8 @@
-<?php $connect_page_id =  Route::current()->getParameter('bot');
-$connect_page = ConnectPage::where('_id', $connect_page_id)->first();
-$user_login = Auth::user();
-$class_header_top = '';
-?>
+
 <header class="header fixed-top clearfix">
     @if(ends_with(Route::currentRouteAction(), ['BotController@listbot', 'BotController@index', 'BotController@create', 'BotController@listUserBot', 'BotController@show', 'BotController@createLineBot', 'BotController@confirm', 'BotController@createWebEmbedBot', 'BotController@createChatworkBot'])
         || str_contains(Route::currentRouteAction(), ['UserController', 'TemplateController', 'PlanController', 'PaymentCardController', 'PaymentController', 'SupportController', 'UserNotificationController', 'PaymentGatewayController'])
     )
-        @php
-            $class_header_top = 'header-top';
-        @endphp
         <a href="{{URL::route('bot.index')}}" class="logo system-logo-top">
             {{--{{config('app.name')}}--}}
             @if(strtolower(config('app.name')) == "embot")
@@ -42,18 +35,7 @@ $class_header_top = '';
     @endif
     <div class="top-nav nav-center clearfix">
         <ul class="nav pull-right top-menu">
-            @include('partials.user_notification', ['class_header_top' => $class_header_top])
-            <li class="dropdown">
-                <a href="{!! URL::route("support.description") !!}" class="{{Request::is('support/*')? 'blue-color' : ''}} sidebar-check"><span>{{{ trans('menu.support') }}}</span></a>
-            </li>
-            <li class="dropdown">
-                <a class="{{ ((Request::is('bot') || Request::is('bot/webEmbed') || Request::is('bot/line')) &&
-                    (!$_is_template_flg && !Request::is('template') && !Request::is('template/create') && !Request::is('template/*/edit'))
-                    ) ? 'blue-color' : '' }}" href="{{ url('bot')}}">
-                    <span>{{{ trans('menu.bot_management')}}}</span>
-                </a>
-            </li>
-            @if(Auth::user()->authority == $authority['admin'])
+            @if(Auth::user()->authority == $authority['supper_admin'])
                 <li class="dropdown">
                     <a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-expanded="false">
                         <span class="management">{{{ trans('menu.management')}}}</span>
@@ -69,9 +51,6 @@ $class_header_top = '';
                         <li class="dropdown">
                             <a class="{{Request::is('bot/list-user-bot') ? 'blue-color' : ''}}" href="{{ url('bot/list-user-bot')}}"><span>{{{ trans('all_bot.header_menu') }}}</span></a>
                         </li>
-                        <li class="dropdown">
-                            <a class="{{ (Request::is('template') || Request::is('template/create') || Request::is('template/*/edit') || $_is_template_flg) ? 'blue-color' : '' }}" href="{{ url('template')}}"><span>{{{ (Auth::user()->authority == $authority['admin']) ? trans('menu.template_list') : trans('modal.template_list')}}}</span></a>
-                        </li>
                     </ul>
                 </li>
             @elseif(Auth::user()->authority == $authority['agency'])
@@ -79,11 +58,6 @@ $class_header_top = '';
                     <a class="{{Request::is('user') || Request::is('user/*/edit') ? 'blue-color' : ''}}" href="{{ url('user')}}"><span>{{{ trans('menu.user_management')}}}</span></a>
                 </li>
             @endif
-            {{--@if(isset($_efo_bot_flg) && $_efo_bot_flg)--}}
-                {{--<li class="dropdown">--}}
-                    {{--<a class="{{Request::is('payment-gateway') ? 'blue-color' : ''}}" href="{{ url('payment-gateway')}}"><span>{{{ trans('payment_gateway.payment_gateway') }}}</span></a>--}}
-                {{--</li>--}}
-            {{--@endif--}}
             <li class="dropdown">
                 <a data-toggle="dropdown" class="dropdown-toggle" href="#" aria-expanded="false">
                     <span class="username">{{{ trans('account.account_management')}}}</span>
