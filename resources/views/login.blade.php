@@ -12,7 +12,7 @@
         <meta name="author" content="hailt"/>
 
 
-        <link href="{{ mix('css/app.css') }}" rel="stylesheet">
+        <link href="{{ mix('build/css/app.css') }}" rel="stylesheet">
 
     @yield('styles')
 
@@ -121,6 +121,6 @@
 </body>
 <!-- Scripts -->
 
-<script src="{{ mix('js/app.js') }}"></script>
+<script src="{{ mix('build/js/app.js') }}"></script>
 @yield('scripts')
 </html>
