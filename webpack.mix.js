@@ -15,12 +15,9 @@ var paths = {
     'jquery': 'vendor/bower_dl/jquery/dist',
     'bootstrap': 'vendor/bower_dl/bootstrap',
     'fontawesome': 'vendor/bower_dl/font-awesome',
-    'bootstrap_datetimepicker' :  'vendor/bower_dl/eonasdan-bootstrap-datetimepicker/build',
     'moment' :  'vendor/bower_dl/moment/',
     'moment_timezone' :  'vendor/bower_dl/moment-timezone',
     'fusioncharts' :  'vendor/bower_dl/fusioncharts/',
-    'bootstrap_fileinput' :  'vendor/bower_dl/bootstrap-fileinput',
-    'bootstrap_colorpicker' :  'vendor/bower_dl/bootstrap-colorpicker',
     'fileUpload' : 'public/js/bucketadmin/fileUpload'
 };
 
@@ -28,7 +25,6 @@ mix.copy(paths.bootstrap + '/fonts/', 'public/build/fonts');
 mix.copy(paths.fontawesome + '/fonts/**', 'public/build/fonts');
 mix.copy('public/images', 'public/build/images');
 mix.copy('public/img', 'public/build/img');
-mix.copy(paths.bootstrap_colorpicker + '/dist/img', 'public/build/img');
 //mix.copy(paths.jquery + '/jquery.min.js', 'public/build/js/');
 mix.sass('resources/assets/sass/app.scss', 'resources/assets/build/app.css');
 mix.styles([
@@ -52,7 +48,6 @@ mix.scripts([
     'public/js/bucketadmin/jquery-ui.js',
     'public/js/bucketadmin/jquery.dcjqaccordion.js',
     'public/js/bucketadmin/jquery.scrollTo.min.js',
-    'public/js/bucketadmin/bootstrap-switch/bootstrap-switch.js',
     'public/js/bucketadmin/jquery.slimscroll.min.js',
     'public/js/bucketadmin/jquery.nicescroll.js',
     // paths.moment + '/moment.min.js',
