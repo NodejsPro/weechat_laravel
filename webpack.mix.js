@@ -25,8 +25,8 @@ mix.copy(paths.bootstrap + '/fonts/', 'public/build/fonts');
 mix.copy(paths.fontawesome + '/fonts/**', 'public/build/fonts');
 mix.copy('public/images', 'public/build/images');
 mix.copy('public/img', 'public/build/img');
-//mix.copy(paths.jquery + '/jquery.min.js', 'public/build/js/');
-mix.sass('resources/assets/sass/app.scss', 'resources/assets/build/app.css');
+mix.copy(paths.jquery + '/jquery.min.js', 'public/build/js/');
+mix.sass('resources/assets/sass/app.scss', 'public/build/css/app.css');
 mix.styles([
     paths.bootstrap + '/dist/css/bootstrap.min.css',
     paths.fontawesome + '/css/font-awesome.min.css',
@@ -35,7 +35,7 @@ mix.styles([
     'public/css/bucketadmin/bootstrap-reset.css',
     'public/css/bucketadmin/style.css',
     'public/css/bucketadmin/style-responsive.css',
-    'resources/assets/build/app.css',
+    'public/build/css/app.css',
     'public/css/jquery.dataTables.min.css',
 ], 'public/build/css/app.css','./');
 mix.styles([
@@ -49,7 +49,7 @@ mix.scripts([
     'public/js/bucketadmin/jquery.dcjqaccordion.js',
     'public/js/bucketadmin/jquery.scrollTo.min.js',
     'public/js/bucketadmin/jquery.slimscroll.min.js',
-    'public/js/bucketadmin/jquery.nicescroll.js',
+    //'public/js/bucketadmin/jquery.nicescroll.js',
     // paths.moment + '/moment.min.js',
     'public/js/bucketadmin/scripts.js',
     'public/js/select2/select2.full.min.js',
