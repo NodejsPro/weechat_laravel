@@ -12,6 +12,10 @@
 */
 
 Auth::routes();
+
+// http://35.185.190.204:80/user/createApi
+
+
 Route::group(['middleware' => ['auth']], function () {
 
     Route::get('/account/account-information', 'UserController@accountInformation');

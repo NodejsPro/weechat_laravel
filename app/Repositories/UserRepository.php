@@ -34,7 +34,6 @@ class UserRepository extends BaseRepository
         $user->email            = $inputs['email'];
         $user->authority        = $inputs['authority'];
         $user->created_id       = $created_id;
-        $user->locale = $inputs['language'];
         $this->save($user, $inputs);
 
         return $user;
@@ -52,62 +51,21 @@ class UserRepository extends BaseRepository
         if(isset($inputs['name'])){
             $user->name             = $inputs['name'];
         }
-        if(isset($inputs['company_name'])){
-            $user->company_name             = $inputs['company_name'];
+        if(isset($inputs['user_name'])){
+            $user->user_name             = $inputs['user_name'];
         }
-        if(isset($inputs['comment'])){
-            $user->comment             = $inputs['comment'];
+        if(isset($inputs['phone'])){
+            $user->phone             = $inputs['phone'];
         }
-        if(isset($inputs['max_bot_number']) && !isset($inputs['plan'])){
-            $user->max_bot_number             = $inputs['max_bot_number'];
+        if(isset($inputs['avatar']) && !isset($inputs['avatar'])){
+            $user->avatar             = $inputs['avatar'];
         }
-        if(isset($inputs['max_user_number'])){
-            $user->max_user_number             = $inputs['max_user_number'];
+        if(isset($inputs['confirmation_token'])){
+            $user->confirmation_token = $inputs['confirmation_token'];
         }
-        if(isset($inputs['white_list_domain'])){
-            $user->white_list_domain  = $inputs['white_list_domain'];
-        }
-        if(isset($inputs['plan'])){
-            $user->plan  = $inputs['plan'];
-        }
-        if(isset($inputs['limit_user_flg'])){
-            $user->limit_user_flg  = $inputs['limit_user_flg'];
-        }
-        if(isset($inputs['locale'])){
-            $user->locale  = $inputs['locale'];
-        }
-        $user_authority = config('constants.authority');
-        if(isset($inputs['authority']) && $inputs['authority'] != $user_authority['agency']){
-            $user->max_user_number = null;
-            if($inputs["authority"] ==  $user_authority['admin']){
-                $user->max_bot_number   = null;
-                $user->white_list_domain   = array();
-            }
-        }
-        $user_login = Auth::user();
-        if($user_login->authority == $user_authority['admin'] && isset($inputs['bot_template'])){
-            $user->bot_template = $inputs['bot_template'];
-        }
-        if(isset($inputs['unsubscribed_at'])){
-            $user->unsubscribed_at = $inputs['unsubscribed_at'];
-            $user->deleted_at = $inputs['unsubscribed_at'];
-        }
-        if(isset($inputs['sns_type_list'])){
-            $user->sns_type_list = $inputs['sns_type_list'];
-        }
-        if(isset($inputs['embot_plan'])){
-            $user->embot_plan = $inputs['embot_plan'];
-        }
-        if(isset($inputs['embot_yearly_user'])){
-            $user->embot_yearly_user = $inputs['embot_yearly_user'];
-        }
-        if(isset($inputs['embot_yearly_fee'])){
-            $user->embot_yearly_fee = $inputs['embot_yearly_fee'];
-        }
-        if(isset($inputs['embot_yearly_user_number'])){
-            $user->embot_yearly_user_number = $inputs['embot_yearly_user_number'];
-        }
+        
         $user->save();
+        return $user;
     }
 
     /**
@@ -299,4 +257,29 @@ class UserRepository extends BaseRepository
         $model = $model->whereNotNull('name');
         return $model->get();
     }
+
+    public function getUserLogin($user_name, $password){
+        $model = new $this->model;
+        dd(bcrypt($password) .'---'. bcrypt('123456'));
+        $model = $model->where('user_name', $user_name)
+                        // ->where('password', bcrypt($password));
+                       ->where('confirmation_token', null);
+                // $model = $model->where('user_name', 'super_admin');;
+        $model = $model->first();
+        return $model;
+    }
+
+    public function getUserCode($phone, $code){
+        $model = new $this->model;
+        $model = $model->where('phone', $phone)
+                        ->where('code', $code);
+        $model = $model->first();
+        return $model;
+    }
+
+    public function updateCode($user,  $code){
+        $user->code = $code;
+        $user->save();
+        return $user;
+    }  
 }

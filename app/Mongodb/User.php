@@ -26,9 +26,7 @@ class User extends Moloquent implements AuthenticatableContract, AuthorizableCon
      *
      * @var array
      */
-    protected $fillable = [
-        'name', 'email', 'password',
-    ];
+   
 
     /**
      * The attributes that should be hidden for arrays.
@@ -38,6 +36,16 @@ class User extends Moloquent implements AuthenticatableContract, AuthorizableCon
     protected $hidden = [
         'password', 'remember_token',
         'confirmation_token', 'confirmation_sent_at'
+    ];
+
+       protected $fillable = [
+        'name', 'email', 'password',
+        'authority',
+        'phone' ,
+        'validate_token',
+        'avatar',
+        'user_name',
+        'code','confirmation_token' ,'created_id'
     ];
 
     protected $dates = [
