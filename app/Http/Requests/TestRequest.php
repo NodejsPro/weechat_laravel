@@ -2,11 +2,11 @@
 
 namespace App\Http\Requests;
 
-//use Auth;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Log;
-
-class TestRequest extends FormRequest
+use Illuminate\Validation\Rule;
+use Auth;
+class TestRequest extends Request
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -15,6 +15,7 @@ class TestRequest extends FormRequest
      */
     public function authorize()
     {
+        Log::info('authorize');
         return true;
     }
 
@@ -25,21 +26,23 @@ class TestRequest extends FormRequest
      */
     public function rules()
     {
+        Log::info('rules');
         return [
-            'title' => 'required',
-            'name' => 'required'
+            'group_name' => 'required',
+            'all_dialog_flg' => 'in:0,1',
+            'library_sheet_type' => 'required',
         ];
     }
-
     public function response(array $errors) {
-        dd(3123123123);
+        Log::info('response');
+        dd(321312312312);
         return \Response::json($errors, 500);
     }
 
 
     public function messages()
     {
-        dd('7978979');
+        Log::info('messages');
         return [
             'title.required' => 'Please enter a title.',
 //            'body.required'  => 'A message is required',

@@ -16,22 +16,13 @@ use Illuminate\Http\Request;
  Route::middleware('auth:api')->get('/user', function (Request $request) {
      return $request->user();
  });
+Route::post('user/login', ['uses' => 'Api\UserController@userLogin', 'as' => 'user.login.api']);
+Route::post('user/create', ['uses' => 'Api\UserController@create', 'as' => 'user.create.api']);
+Route::group(['middleware' => ['authentication.api']], function () {
+    Route::post('user/authentication', ['uses' => 'Api\UserController@authentication', 'as' => 'use.authentication.api']);
+    Route::post('contact/list', ['uses' => 'Api\UserController@create', 'as' => 'user.create.api']);
+    Route::post('room/list', ['uses' => 'Api\RoomController@create', 'as' => 'user.create.api']);
+});
 
-Route::post('/user/login', ['uses' => 'UserController@userLoginApi', 'as' => 'user.login.api']);
-Route::get('/user/userTest', ['uses' => 'UserController@userTest']);
-Route::post('/user/authentication', ['uses' => 'UserController@authenticationApi']);
-Route::post('/user/create', ['uses' => 'UserController@createApi', 'as' => 'user.create.api']);
+Route::get('user/userTest', ['uses' => 'Api\UserController@userTest']);
 Route::any('test', 'Api\ApiController@test');
-
-
-
-
-Route::any('test', 'Api\ApiController@test');
-Route::any('wevnalOnlineEnglishQuestion', 'Api\ApiController@wevnalOnlineEnglishQuestion');
-Route::any('wevnalOnlineEnglishQuestionNew', 'Api\ApiController@wevnalOnlineEnglishQuestionNew');
-
-Route::any('checknotexists', 'Api\ApiController@checknotexists');
-
-Route::any('checkexists', 'Api\ApiController@checkexists');
-
-Route::any('random', 'Api\ApiController@random');

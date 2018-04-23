@@ -154,11 +154,19 @@ class ApiController extends Controller
         }
         return Response::json(null, 200);
     }
+    public function test(Request $request){
+        $validator = Validator::make(
+            $request->all(),
+            array(
+                'email' => 'required|email',
+                'password' => 'required'
+            )
+        );
 
-    public function test(TestRequest $request){
-
-        echo 'product created...';
-
-
+// If validation fails, redirect to the settings page and send the errors
+        if ($validator->fails())
+        {
+            dd($validator->errors()->getMessages());
+        }
     }
 }

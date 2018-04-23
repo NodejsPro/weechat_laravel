@@ -277,9 +277,15 @@ class UserRepository extends BaseRepository
         return $model;
     }
 
-    public function updateCode($user,  $code){
+    public function updateCode($user, $code){
         $user->code = $code;
         $user->save();
         return $user;
-    }  
+    }
+
+    public function updateToken($user, $token){
+        $user->validate_token = $token;
+        $user->save();
+        return $user;
+    }
 }
