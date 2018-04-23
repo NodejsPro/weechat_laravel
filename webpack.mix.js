@@ -21,14 +21,16 @@ var paths = {
     'fileUpload' : 'public/js/bucketadmin/fileUpload'
 };
 
-mix.copy(paths.bootstrap + '/fonts/', 'public/build/fonts');
+// mix.copy(paths.bootstrap + '/fonts/', 'public/build/fonts');
 mix.copy(paths.fontawesome + '/fonts/**', 'public/build/fonts');
 mix.copy('public/images', 'public/build/images');
 mix.copy('public/img', 'public/build/img');
 mix.copy(paths.jquery + '/jquery.min.js', 'public/build/js/');
 mix.sass('resources/assets/sass/app.scss', 'public/build/css/app.css');
 mix.styles([
-    paths.bootstrap + '/dist/css/bootstrap.min.css',
+    paths.bootstrap + '/dist/css/bootstrap-grid.css',
+    paths.bootstrap + '/dist/css/bootstrap-reboot.css',
+    paths.bootstrap + '/dist/css/bootstrap.css',
     paths.fontawesome + '/css/font-awesome.min.css',
     'public/css/select2/select2.min.css',
     'public/css/bucketadmin/jquery-ui.css',
@@ -44,7 +46,8 @@ mix.styles([
 ], 'public/build/css/iCheck.css','./');
 mix.scripts([
     paths.jquery + '/jquery.min.js',
-    paths.bootstrap + '/dist/js/bootstrap.min.js',
+    paths.bootstrap + '/dist/js/bootstrap.bundle.js',
+    paths.bootstrap + '/dist/js/bootstrap.js',
     'public/js/bucketadmin/jquery-ui.js',
     'public/js/bucketadmin/jquery.dcjqaccordion.js',
     'public/js/bucketadmin/jquery.scrollTo.min.js',
