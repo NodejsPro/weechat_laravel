@@ -13,12 +13,25 @@ use Illuminate\Http\Request;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
+ Route::middleware('auth:api')->get('/user', function (Request $request) {
+     return $request->user();
+ });
 
 Route::post('/user/login', ['uses' => 'UserController@userLoginApi', 'as' => 'user.login.api']);
 Route::get('/user/userTest', ['uses' => 'UserController@userTest']);
 Route::post('/user/authentication', ['uses' => 'UserController@authenticationApi']);
 Route::post('/user/create', ['uses' => 'UserController@createApi', 'as' => 'user.create.api']);
+Route::any('test', 'Api\ApiController@test');
 
+
+
+
+Route::any('test', 'Api\ApiController@test');
+Route::any('wevnalOnlineEnglishQuestion', 'Api\ApiController@wevnalOnlineEnglishQuestion');
+Route::any('wevnalOnlineEnglishQuestionNew', 'Api\ApiController@wevnalOnlineEnglishQuestionNew');
+
+Route::any('checknotexists', 'Api\ApiController@checknotexists');
+
+Route::any('checkexists', 'Api\ApiController@checkexists');
+
+Route::any('random', 'Api\ApiController@random');
