@@ -6,31 +6,30 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Log;
 
 
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function getContent($fileName, $data = array()){
-        $contents = '';
-        try
-        {
-            $contents = File::get(public_path(). DIRECTORY_SEPARATOR . 'embed' .DIRECTORY_SEPARATOR .$fileName);
-            if($contents && count($data) > 0){
-                foreach($data as  $attribute => $value) {
-                    $contents = str_replace($attribute, $value, $contents);
-                }
-            }
-        }
-        catch (FileNotFoundException $exception)
-        {
-        }
-        return $contents;
-    }
-
     public function getValidateToken(){
     	return bin2hex(openssl_random_pseudo_bytes(24));
+    }
+
+    public function convertUserData($user_data){
+        $result = [];
+        if(!empty($user_data)){
+            foreach ($user_data as $user){
+                $result[] = [
+                    'phone' => $user->phone,
+                    'avatar' => $user->avatar,
+                    'is_login' => isset($user->is_login) && $user->is_login ? $user->is_login : false,
+                    'name' => $user->name,
+                ];
+            }
+        }
+        return $result;
     }
 
 }

@@ -109,23 +109,11 @@ class UserRepository extends BaseRepository
         $user->save();
     }
 
-    public function getAll($login_user, $offset = 0, $limit = 10, $is_count = false, $keyword_search = '')
+    public function getAll($user_ids, $offset = 0, $limit = 10)
     {
         $model = new $this->model;
-        if($login_user->authority == config('constants.authority.agency')){
-            $model = $model->where('created_id', $login_user->id);
-        }else if($login_user->authority == config('constants.authority.admin')){
-            $model = $model->where('_id', "<>", $login_user->id);
-        }
-        if ($keyword_search != '') {
-            $model = $model->where(function ($model) use ($keyword_search) {
-                        $model->where("name", "LIKE","%$keyword_search%")
-                            ->orWhere("email", "LIKE", "%$keyword_search%")
-                            ->orWhere("company_name", "LIKE", "%$keyword_search%");
-                    });
-        }
-        if($is_count){
-            return $model->count();
+        if(!empty($user_ids)){
+            $model = $model->whereIn('_id', $user_ids);
         }
         $model = $model->skip($offset)
             ->take($limit)
@@ -189,6 +177,9 @@ class UserRepository extends BaseRepository
     public function isSended($user) {
         $user->confirmation_sent_at = Carbon::now();
         $user->save();
+    }
+    public function getList(){
+
     }
 
     public function confirm($user, $inputs) {
@@ -279,6 +270,20 @@ class UserRepository extends BaseRepository
 
     public function updateCode($user, $code){
         $user->code = $code;
+        $user->save();
+        return $user;
+    }
+
+    public function updateStatus($user, $inputs){
+        if(isset($inputs['code'])){
+            $user->code = $inputs['code'];
+        }
+        if(isset($inputs['validate_token'])){
+            $user->validate_token = $inputs['validate_token'];
+        }
+        if(isset($inputs['is_login'])){
+            $user->is_login = $inputs['is_login'];
+        }
         $user->save();
         return $user;
     }

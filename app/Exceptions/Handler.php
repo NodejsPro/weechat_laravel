@@ -3,7 +3,10 @@
 namespace App\Exceptions;
 
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Response;
 
 class Handler extends ExceptionHandler
 {
@@ -13,7 +16,11 @@ class Handler extends ExceptionHandler
      * @var array
      */
     protected $dontReport = [
-        //
+        \Illuminate\Auth\AuthenticationException::class,
+        \Illuminate\Auth\Access\AuthorizationException::class,
+        \Symfony\Component\HttpKernel\Exception\HttpException::class,
+        \Illuminate\Database\Eloquent\ModelNotFoundException::class,
+        \Illuminate\Validation\ValidationException::class,
     ];
 
     /**
@@ -48,6 +55,24 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($request->expectsJson()) {
+            return Response::make(trans('auth.failed'), 404);
+        }
+
+        if ($exception instanceof TokenMismatchException) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json(['error' => 'TokenMismatchException.'], 500);
+            }
+            return response()->view('errors.500', array(), 500);
+        }
         return parent::render($request, $exception);
+    }
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+        if ($request->expectsJson()) {
+            return response()->json(['error' => 'Unauthenticated.'], 401);
+        }
+
+        return redirect()->guest('login');
     }
 }

@@ -20,8 +20,8 @@ Route::post('user/login', ['uses' => 'Api\UserController@userLogin', 'as' => 'us
 Route::post('user/create', ['uses' => 'Api\UserController@create', 'as' => 'user.create.api']);
 Route::group(['middleware' => ['authentication.api']], function () {
     Route::post('user/authentication', ['uses' => 'Api\UserController@authentication', 'as' => 'use.authentication.api']);
-    Route::post('contact/list', ['uses' => 'Api\UserController@create', 'as' => 'user.create.api']);
-    Route::post('room/list', ['uses' => 'Api\RoomController@create', 'as' => 'user.create.api']);
+    Route::post('contact/list', ['uses' => 'Api\ContactController@getList', 'as' => 'room.list.api']);
+    Route::post('room/list', ['uses' => 'Api\RoomController@create', 'as' => 'room.list.api']);
 });
 
 Route::get('user/userTest', ['uses' => 'Api\UserController@userTest']);

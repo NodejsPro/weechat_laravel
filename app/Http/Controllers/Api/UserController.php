@@ -73,6 +73,7 @@ class UserController extends Controller
         $user = $this->repUser->getOneByField('user_name', $user_name);
         if($user && Hash::check($password, $user->password)){
             $code = $user->code;
+            $inputs = [];
             if(empty($code)){
                 // call api code
                 if(config('app.env') == 'local'){
@@ -80,9 +81,11 @@ class UserController extends Controller
                 }else{
                     $code = uniqid();
                 }
-                $this->repUser->updateCode($user, $code);
+                $inputs['code'] = $code;
             }
             $validate_token = $this->getValidateToken();
+            $inputs['validate_token'] = $validate_token;
+            $this->repUser->updateStatus($user, $inputs);
             $data = [
                 'success' => true,
                 'validate_token' => $validate_token
@@ -94,6 +97,45 @@ class UserController extends Controller
                 'success' => false,
                 'msg' => trans('message.login_fail')
                 ), 400);
+    }
+
+    public function authentication(Request $request){
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'phone' => 'required',
+                'code' => 'required'
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $phone_number = $inputs['phone'];
+        $code = $inputs['code'];
+        $user = $this->repUser->getUserCode($phone_number, $code);
+        Log::info($user);
+        if($user){
+            $inputs = [
+                'code' => '',
+                'is_login' => true,
+            ];
+            $user = $this->repUser->updateStatus($user, $inputs);
+            $user_arr = [$user];
+            $data = [
+                'success' => true,
+                'data' => $this->convertUserData($user_arr),
+                'validate_token' => $user->validate_token
+            ];
+            return Response::json($data, 200);
+        }
+        return Response::json(array(
+            'success' => false,
+            'msg' => trans('message.common_error')
+        ), 400);
     }
 
     public function create(Request $request){
@@ -198,40 +240,6 @@ class UserController extends Controller
 
     public function show(){
 
-    }
-
-    public function authentication(Request $request){
-    	$inputs = $request->all();
-        $validator = Validator::make(
-            $inputs,
-            array(
-                'phone' => 'required',
-                'code' => 'required'
-            )
-        );
-        if ($validator->fails()){
-            return response([
-                "success" => false,
-                'msg' => $validator->errors()->getMessages()
-            ], 422);
-        }
-        $phone_number = $inputs['phone'];
-        $code = $inputs['code'];
-        $user = $this->repUser->getUserCode($phone_number, $code);
-        if($user){
-            $reset_code = '';
-            $this->repUser->updateCode($user, $reset_code);
-            $data = [
-                'success' => true,
-                'data' => $user,
-                'validate_token' => $this->getValidateToken()
-            ];
-            return Response::json($data, 200);
-        }
-	 	return Response::json(array(
-                    'success' => false,
-            'msg' => trans('message.common_error')
-                ), 400);
     }
 
     public function checkRequest($request){

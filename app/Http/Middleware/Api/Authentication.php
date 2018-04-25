@@ -2,12 +2,21 @@
 
 namespace App\Http\Middleware\Api;
 
+use App\Repositories\UserRepository;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class Authentication
 {
+    protected $repUser;
+    public function __construct(
+        UserRepository $user
+    )
+    {
+        $this->repUser   = $user;
+    }
+
     /**
      * Handle an incoming request.
      *
@@ -21,7 +30,10 @@ class Authentication
         $result = false;
         if(isset($headers['validate-token']) && !empty($headers['validate-token'])){
             $validate_token = $headers['validate-token'];
-            $result = true;
+            $user = $this->repUser->getOneByField('validate_token', @$validate_token['0']);
+            if($user){
+                $result = true;
+            }
         }
         if($result){
             return $next($request);
