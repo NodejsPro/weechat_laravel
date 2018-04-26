@@ -8,4 +8,8 @@ return [
         'admin_lv2' => '003',
         'client' => '004',
     ],
+    'active'    => [
+        'enable'                => 1,
+        'disable'               => 0,
+    ],
 ];
