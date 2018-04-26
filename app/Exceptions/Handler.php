@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Response;
 
 class Handler extends ExceptionHandler
@@ -43,6 +44,7 @@ class Handler extends ExceptionHandler
      */
     public function report(Exception $exception)
     {
+        Log::info('report');
         parent::report($exception);
     }
 
@@ -55,20 +57,27 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        Log::info('render');
         if ($request->expectsJson()) {
+            Log::info('1');
             return Response::make(trans('auth.failed'), 404);
         }
 
         if ($exception instanceof TokenMismatchException) {
+            Log::info('2');
             if ($request->ajax() || $request->wantsJson()) {
+                Log::info('3');
                 return response()->json(['error' => 'TokenMismatchException.'], 500);
             }
+            Log::info('4');
             return response()->view('errors.500', array(), 500);
         }
+        Log::info('5');
         return parent::render($request, $exception);
     }
     protected function unauthenticated($request, AuthenticationException $exception)
     {
+        Log::info('unauthenticated');
         if ($request->expectsJson()) {
             return response()->json(['error' => 'Unauthenticated.'], 401);
         }

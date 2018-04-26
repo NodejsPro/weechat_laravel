@@ -95,25 +95,15 @@ class RoomRepository extends BaseRepository
         $this->save($user, $inputs);
     }
 
-    public function getAll($login_user, $offset = 0, $limit = 10, $is_count = false, $keyword_search = '')
+    public function getAll($room_arr, $offset = 0, $limit = 10)
     {
         $model = new $this->model;
-        if($login_user->authority == config('constants.authority.agency')){
-            $model = $model->where('created_id', $login_user->id);
-        }else if($login_user->authority == config('constants.authority.admin')){
-            $model = $model->where('_id', "<>", $login_user->id);
+        if(!empty($room_arr)){
+            $model = $model->whereIn('_id', $room_arr);
         }
-        if ($keyword_search != '') {
-            $model = $model->where(function ($model) use ($keyword_search) {
-                        $model->where("name", "LIKE","%$keyword_search%")
-                            ->orWhere("email", "LIKE", "%$keyword_search%")
-                            ->orWhere("company_name", "LIKE", "%$keyword_search%");
-                    });
-        }
-        if($is_count){
-            return $model->count();
-        }
-        $model = $model->skip($offset)
+        $model = $model
+            ->where('confirm_flg', config('constants.active.enable'))
+            ->skip($offset)
             ->take($limit)
             ->orderBy('created_at', 'DESC');
         return $model->get();

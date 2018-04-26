@@ -39,6 +39,13 @@ class UserRepository extends BaseRepository
         return $user;
     }
 
+    public function storeApi($user, $inputs){
+        $user->user_name = $inputs['user_name'];
+        $user->password = $inputs['password'];
+        $user->confirm_flg = $inputs['confirm_flg'];
+        $user->save();
+    }
+
     /**
      * Save the User.
      *
@@ -191,67 +198,15 @@ class UserRepository extends BaseRepository
         $user->save();
     }
 
-    public function updateInformation($user, $inputs)
-    {
-        $user->business_segments = $inputs['business_segments'];
-        $user->company_name = $inputs['company_name'];
-        $user->person_in_charge = $inputs['person_in_charge'];
-        $user->zip_code = @$inputs['zip_code'];
-        $user->address = $inputs['address'];
-        $user->tel = $inputs['tel'];
-        $user->url = @$inputs['url'];
-        $user->confirmation_flg = 1;
-        $user->save();
-    }
-
-    public function checkEmailReset($email){
+    public function getUserActive($field, $value){
         $model = new $this->model;
-        $model = $model->where('email', $email)
-                       ->where('deleted_at', null)
-                       ->where('confirmation_token', null);
+        $model = $model->where($field, $value)
+                        ->where('confirm_flg', config('constants.active.enable'));
         return $model->first();
-    }
-
-    public function getUserPayment() {
-        $model = new $this->model;
-        $model = $model->where('plan', '<>', null)
-                       ->where('plan', '<>', config('constants.user_plan.free')) ;
-        return $model->get();
-    }
-
-    public function changePlan($user, $inputs) {
-        if(isset($inputs['plan'])){
-            $user->plan = $inputs['plan'];
-        }
-        if(isset($inputs['next_month_plan'])){
-            $user->next_month_plan = $inputs['next_month_plan'];
-        }
-        $user->save();
-    }
-
-    public function nextMonthPlan($user, $plan_code){
-        $user->next_month_plan = $plan_code;
-        $user->save();
-    }
-
-    public function getUserPlan(){
-        $model = new $this->model;
-        $model = $model->select("id", "email", "plan")->whereNotNull('plan')
-            ->whereNotNull('confirmed_at')
-            ->whereNull('deleted_at');
-        return $model->get();
-    }
-
-    public function getUserList(){
-        $model = new $this->model;
-        $model = $model->select('_id', 'name', 'email');
-        $model = $model->whereNotNull('name');
-        return $model->get();
     }
 
     public function getUserLogin($user_name, $password){
         $model = new $this->model;
-        dd(bcrypt($password) .'---'. bcrypt('123456'));
         $model = $model->where('user_name', $user_name)
                         // ->where('password', bcrypt($password));
                        ->where('confirmation_token', null);
@@ -263,7 +218,8 @@ class UserRepository extends BaseRepository
     public function getUserCode($phone, $code){
         $model = new $this->model;
         $model = $model->where('phone', $phone)
-                        ->where('code', $code);
+                        ->where('code', $code)
+                        ->where('confirm_flg', config('constants.active.enable'));
         $model = $model->first();
         return $model;
     }

@@ -27,11 +27,12 @@ class Authentication
     public function handle($request, Closure $next)
     {
         $headers = $request->header();
+        $inputs = $request->all();
         $result = false;
         if(isset($headers['validate-token']) && !empty($headers['validate-token'])){
             $validate_token = $headers['validate-token'];
             $user = $this->repUser->getOneByField('validate_token', @$validate_token['0']);
-            if($user){
+            if($user && (!isset($inputs['phone']) || $inputs['phone'] == $user->phone)){
                 $result = true;
             }
         }

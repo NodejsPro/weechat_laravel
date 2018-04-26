@@ -1,30 +1,15 @@
-
 <header class="header fixed-top clearfix">
     @if(ends_with(Route::currentRouteAction(), ['BotController@listbot', 'BotController@index', 'BotController@create', 'BotController@listUserBot', 'BotController@show', 'BotController@createLineBot', 'BotController@confirm', 'BotController@createWebEmbedBot', 'BotController@createChatworkBot'])
         || str_contains(Route::currentRouteAction(), ['UserController', 'TemplateController', 'PlanController', 'PaymentCardController', 'PaymentController', 'SupportController', 'UserNotificationController', 'PaymentGatewayController'])
     )
         <a href="{{URL::route('bot.index')}}" class="logo system-logo-top">
-            {{--{{config('app.name')}}--}}
-            @if(strtolower(config('app.name')) == "embot")
-                <img src="/images/logo_manager_embot2.png"  style="width: 60%;"/>
-            @else
-                <img src="/images/logo_manager_botchan2.png"  style="width: 60%;"/>
-            @endif
+            Chat me
         </a>
     @else
         <div class="brand brand-check">
-            {{--<div class="admin-header-title">
-                <a href="{!! URL::route('bot.index') !!}" class="logo system-logo-main">
-                    {{config('app.name')}}
-                </a>
-            </div>--}}
             <div>
                 <a href="{!! URL::route('bot.index') !!}" class="logo system-logo-main">
-                    @if(strtolower(config('app.name')) == "embot")
-                        <img src="/images/logo_white_embot2.png" style="width: 73%;"/>
-                    @else
-                        <img src="/images/logo_white_botchan2.png" style="width: 73%;"/>
-                    @endif
+                    Chat me
                 </a>
             </div>
 

@@ -53,6 +53,9 @@ class UserController extends Controller
     {
     }
 
+    /**
+     * Hàm chức năng check login người dùng
+    */
     public function userLogin(Request $request){
         $inputs = $request->all();
         $validator = Validator::make(
@@ -70,7 +73,7 @@ class UserController extends Controller
         }
         $user_name = $inputs['user-name'];
         $password = $inputs['password'];
-        $user = $this->repUser->getOneByField('user_name', $user_name);
+        $user = $this->repUser->getUserActive('user_name', $user_name);
         if($user && Hash::check($password, $user->password)){
             $code = $user->code;
             $inputs = [];
@@ -99,6 +102,10 @@ class UserController extends Controller
                 ), 400);
     }
 
+    /**
+     * Hàm chức năng xác thực người dùng qua sms sau khi login
+     *
+     * */
     public function authentication(Request $request){
         $inputs = $request->all();
         $validator = Validator::make(
@@ -139,37 +146,67 @@ class UserController extends Controller
     }
 
     public function create(Request $request){
-    	// dd(1);
         $inputs = $request->all();
-        $authority = @$inputs['authority'];
-        $email = @$inputs['email'];
-        $name = @$inputs['name'];
-        $user_name = @$inputs['user_name'];
-        $phone = @$inputs['phone'];
-        $avatar = @$inputs['avatar'];
-        $created_id = @$inputs['created_id'];
-        $password = @$inputs['password'];
-        $validate_token = $request->header('validate_token');
-        // $confirmation_token = @$inputs['password'];
-        if(!empty($validate_token) && !empty($authority) && !empty($email) && !empty($name) && !empty($user_name)
-         && !empty($phone) && !empty($avatar) && !empty($created_id) && !empty($password)){
-         	$user_created = $this->repUser->getById($created_id);
-         	if($user_created){
-         		$inputs['confirmation_token'] = $this->getValidateToken();
-	            //$user = $this->repUser->store($inputs);
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'phone' => 'required',
+                'user-name' => 'required',
+                'password' => 'required|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/'
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $phone = $inputs['phone'];
+        $user_name = $inputs['user-name'];
+        $password = $inputs['password'];
+        $active = config('constants.active');
+        $user = $this->repUser->getOneByField('phone', $phone);
+        if($user){
+            if($user->confirm_flg != $active['disable']){
                 return Response::json([
-                	'success' => true
-                ], 200);
-            }else{
-     		return Response::json([
-                	'success' => false,
-                	'msg' => 'User quản lý không tồn tại'
+                    'success' => true,
+                    'msg' => trans('message.user_used')
                 ], 400);
-     		}
-     	}	
-        return Response::json(array(
-                'success' => false
-            ), 400);
+            }
+            $inputs = [
+              'user_name' => $user_name,
+              'password' => $password,
+              'confirm_flg' => $active['disable']
+            ];
+            $this->repUser->storeApi($user, $inputs);
+            return Response::json([
+                'success' => true
+            ], 200);
+        }else{
+            return Response::json([
+                'success' => false,
+                'msg' => trans('msg.user_not_exists')
+            ], 400);
+        }
+    }
+
+    public function edit(Request $request){
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'avatar' => 'required',
+                'password_app' => 'required',
+                'password' => 'required|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/',
+                'phone' => 'required',
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
     }
 
     public function userTest(){

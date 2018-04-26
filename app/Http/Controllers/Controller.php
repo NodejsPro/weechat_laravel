@@ -32,4 +32,16 @@ class Controller extends BaseController
         return $result;
     }
 
+    public function convertRoomData($room_data){
+        $result = [];
+        if(!empty($room_data)){
+            foreach ($room_data as $item){
+                $result[] = [
+                    'name' => $item->name,
+                    'id' => $item->_id
+                ];
+            }
+        }
+        return $result;
+    }
 }

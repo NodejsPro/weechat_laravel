@@ -8,9 +8,11 @@ use App\Mongodb\EmbotPlan;
 use App\Http\Requests\UserRequest;
 use App\Repositories\ConnectPageRepository;
 use App\Repositories\ConnectRepository;
+use App\Repositories\ContactRepository;
 use App\Repositories\EmbotPlanRepository;
 use App\Repositories\MasterRepository;
 use App\Repositories\PlanRepository;
+use App\Repositories\RoomRepository;
 use App\Repositories\UserMongoRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -32,16 +34,14 @@ use Illuminate\Support\Facades\Hash;
 class RoomController extends Controller
 {
     protected $repUser;
-    protected $repMaster;
-	protected $repPlan;
-    protected $repConnect;
-    protected $repConnectPage;
-    protected $repEmbotPlan;
+    protected $repRoom;
 
     public function __construct(
-        UserRepository $user
+        UserRepository $user,
+        RoomRepository $room
     ){
         $this->repUser = $user;
+        $this->repRoom = $room;
     }
     /**
      * Display a listing of the resource.
@@ -52,33 +52,36 @@ class RoomController extends Controller
     {
     }
 
-    public function userLogin(TestRequest $request){
-        $this->checkRequest($request);
+    public function getList(Request $request){
         $inputs = $request->all();
-        $user_name = @$inputs['user_name'];
-        $password = @$inputs['password'];
-        if(!empty($user_name) && !empty($password)){
-            $user = $this->repUser->getOneByField('user_name', $user_name);
-            if($user && Hash::check($password, $user->password)){
-            	$code = $user->code;
-                if(empty($code)){
-                    // call api code
-                    $code = uniqid();
-                    $this->repUser->updateCode($user, $code);
-                }
-                $data = [
-                    'success' => true,
-                    'code' => $code,
-                    'validate_token' => $this->getValidateToken()
-                ];
-                return Response::json($data, 200);
-            }
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'phone' => 'required'
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
         }
-        return Response::json(array(
-                    'success' => false
-                ), 400);
+        $phone = $inputs['phone'];
+        $user = $this->repUser->getOneByField('phone', $phone);
+        $start = isset($inputs['start']) ? (int)$inputs['start'] : 0;
+        $length = isset($inputs['length']) ? (int)$inputs['length'] : config('constants.per_page')[3];
+        if($user){
+            $user_room = $this->repRoom->getAll($user->room, $start, $length);
+            return Response::json([
+                'success' => true,
+                'data' => $this->convertRoomData($user_room)
+            ], 200);
+        }
+        return Response::json([
+            'success' => true,
+            'msg' => trans('message.user_not_exists')
+        ], 400);
     }
-
     public function create(Request $request){
     	// dd(1);
         $inputs = $request->all();
@@ -181,44 +184,5 @@ class RoomController extends Controller
 
     public function show(){
 
-    }
-
-    public function authentication(Request $request){
-    	$inputs = $request->all();
-	 	$validate_token = $request->header('validate_token');
-	 	if(!empty($validate_token) && !empty($inputs['phone']) && !empty($inputs['code'])){
-	 		$phone_number = $inputs['phone'];
-	 		$code = $inputs['code'];
-	 		$user = $this->repUser->getUserCode($inputs['phone'], $inputs['code']);
-	 		if($user){
-				$data = [
-                    'success' => true,
-                    'data' => $user,
-                    'validate_token' => $this->getValidateToken()
-                ];
-                return Response::json($data, 200);
-	 		}
-	 	}
-	 	return Response::json(array(
-                    'success' => false
-                ), 400);
-    }
-
-    public function checkRequest($request){
-        $validator = Validator::make(
-            $request->all(),
-            array(
-                'email' => 'required|email',
-                'password' => 'required'
-            )
-        );
-        if ($validator->fails()){
-            Log::info('false');
-//            return response([
-//                "success" => '13123',
-//                'msg' => '123'
-//            ], 422);
-        }
-        Log::info('success');
     }
 }

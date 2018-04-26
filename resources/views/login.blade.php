@@ -105,15 +105,8 @@
 <body class="login-body">
 <div class="container">
     <div class="wrapper-page">
-        {{--<p align="center" class="system-logo">
-           {{config('app.name')}}
-        </p>--}}
         <div align="center" class="system-logo">
-            @if(strtolower(config('app.name')) == "embot")
-                <img src="/images/logo_manager_embot2.png"/>
-            @else
-                <img src="/images/logo_manager_botchan2.png"/>
-            @endif
+            Chat me
         </div>
         @yield('content')
     </div>
