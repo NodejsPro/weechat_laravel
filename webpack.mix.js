@@ -18,11 +18,12 @@ var paths = {
     'moment' :  'vendor/bower_dl/moment/',
     'moment_timezone' :  'vendor/bower_dl/moment-timezone',
     'fusioncharts' :  'vendor/bower_dl/fusioncharts/',
+    'bootstrap_fileinput' :  'vendor/bower_dl/bootstrap-fileinput',
     'fileUpload' : 'public/js/bucketadmin/fileUpload'
 };
 
 // mix.copy(paths.bootstrap + '/fonts/', 'public/build/fonts');
-mix.copy(paths.fontawesome + '/fonts/**', 'public/build/fonts');
+// mix.copy(paths.fontawesome + '/fonts/**', 'public/build/fonts');
 mix.copy('public/images', 'public/build/images');
 mix.copy('public/img', 'public/build/img');
 mix.copy(paths.jquery + '/jquery.min.js', 'public/build/js/');
@@ -69,6 +70,19 @@ mix.scripts([
     paths.moment_timezone + '/moment-timezone-utils.js',
     'public/js/moment-timezone-with-data-2012-2022.min.js',
 ], 'public/build/js/timezone.js','./');
+mix.styles([
+    paths.bootstrap_fileinput + '/css/fileinput.min.css',
+    paths.bootstrap_fileinput + '/css/fileinput-rtl.min.css',
+], 'public/build/css/template_upload.css','./');
+mix.scripts([
+    paths.bootstrap_fileinput + '/js/fileinput.min.js',
+], 'public/build/js/template_upload.js','./');
+mix.scripts([
+    paths.bootstrap_fileinput + '/js/locales/ja.js',
+], 'public/build/js/template_upload_language_ja.js','./');
+mix.scripts([
+    paths.bootstrap_fileinput + '/js/locales/vi.js',
+], 'public/build/js/template_upload_language_vn.js','./');
 mix.scripts([
     'public/js/bucketadmin/iCheck/jquery.icheck.js',
     'public/js/bucketadmin/icheck-init.js'
@@ -80,7 +94,9 @@ mix.scripts([
 mix.version([
     'public/build/css/app.css',
     'public/build/css/iCheck.css',
+    'public/build/css/template_upload.css',
     'public/build/js/app.js',
     'public/build/js/iCheck.js',
     'public/build/js/moment.js',
+    'public/build/js/template_upload.js',
 ]);

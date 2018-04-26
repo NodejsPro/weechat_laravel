@@ -10,6 +10,7 @@
     "jquery": "^1.12.0",
     "bootstrap": "^3.3.7",
     "font-awesome": "fontawesome#^5.0.0",
+    "bootstrap-fileinput" : "*",
     "moment-timezone" : "*"
   }
 }

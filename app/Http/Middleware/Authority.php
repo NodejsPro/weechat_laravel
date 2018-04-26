@@ -20,9 +20,13 @@ class Authority
         if(Auth::check()){
             $authority = config('constants.authority');
             if(Auth::user()->authority == $authority['client']){
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response('Not found.', 404);
+                }
                 abort(404);
             }
         }
+
 
         return $next($request);
     }
