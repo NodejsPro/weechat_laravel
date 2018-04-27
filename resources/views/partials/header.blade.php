@@ -2,14 +2,12 @@
     @if(ends_with(Route::currentRouteAction(), ['BotController@listbot', 'BotController@index', 'BotController@create', 'BotController@listUserBot', 'BotController@show', 'BotController@createLineBot', 'BotController@confirm', 'BotController@createWebEmbedBot', 'BotController@createChatworkBot'])
         || str_contains(Route::currentRouteAction(), ['UserController', 'TemplateController', 'PlanController', 'PaymentCardController', 'PaymentController', 'SupportController', 'UserNotificationController', 'PaymentGatewayController'])
     )
-        <a href="{{URL::route('bot.index')}}" class="logo system-logo-top">
-            Chat me
-        </a>
+        <a href="{{URL::route('user.index')}}" class="logo system-logo-top">{{config('app.name')}}</a>
     @else
         <div class="brand brand-check">
             <div>
                 <a href="{!! URL::route('bot.index') !!}" class="logo system-logo-main">
-                    Chat me
+                    {{config('app.name')}}
                 </a>
             </div>
 

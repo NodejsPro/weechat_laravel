@@ -40,7 +40,6 @@
                     <div class="form-group">
                         {!! Form::label('email', trans('field.email'), ['class' => "col-md-2 control-label required"]) !!}
                         <div class="col-md-6">
-                            {!! Form::hidden('change_white_domain', null, ['id' => 'change_white_domain','class' => 'form-control']) !!}
                             {!! Form::text('email', null, ['id' => 'inputEmail','class' => 'form-control', 'readonly']) !!}
                             @if ($errors->has('email'))
                                 <label for="inputEmail" class="error">{{ $errors->first('email') }}</label>
@@ -57,7 +56,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        {!! Form::label('user_name', trans('field.user_name'), ['class' => 'col-md-2 control-label required']) !!}
+                        {!! Form::label('user_name', trans('field.user_name'), ['class' => 'col-md-2 control-label']) !!}
                         <div class="col-md-6">
                             {!! Form::text('user_name', null, ['id' => 'inputUserName','class' => 'form-control']) !!}
                             @if ($errors->has('user_name'))
@@ -75,7 +74,7 @@
                         </div>
                     </div>
                     <div class="form-group group-bot-sns">
-                        {!! Form::label('contact', trans('add_user.sns_type'), ['class' => "col-md-2 control-label"]) !!}
+                        {!! Form::label('contact', trans('field.contact'), ['class' => "col-md-2 control-label"]) !!}
                         <div class="col-md-6">
                             {!! Form::select('contact[]', $contact, null, ['class' => 'form-control select2-init contact ', 'multiple' => 'multiple', 'style' => 'width: 100%']) !!}
                             @if ($errors->has('contact'))
@@ -85,11 +84,20 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        {!! Form::label('password', trans('field.password'), ['class' => 'col-md-2 control-label required']) !!}
+                        {!! Form::label('password', trans('field.password'), ['class' => 'col-md-2 control-label']) !!}
                         <div class="col-md-6">
                             {!! Form::text('password', null, ['id' => 'inputPassword','class' => 'form-control']) !!}
                             @if ($errors->has('password'))
                                 <label for="inputPassword" class="error">{{ $errors->first('password') }}</label>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        {!! Form::label('password_confirmation', trans('field.password_confirmation'), ['class' => 'col-md-2 control-label']) !!}
+                        <div class="col-md-6">
+                            {!! Form::text('password_confirmation', null, ['id' => 'inputPasswordConfirmation','class' => 'form-control']) !!}
+                            @if ($errors->has('password_confirmation'))
+                                <label for="inputPasswordConfirmation" class="error">{{ $errors->first('password_confirmation') }}</label>
                             @endif
                         </div>
                     </div>

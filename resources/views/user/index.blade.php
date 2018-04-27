@@ -21,22 +21,15 @@
                             <tr role="row">
                                 <th >No.</th>
                                 <th >{{{ trans('field.email') }}}</th>
-                                <th >{{{ trans('field.name') }}}</th>
-                                <th >{{{ trans('field.company_name') }}}</th>
+                                <th >{{{ trans('field.phone') }}}</th>
+                                <th >{{{ trans('field.user_name') }}}</th>
                                 <th>{{{trans('field.authority')}}}</th>
-                                <th>{{{trans('add_user.sns_type')}}}</th>
-                                @if($login_user->authority == $authority['super_admin'])
-                                    <th >{{{ trans('field.user_number') }}}</th>
-                                @endif
-                                <th >{{{ trans('field.bot_number') }}}</th>
-                                @if($login_user->authority == $authority['super_admin'])
-                                    <th >{{{ trans('field.user_create') }}}</th>
-                                @endif
-                                <th>{{{trans('field.white_list_domain')}}}</th>
+                                <th >{{{ trans('field.contact') }}}</th>
+                                <th >{{{ trans('field.user_create') }}}</th>
+                                <th >{{{ trans('field.action') }}}</th>
                             </tr>
                             </thead>
-                            <tbody>
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                     <div class="clearfix group-add">
@@ -46,8 +39,62 @@
             </section>
         </div>
     </div>
-{{--    @include('modals.user_delete')--}}
+    @include('modals.user_delete')
 @endsection
 @section('scripts2')
+    <script></script>
+    <script>
+        $(document).ready(function () {
+            global_datatable = $('#datatable_user').DataTable({
+                info: false,
+                processing: false,
+                serverSide: true,
+                ajax: {
+                    type: 'POST',
+                    url :'{!! route('user.list') !!}',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                },
 
+                paging: true,
+                searching: false,
+//                searching: true,
+                ordering:  true,
+                "dom": '<"top"i>rt<"bottom pull-left"flp><"clear">',
+                columns: [
+                    {data: 'no', name: 'no', width: '5px'},
+                    {data: 'email', name: 'email', class: 'email', width: '200px'},
+                    {data: 'phone', name: 'phone', class: 'phone'},
+                    {data: 'user_name', name: 'user_name', class: 'user_name'},
+                    {data: 'authority', name: 'authority', class: 'authority'},
+                    {data: 'contact', name: 'contact', class: 'contact'},
+                    {data: 'user_create', name: 'user_create', class: 'user_create'},
+                    {data: 'action', name: 'action', class: 'action'},
+                ],
+                language:
+                    {
+                        emptyTable: "<p class='pull-left'>{{trans('message.not_record')}}</p>",
+                        zeroRecords: "<p class='pull-left'>{{trans('message.not_record')}}</p>",
+                        paginate:
+                            {
+                                previous: "",
+                                next: ""
+                            }
+                    },
+                "pageLength": 10,
+                "fnDrawCallback": function(oSettings) {
+                    if (oSettings._iDisplayLength >= oSettings.fnRecordsDisplay()) {
+                        $(oSettings.nTableWrapper).find('.dataTables_paginate').hide();
+                    }else{
+                        $(oSettings.nTableWrapper).find('.dataTables_paginate').show();
+                    }
+                },
+                "bLengthChange": false,
+                "bAutoWidth": false,
+                scrollX: true,
+                destroy: true
+            });
+        });
+    </script>
 @endsection

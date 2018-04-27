@@ -106,7 +106,7 @@
 <div class="container">
     <div class="wrapper-page">
         <div align="center" class="system-logo">
-            Chat me
+            {{config('app.name')}}
         </div>
         @yield('content')
     </div>

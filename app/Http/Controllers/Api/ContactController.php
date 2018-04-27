@@ -72,9 +72,9 @@ class ContactController extends Controller
         $user = $this->repUser->getOneByField('phone', $phone);
         if($user){
             if(config('app.env') == 'local'){
-                $user_contact = $this->repUser->getAll(null, $start, $length);
+                $user_contact = $this->repUser->getList(null, $start, $length);
             }else{
-                $user_contact = $this->repUser->getAll($user->contact, $start, $length);
+                $user_contact = $this->repUser->getList($user->contact, $start, $length);
             }
             $user_contact_data = $this->convertUserData($user_contact);
             return Response::json([

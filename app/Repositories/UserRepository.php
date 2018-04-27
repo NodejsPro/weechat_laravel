@@ -116,7 +116,7 @@ class UserRepository extends BaseRepository
         $user->save();
     }
 
-    public function getAll($user_ids, $offset = 0, $limit = 10)
+    public function getList($user_ids, $offset = 0, $limit = 10)
     {
         $model = new $this->model;
         if(!empty($user_ids)){
@@ -126,6 +126,30 @@ class UserRepository extends BaseRepository
             ->take($limit)
             ->orderBy('created_at', 'DESC');
         return $model->get();
+    }
+
+    public function getAll($user_login, $offset = 0, $limit = 10)
+    {
+        $model = new $this->model;
+        if($user_login->authority == config('constants.authority.super_admin')){
+            $model = $model->where('_id', "<>", $user_login->id);
+        }else if($user_login->authority != config('constants.authority.super_admin')){
+            $model = $model->where('created_id', $user_login->id);
+        }
+        $model = $model->skip($offset)
+            ->take($limit)
+            ->orderBy('created_at', 'DESC');
+        return $model->get();
+    }
+
+    public function getCount($user_login){
+        $model = new $this->model;
+        if($user_login->authority == config('constants.authority.super_admin')){
+            $model = $model->where('_id', "<>", $user_login->id);
+        }else if($user_login->authority != config('constants.authority.super_admin')){
+            $model = $model->where('created_id', $user_login->id);
+        }
+        return $model->count();
     }
 
     public function getUserByKeywordSearch($keyword_search){
@@ -184,9 +208,6 @@ class UserRepository extends BaseRepository
     public function isSended($user) {
         $user->confirmation_sent_at = Carbon::now();
         $user->save();
-    }
-    public function getList(){
-
     }
 
     public function confirm($user, $inputs) {

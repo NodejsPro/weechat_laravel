@@ -8,6 +8,12 @@ return [
         'admin_lv2' => '003',
         'client' => '004',
     ],
+    'authority_lang' => [
+        '001' => 'Supper admin',
+        '002' => 'Admin lv1',
+        '003' => 'Admin lv2',
+        '004' => 'Client',
+    ],
     'active'    => [
         'enable'                => 1,
         'disable'               => 0,
