@@ -7,10 +7,12 @@
     @endif
     ::
     @parent @stop
+@section('styles')
+    <link href="{{ mix('build/css/jquery.steps.css') }}" rel="stylesheet">
+@endsection
 @section('content')
     <div class="row user-create">
         <div class="center-block" style="float: none">
-            <!--breadcrumbs start -->
             <ul class="breadcrumb">
                 <li><a href="{!! URL::to('user') !!}"><i class="fa fa-bars"></i> {{{ trans('menu.user_management') }}}</a></li>
                 <li class="active">
@@ -31,6 +33,85 @@
                     @endif
                 </header>
                 <div class="panel-body">
+                    <div id="wizard">
+                        <h2>First Step</h2>
+
+                        <section>
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">Full Name</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" placeholder="Full Name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">Email Address</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" placeholder="Email Address">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">User Name</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" placeholder="Username">
+                                    </div>
+                                </div>
+                            </form>
+                        </section>
+
+                        <h2>Second Step</h2>
+                        <section>
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">Phone</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" placeholder="Phone">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">Mobile</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" placeholder="Mobile">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">Address</label>
+                                    <div class="col-lg-8">
+                                        <textarea class="form-control" cols="60" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </section>
+
+                        <h2>Third Step</h2>
+                        <section>
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">Bill Name 1</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" placeholder="Phone">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">Bill Name 2</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" placeholder="Mobile">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-lg-2 control-label">Status</label>
+                                    <div class="col-lg-8">
+                                        <textarea class="form-control" cols="60" rows="5"></textarea>
+                                    </div>
+                                </div>
+                            </form>
+                        </section>
+
+                        <h2>Final Step</h2>
+                        <section>
+                            <p>Congratulations This is the Final Step</p>
+                        </section>
+                    </div>
                     @include('flash')
                     @if(ends_with(Route::currentRouteAction(), 'UserController@create'))
                         {!! Form::open(['url' => 'user', 'class' => 'cmxform form-horizontal form-action', 'role' => 'form']) !!}
@@ -134,13 +215,18 @@
     </div>
     <script src="{{ mix('build/js/template_upload.js') }}"></script>
     <script src="{{ mix('build/js/iCheck.js') }}"></script>
+    <script src="{{ mix('build/js/jquery.steps.js') }}"></script>
 
     @if(Lang::locale() != config('constants.language_file_input_js.en'))
 {{--        <script src="{{ mix('build/js/te mplate_upload_language_'. Lang::locale() .'.js') }}"></script>--}}
     @endif
     <script type="text/javascript">
         $(document).ready(function () {
-
+            $("#wizard").steps({
+                headerTag: "h2",
+                bodyTag: "section",
+                transitionEffect: "slideLeft"
+            });
             $('.user-create select.select2-init').select2({
                 "language": {
                     "noResults": function(){

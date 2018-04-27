@@ -91,6 +91,17 @@ mix.scripts([
     'public/js/jquery.dataTables.min.js',
     'public/js/dataTables.bootstrap.min.js'
 ], 'public/build/js/jquery.dataTables.js','./');
+
+/**
+ * jquery step
+ * */
+mix.styles([
+    'public/css/jquery.steps.css',
+], 'public/build/css/jquery.steps.css','./');
+mix.scripts([
+    'public/js/jquery.steps.js',
+], 'public/build/js/jquery.steps.js','./');
+
 mix.version([
     'public/build/css/app.css',
     'public/build/css/iCheck.css',
@@ -99,4 +110,6 @@ mix.version([
     'public/build/js/iCheck.js',
     'public/build/js/moment.js',
     'public/build/js/template_upload.js',
+    'public/build/css/jquery.steps.css',
+    'public/build/js/jquery.steps.js',
 ]);

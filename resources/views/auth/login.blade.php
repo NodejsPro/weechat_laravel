@@ -10,7 +10,7 @@
         <div class="panel-body">
             @include('errors.list')
             @include('flash')
-            {!! Form::text('email', null, ['id' => 'inputEmail', 'class' => "form-control", 'placeholder' => trans('field.email')]) !!}
+            {!! Form::text('user_name', null, ['id' => 'inputUsername', 'class' => "form-control", 'placeholder' => trans('field.user_name')]) !!}
             {!! Form::password('password', ['id' => 'inputPassword', 'class' => "form-control", 'placeholder' => trans('field.password')]) !!}
             {!! Form::checkbox('remember', null, false) !!} &nbsp;{{{ trans('button.remember_me') }}}
             <button class="btn btn-lg btn-login btn-block" type="submit">{{{ trans('button.login') }}}</button>
