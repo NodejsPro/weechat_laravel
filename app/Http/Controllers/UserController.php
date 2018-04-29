@@ -95,7 +95,6 @@ class UserController extends Controller
                     'user' => $row,
                     'authority' => @$group[$row->authority],
                     'user_name' => $row->user_name,
-                    'email' => $row->email,
                     'phone' => $row->phone,
                     'login_user' => $login_user,
                     'user_created_id' => $row->created_id,

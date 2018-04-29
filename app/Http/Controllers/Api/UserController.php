@@ -61,9 +61,11 @@ class UserController extends Controller
         $validator = Validator::make(
             $inputs,
             array(
-                'user-name' => 'required',
+                'user-name-phone' => 'required',
                 'password' => 'required'
-            )
+            ),[
+                'user-name-phone.required' => trans('validation.required', ['attribute' => trans('user.field_user_phone')])
+            ]
         );
         if ($validator->fails()){
             return response([
@@ -71,9 +73,9 @@ class UserController extends Controller
                 'msg' => $validator->errors()->getMessages()
             ], 422);
         }
-        $user_name = $inputs['user-name'];
+        $user_name_phone = $inputs['user-name-phone'];
         $password = $inputs['password'];
-        $user = $this->repUser->getUserActive('user_name', $user_name);
+        $user = $this->repUser->getUserActive($user_name_phone);
         if($user && Hash::check($password, $user->password)){
             $code = $user->code;
             $inputs = [];
@@ -98,7 +100,7 @@ class UserController extends Controller
         return Response::json(
             array(
                 'success' => false,
-                'msg' => trans('message.login_fail')
+                'msg' => trans('user.msg_login_fail')
                 ), 400);
     }
 
@@ -124,7 +126,6 @@ class UserController extends Controller
         $phone_number = $inputs['phone'];
         $code = $inputs['code'];
         $user = $this->repUser->getUserCode($phone_number, $code);
-        Log::info($user);
         if($user){
             $inputs = [
                 'code' => '',
@@ -145,6 +146,61 @@ class UserController extends Controller
         ), 400);
     }
 
+    public function createByPhone(Request $request){
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'phone' => 'required',
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $phone = $inputs['phone'];
+        $user = $this->repUser->getOneByField('phone', $phone);
+        if($user){
+            if(isset($user->confirm_flg) && $user->confirm_flg){
+                $msg = trans('user.user_exists');
+                return response([
+                    "success" => true,
+                    'msg' => $msg,
+                    'data' => $this->convertUserData($user)
+                ], 200);
+            }else{
+                return response([
+                    "success" => true,
+                ], 200);
+            }
+        }
+        return response([
+            "success" => false,
+            'msg' => trans('user.user_not_exists')
+        ], 422);
+    }
+
+    public function createByUserName(Request $request){
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'phone' => 'required',
+                'user-name' => 'required',
+                'password' => 'required',
+//                'password' => 'required|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/'
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+    }
+
     public function create(Request $request){
         $inputs = $request->all();
         $validator = Validator::make(
@@ -152,7 +208,7 @@ class UserController extends Controller
             array(
                 'phone' => 'required',
                 'user-name' => 'required',
-                'password' => 'required|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/'
+                'password' => 'required',
             )
         );
         if ($validator->fails()){

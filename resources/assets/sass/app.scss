@@ -381,6 +381,16 @@
     }
 
   }
+  .kv-avatar{
+    .file-drop-zone{
+      margin: 0px;
+      .file-preview-thumbnails img{
+        max-width: 150px !important;
+        max-height: 150px !important;
+      }
+    }
+
+  }
   div.tagsinput span.tag.domain-error {
     background: #ff6c60 !important;
     color: white !important;

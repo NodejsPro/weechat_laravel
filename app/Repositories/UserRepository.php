@@ -219,7 +219,17 @@ class UserRepository extends BaseRepository
         $user->save();
     }
 
-    public function getUserActive($field, $value){
+    public function getUserActive($value){
+        $model = new $this->model;
+        $model =  $model->where(function ($model) use ($value) {
+            $model->where("user_name", $value)
+                ->orWhere("phone", $value);
+        });
+        $model = $model->where('confirm_flg', config('constants.active.enable'));
+        return $model->first();
+    }
+
+    public function getUserConditionActive($field, $value){
         $model = new $this->model;
         $model = $model->where($field, $value)
                         ->where('confirm_flg', config('constants.active.enable'));

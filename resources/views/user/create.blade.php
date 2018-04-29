@@ -8,6 +8,7 @@
     ::
     @parent @stop
 @section('styles')
+    <link href="{{ mix('build/css/template_upload.css') }}" rel="stylesheet">
     <link href="{{ mix('build/css/jquery.steps.css') }}" rel="stylesheet">
 @endsection
 @section('content')
@@ -33,185 +34,130 @@
                     @endif
                 </header>
                 <div class="panel-body">
-                    <div id="wizard">
-                        <h2>First Step</h2>
-
+                    <style>
+                        /*.wizard > .content{*/
+                            /*min-height: 48em;*/
+                        /*}*/
+                        .wizard > .content > .body label.error{
+                            margin-left: 0px;
+                        }
+                        .contact-item .pannel-content{
+                            border: 2px solid #eff2f7;
+                            margin-bottom: 10px;
+                            height: 170px;
+                            overflow: hidden;
+                        }
+                        .contact-item.active .pannel-content{
+                            border: 2px solid #1fb5ad;
+                        }
+                        .wizard > .content .contact-paging .pagination{
+                            display: block;
+                            list-style: none !important;
+                        }
+                        .wizard > .content .contact-paging .pagination li{
+                            display: inline;
+                        }
+                        .wizard > .content .body{
+                            width: 100%;
+                            padding-left: 0px;
+                            padding-right: 0px;
+                            height: 100%;
+                        }
+                        .wizard > .content .contact-item{
+                            padding-left: 7.5px;
+                            padding-right: 7.5px;
+                        }
+                        .contact-paging{
+                            position: absolute;
+                            bottom: 5px;
+                            right:0px;
+                        }
+                    </style>
+                    <div id="user-wizard">
+                        <h2>{{trans('user.first_step')}}</h2>
                         <section>
-                            <form class="form-horizontal">
+                            <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-lg-2 control-label">Full Name</label>
+                                    <label class="col-lg-2 control-label">{{trans('user.field_phone')}}</label>
                                     <div class="col-lg-8">
-                                        <input type="text" class="form-control" placeholder="Full Name">
+                                        <input type="text" name="phone" class="form-control" id="input_phone" placeholder="{{trans('user.field_phone')}}" data-error_required="{{trans('validation.required', ['attribute' => trans('user.field_phone')])}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-lg-2 control-label">Email Address</label>
+                                    <label class="col-lg-2 control-label">{{trans('user.field_user_name')}}</label>
                                     <div class="col-lg-8">
-                                        <input type="text" class="form-control" placeholder="Email Address">
+                                        <input type="text" name='user_name' class="form-control" id="input_user_name" placeholder="{{trans('user.field_user_name')}}" data-error_required="{{trans('validation.required', ['attribute' => trans('user.field_user_name')])}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-lg-2 control-label">User Name</label>
+                                    <label class="col-lg-2 control-label">{{trans('user.field_authority')}}</label>
                                     <div class="col-lg-8">
-                                        <input type="text" class="form-control" placeholder="Username">
-                                    </div>
-                                </div>
-                            </form>
-                        </section>
-
-                        <h2>Second Step</h2>
-                        <section>
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-lg-2 control-label">Phone</label>
-                                    <div class="col-lg-8">
-                                        <input type="text" class="form-control" placeholder="Phone">
+                                        {!! Form::select('authority',$group, null,['id' => 'input_authority', 'class' => "form-control select2-init",  "data-error_required" => trans('validation.required', ['attribute' => trans('user.field_authority')])])!!}
+                                        @if ($errors->has('authority'))
+                                            <label for="inputAuthority" class="error">{{ $errors->first('authority') }}</label>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-lg-2 control-label">Mobile</label>
+                                    <label class="col-lg-2 control-label">{{trans('user.field_password')}}</label>
                                     <div class="col-lg-8">
-                                        <input type="text" class="form-control" placeholder="Mobile">
+                                        <input type="text" name="password" class="form-control" id="input_password" placeholder="{{trans('user.field_password')}}" data-error_required="{{trans('validation.required', ['attribute' => trans('user.field_password')])}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-lg-2 control-label">Address</label>
+                                    <label class="col-lg-2 control-label">{{trans('user.field_avatar')}}</label>
                                     <div class="col-lg-8">
-                                        <textarea class="form-control" cols="60" rows="5"></textarea>
+                                        <div class="kv-avatar center-block text-center">
+                                            <input type="file" id="avatar-upload" name="avatar" class="form-control" placeholder="{{trans('user.field_avatar')}}">
+                                        </div>
+                                        <div id="error-avatar"></div>
                                     </div>
                                 </div>
-                            </form>
-                        </section>
-
-                        <h2>Third Step</h2>
-                        <section>
-                            <form class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-lg-2 control-label">Bill Name 1</label>
-                                    <div class="col-lg-8">
-                                        <input type="text" class="form-control" placeholder="Phone">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-lg-2 control-label">Bill Name 2</label>
-                                    <div class="col-lg-8">
-                                        <input type="text" class="form-control" placeholder="Mobile">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-lg-2 control-label">Status</label>
-                                    <div class="col-lg-8">
-                                        <textarea class="form-control" cols="60" rows="5"></textarea>
-                                    </div>
-                                </div>
-                            </form>
-                        </section>
-
-                        <h2>Final Step</h2>
-                        <section>
-                            <p>Congratulations This is the Final Step</p>
-                        </section>
-                    </div>
-                    @include('flash')
-                    @if(ends_with(Route::currentRouteAction(), 'UserController@create'))
-                        {!! Form::open(['url' => 'user', 'class' => 'cmxform form-horizontal form-action', 'role' => 'form']) !!}
-                    @elseif(ends_with(Route::currentRouteAction(), 'UserController@edit'))
-                        {!! Form::model($user,[ 'route' => ['user.update', $user->id], 'method' => 'PUT', 'class' => 'cmxform form-horizontal form-action form-user-edit', 'role' => 'form']) !!}
-                    @endif
-                    <div class="form-group">
-                        {!! Form::label('email', trans('field.email'), ['class' => "col-md-2 control-label required"]) !!}
-                        <div class="col-md-6">
-                            {!! Form::text('email', null, ['id' => 'inputEmail','class' => 'form-control', 'readonly']) !!}
-                            @if ($errors->has('email'))
-                                <label for="inputEmail" class="error">{{ $errors->first('email') }}</label>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('phone', trans('field.phone'), ['class' => 'col-md-2 control-label required']) !!}
-                        <div class="col-md-6">
-                            {!! Form::text('phone', null, ['id' => 'inputPhone', 'class' => "form-control"]) !!}
-                            @if ($errors->has('phone'))
-                                <label for="inputPhone" class="error">{{ $errors->first('phone') }}</label>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('user_name', trans('field.user_name'), ['class' => 'col-md-2 control-label']) !!}
-                        <div class="col-md-6">
-                            {!! Form::text('user_name', null, ['id' => 'inputUserName','class' => 'form-control']) !!}
-                            @if ($errors->has('user_name'))
-                                <label for="inputUserName" class="error">{{ $errors->first('user_name') }}</label>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group group-authority">
-                        {!! Form::label('authority', trans('field.authority'), ['class' => 'col-md-2 control-label required']) !!}
-                        <div class="col-md-3">
-                            {!! Form::select('authority',$group, null,['id' => 'selectAuthority', 'class' => "form-control select2-init" ])!!}
-                            @if ($errors->has('authority'))
-                                <label for="inputAuthority" class="error">{{ $errors->first('authority') }}</label>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group group-bot-sns">
-                        {!! Form::label('contact', trans('field.contact'), ['class' => "col-md-2 control-label"]) !!}
-                        <div class="col-md-6">
-                            {!! Form::select('contact[]', $contact, null, ['class' => 'form-control select2-init contact ', 'multiple' => 'multiple', 'style' => 'width: 100%']) !!}
-                            @if ($errors->has('contact'))
-                                <label for="sns_type_list" class="error">{{ $errors->first('contact') }}</label>
-                            @endif
-                            <label for="contact" class="contact">{{ trans('add_user.contact') }}</label>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('password', trans('field.password'), ['class' => 'col-md-2 control-label']) !!}
-                        <div class="col-md-6">
-                            {!! Form::text('password', null, ['id' => 'inputPassword','class' => 'form-control']) !!}
-                            @if ($errors->has('password'))
-                                <label for="inputPassword" class="error">{{ $errors->first('password') }}</label>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('password_confirmation', trans('field.password_confirmation'), ['class' => 'col-md-2 control-label']) !!}
-                        <div class="col-md-6">
-                            {!! Form::text('password_confirmation', null, ['id' => 'inputPasswordConfirmation','class' => 'form-control']) !!}
-                            @if ($errors->has('password_confirmation'))
-                                <label for="inputPasswordConfirmation" class="error">{{ $errors->first('password_confirmation') }}</label>
-                            @endif
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        {!! Form::label('bot_icon', trans('field.bot_icon'), ['class' => "col-md-2 control-label"]) !!}
-                        <div class="col-md-6">
-                            <div class="kv-avatar center-block text-center">
-                                <input id="web-embed-update" name="picture" type="file" class="" title=" ">
                             </div>
-                        </div>
+                        </section>
+                        <h2>{{trans('user.last_step')}}</h2>
+                        <section class="contact-list">
+                            @php
+                                $contacts = [1,2,3,4, 5,6,7,8,9,10,11,12];
+                            @endphp
+                            @if(isset($contacts))
+                                <div class="form-horizontal clearfix">
+                                    @foreach($contacts as $contact)
+                                        <div class="col-md-3 contact-item" data-contact-id="{{$contact}}">
+                                            <div class="feed-box text-center pannel-content">
+                                                <section class="panel">
+                                                    <div class="panel-body">
+                                                        <a class="image_box" href="javascript:void 0" >
+                                                            <img class="profile_img" alt="" src="{{asset('images/profile.png') }}">
+                                                        </a>
+                                                        <div class="description">
+                                                            <div class="user-name">user-name</div>
+                                                            <div class="phone">phone</div>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="contact-paging col-md-12">
+                                    <ul class = "pagination pull-right">
+                                        <li><a href = "#">&laquo;</a></li>
+                                        <li><a href = "#">1</a></li>
+                                        <li><a href = "#">2</a></li>
+                                        <li><a href = "#">&raquo;</a></li>
+                                    </ul>
+                                </div>
+                            @endif
+                        </section>
                     </div>
                     <div class="columns separator"></div>
-                    <div class="form-group">
-                        <div class="col-md-2">
-                            <div class="btn-group-back">
-                                <a class="btn btn-default btn-back" href="{{route('user.index')}}">{{{ trans('button.back') }}}</a>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="btn-group-create">
-                                @if(ends_with(Route::currentRouteAction(), 'UserController@create'))
-                                    <button class="btn btn-info btn-create" type="submit">{{{ trans('button.save') }}}</button>
-                                @elseif(ends_with(Route::currentRouteAction(), 'UserController@edit'))
-                                    <button class="btn btn-info btn-edit" type="submit">{{{ trans('button.save') }}}</button>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
+
                     {!! Form::close() !!}
                 </div>
+                <label class="error" id="error-cnt"></label>
             </section>
         </div>
-        @include('modals.user_change_white_domain')
     </div>
     <script src="{{ mix('build/js/template_upload.js') }}"></script>
     <script src="{{ mix('build/js/iCheck.js') }}"></script>
@@ -222,11 +168,74 @@
     @endif
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#wizard").steps({
+            var contacts = {};
+            function resizeJquerySteps() {
+                var height = $('.body.current .form-horizontal').outerHeight() + 60;
+                console.log('resizeJquerySteps height: ', height);
+                $('#user-wizard .content').animate({ height: height }, "fast");
+            }
+            var form = $("#user-wizard");
+            form.steps({
                 headerTag: "h2",
                 bodyTag: "section",
-                transitionEffect: "slideLeft"
+                transitionEffect: "slideLeft",
+                onStepChanging: function (event, currentIndex, newIndex){
+                    if (currentIndex > newIndex){
+                        return true;
+                    }
+                    $('.form-horizontal label.error').remove();
+                    console.log('onStepChanging: ');
+                    console.log('currentIndex: ' + currentIndex, 'newIndex', newIndex);
+                    if(currentIndex == 0){
+                        var errors = validateUser();
+                        console.log('errors: ', errors);
+                        if(errors.length == 0){
+                            return true;
+                        }else{
+                            for(var i = 0; i < errors.length ; i++){
+                                console.log('error: ' + errors[i]);
+                                var element = $('#input_' + errors[i]);
+                                showMessageError(element, element.data('error_required'))
+                            }
+                        }
+                    }else{
+//                        return true
+                    }
+                },
+                onStepChanged: function (event, currentIndex, priorIndex){
+                    resizeJquerySteps();
+//                    // Used to skip the "Warning" step if the user is old enough.
+//                    console.log('onStepChanged');
+//                    console.log('currentIndex: ' + currentIndex, 'newIndex', priorIndex, 'event', event);
+////                    if (currentIndex === 2 && Number($("#age-2").val()) >= 18)
+//                    if (currentIndex === 0 ){
+//                        form.steps("next");
+//                    }
+//                    // Used to skip the "Warning" step if the user is old enough and wants to the previous step.
+//                    if (currentIndex === 1 && priorIndex === 2){
+//                        form.steps("previous");
+//                    }
+                },
+                onFinishing: function (event, currentIndex)
+                {
+                    console.log('onFinishing');
+                    return false;
+//                    resizeJquerySteps();
+//                    form.validate().settings.ignore = ":disabled";
+//                    return form.valid();
+                },
+                onFinished: function (event, currentIndex)
+                {
+                    console.log('onFinished');
+//                    resizeJquerySteps();
+                    alert("Submitted!");
+                }
             });
+
+            setTimeout(function () {
+                resizeJquerySteps();
+            }, 1200);
+
             $('.user-create select.select2-init').select2({
                 "language": {
                     "noResults": function(){
@@ -244,7 +253,7 @@
                 return false;
             });
 
-            $("#web-embed-update").fileinput({
+            $("#avatar-upload").fileinput({
                 language: 'vn',
                 overwriteInitial: true,
                 required : false,
@@ -257,7 +266,7 @@
                 browseIcon: '<i class="glyphicon glyphicon-folder-open"></i>',
                 removeIcon: '<i class="glyphicon glyphicon-remove"></i>',
                 removeTitle: '',
-                elErrorContainer: '#error-web-embed-update',
+                elErrorContainer: '#error-avatar',
                 msgErrorClass: 'alert alert-block alert-danger',
                 defaultPreviewContent: '<img src="{{'/images/profile.png'}}"  class="preview_avatar">',
                 previewSettings: {
@@ -275,6 +284,18 @@
                 msgUploadEnd: '',
                 allowedFileExtensions: ['jpg', 'png', 'jpeg']
             });
+
+            $('.contact-item').on('click', function(){
+                $(this).toggleClass('active');
+                var contact_id = $(this).data('contact-id');
+                if($(this).hasClass('active')){
+                    contacts[contact_id] = contact_id;
+                }else{
+                    delete contacts[contact_id];
+                }
+                console.log('contacts: ', contacts);
+            });
+
             $('.btn-file').attr({'class': 'btn btn-info btn-file'});
 
             @if(isset($user))
@@ -324,7 +345,34 @@
             $('.fa-close-user-change').on('click', function () {
                 $('#user-change-option, .error-user-change').hide();
                 $('#change_white_domain').val('');
-            })
+            });
+            
+            function validateUser() {
+                var error_arr = [];
+                var check_element = ['phone', 'user_name', 'authority', 'password'];
+                for(var i = 0; i < check_element.length; i++){
+                    var value = $('#input_'+ check_element[i]).val();
+                    if(isEmpty(value)){
+                        error_arr.push(check_element[i]);
+                    }
+                }
+                return error_arr;
+            }
+
+            function isEmpty(value) {
+                var result = true;
+                if(value != void 0 && value.length > 0 && ((typeof value === 'string' || value instanceof String) && value.trim().length > 0)){
+                    result = false;
+                }
+                return result;
+            }
+
+            function showMessageError(element, msg) {
+                var error = $('#error-cnt').clone();
+                error.attr('id', '');
+                error.html(msg);
+                $(element).parent().append(error);
+            }
         });
 
         setTimeout(function () {
