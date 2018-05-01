@@ -164,13 +164,9 @@ class UserController extends Controller
         if(empty($avatar)){
             $inputs['avatar'] = '/images/profile.png';
         }else{
-            $size = [
-                'width' => '150',
-                'height' => '150',
-            ];
             $extension_file_upload = $avatar->getClientOriginalExtension();
-            $path = 'uploads/' . uniqid().$extension_file_upload;
-            $this->resizeImage($this->file_manager, $avatar, $size, public_path($path));
+            $path = 'uploads/' . uniqid().'.'.$extension_file_upload;
+            $this->resizeImage($this->file_manager, $avatar, config('constants.size_image'), public_path($path));
             $inputs['avatar'] = $path;
         }
         try{
@@ -213,13 +209,9 @@ class UserController extends Controller
                 }
                 $avatar = $request->file('avatar');
                 if(!empty($avatar)){
-                    $size = [
-                        'width' => '150',
-                        'height' => '150',
-                    ];
                     $extension_file_upload = $avatar->getClientOriginalExtension();
-                    $path = 'uploads/' . uniqid().$extension_file_upload;
-                    $this->resizeImage($this->file_manager, $avatar, $size, public_path($path));
+                    $path = 'uploads/' . uniqid() . '.' . $extension_file_upload;
+                    $this->resizeImage($this->file_manager, $avatar, config('constants.size_image'), public_path($path));
                     $inputs['avatar'] = $path;
                 }
                 $this->repUser->update($edit_user, $inputs);

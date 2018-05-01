@@ -18,4 +18,8 @@ return [
         'enable'                => 1,
         'disable'               => 0,
     ],
+    'size_image' => [
+      'width' => 150,
+      'height' => 150
+    ],
 ];

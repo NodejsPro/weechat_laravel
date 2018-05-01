@@ -24,7 +24,7 @@ class Controller extends BaseController
                 $result[] = [
                     'id' => $user->id,
                     'phone' => $user->phone,
-                    'avatar' => $user->avatar,
+                    'avatar' => $user->avatar ? asset($user->avatar) : asset('images/profile.png'),
                     'is_login' => isset($user->is_login) && $user->is_login ? $user->is_login : false,
                     'user_name' => $user->user_name,
                 ];
