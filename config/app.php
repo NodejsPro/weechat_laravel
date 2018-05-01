@@ -216,7 +216,8 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         'Moloquent'       => Jenssegers\Mongodb\Eloquent\Model::class,
-        'datatables' => Yajra\Datatables\Datatables::class
+        'datatables' => Yajra\Datatables\Datatables::class,
+        'Image' => Intervention\Image\Facades\Image::class,
 
     ],
 

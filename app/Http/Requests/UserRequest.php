@@ -30,12 +30,8 @@ class UserRequest extends Request
         if(Request::isMethod('put') && Request::is('user/*') ){
             $userId = Request::route()->parameter('user');
             $validation = [
-//                'user_name'                 => 'required|max:50',
-                'email' => "required|email|max:50|min:6|unique:users,email,$userId,_id,deleted_at,NULL",
-                'phone'         => 'required|max:255',
-                'contact'                  => 'url|max:255',
-//                'password'             => 'max:25|min:6|confirmed',
-//                'password_confirmation'=> 'required_if:password,!=null',
+                'authority' => 'required',
+                'phone' => "required|max:50|unique:users,phone,$userId,_id,deleted_at,NULL",
             ];
             if(Auth::user()->id != $userId){
                 $validation = array_merge($validation, $this->validateAction($input, $userId));
@@ -44,40 +40,30 @@ class UserRequest extends Request
         }else {
             //create  new user
             $validation = [
-                'name'                  => 'required|max:50',
-                'email'                 => 'required|email|max:50|min:6|unique:users,email,NULL,id,deleted_at,NULL',
-                'user_name' => 'required|max:50',
                 'authority' => 'required',
-                'phone' => 'required|max:50',
-                'avatar' => 'required|max:50',
-                'created_id' => 'required|max:50',
-                'password'              => 'required|max:25|min:6',
+                'phone' => 'required|max:50|unique:users,phone,NULL,id,deleted_at,NULL',
             ];
-            //$validation = array_merge($validation, $this->validateAction($input));
-            Log::info($validation);
+            $validation = array_merge($validation, $this->validateAction($input));
             return $validation;
         }
     }
 
     public function validateAction($input, $user_id = null){
-        if ($user_id != null) {
-            $user = User::where('_id', $user_id)->first();
-        }
         $user_authority = config('constants.authority');
         $authority = Auth::user()->authority;
         $validation = array();
         $validation['authority'] = 'required';
-        $validation['user_name'] = 'required';
+        if(isset($user_id)){
+            $validation['user_name'] = "required|min:6|unique:users,phone,$user_id,_id,deleted_at,NULL";
+        }else{
+            $validation['user_name'] = 'required|min:6|unique:users,phone,NULL,id,deleted_at,NULL';
+        }
         $validation['password'] = 'required|min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
-        $validation['password_confirmation'] = 'required_if:password,!=null';
-        $input_authority = @$input['authority'];
         $input_user_name = @$input['user_name'];
         $input_password = @$input['password'];
-
         if(!isset($input_password) && !isset($input_user_name)){
             unset($validation['user_name']);
             unset($validation['password']);
-            unset($validation['password_confirmation']);
         }
         $authority_arr = config('constants.authority');
         if($authority == $user_authority['super_admin']){

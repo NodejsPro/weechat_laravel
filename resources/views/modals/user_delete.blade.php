@@ -50,7 +50,7 @@
                     success: function(data) {
                         $('.overlay-wrapper .overlay').hide();
                         $('.delete-modal').modal('hide');
-                        setMesssage('{{trans('message.modal_delete_success')}}', 2);
+                        {{--setMesssage('{{trans('message.modal_delete_success')}}', 2);--}}
                         global_datatable.ajax.reload(null, false);
                     },
                     error: function(result){
@@ -58,9 +58,9 @@
                         $('.delete-modal').modal('hide');
                         var text = $.parseJSON(result.responseText);
                         if(text.errors != void 0 && text.errors.msg != void 0){
-                            setMesssage(text.errors.msg, 1);
+//                            setMesssage(text.errors.msg, 1);
                         }else{
-                            setMesssage('{{trans('message.common_error')}}', 1);
+                            {{--setMesssage('{{trans('message.common_error')}}', 1);--}}
 
                         }
                     }

@@ -26,6 +26,7 @@ class Authentication
      */
     public function handle($request, Closure $next)
     {
+        Log::info('Authentication');
         $headers = $request->header();
         $inputs = $request->all();
         $result = false;

@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cookie;
+use Intervention\Image\ImageManager;
 use Jenssegers\Mongodb\Auth\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -34,12 +35,12 @@ class UserController extends Controller
 	protected $repPlan;
     protected $repConnect;
     protected $repConnectPage;
-    protected $repEmbotPlan;
-
+    protected $file_manager;
     public function __construct(
         UserRepository $user
     ){
         $this->repUser = $user;
+        $this->file_manager = new ImageManager(array('driver' => 'gd'));
     }
     /**
      * Display a listing of the resource.
@@ -63,10 +64,11 @@ class UserController extends Controller
     public function create()
     {
         $user = Auth::user();
+        $contacts = $this->repUser->getContact(0, config('constants.per_page')[4]);
         return view('user.create')->with([
             'users'             => null,
             'user_login'             => $user,
-            'contact'             => $this->getContactForUser($user),
+            'contacts'             => $contacts,
             'group' => $this->getAuthorityForUser($user)
         ]);
     }
@@ -129,6 +131,19 @@ class UserController extends Controller
                         }
                     }
                 })
+                ->addColumn('contact', function ($row) {
+                    $contacts = $row['contact'];
+                    $result = [];
+                    if(!empty($contacts)){
+                        foreach ($contacts as $key => $contact){
+                            $user = $this->repUser->getById($contact);
+                            if($user){
+                                $result[] = $user->user_name;
+                            }
+                        }
+                    }
+                    return implode(', ', $result);
+                })
                 ->setTotalRecords($count)->make(true);
         }
         return null;
@@ -137,63 +152,105 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $inputs = $request->all();
+        $inputs['contact'] = $this->checkContact(@$inputs['contact']);
         $user = Auth::user();
-        $inputs['language'] = config('app.locale');
-        $user_authority = config('constants.authority');
-        $domain_follow_arr = array();
-        if($user->authority == $user_authority['agency'] && isset($user->white_list_domain)){
-            $domain_follow_arr = $user->white_list_domain;
+        $avatar = $request->file('avatar');
+        $inputs['created_id'] = Auth::user()->id;
+        if(!empty($inputs['user_name']) && !empty($inputs['password'])){
+            $inputs['confirm_flg'] = config('constants.active.enable');
+        }else{
+            $inputs['confirm_flg'] = config('constants.active.disable');
         }
-        $data = $this->generateDomain($inputs, $user->authority, $domain_follow_arr);
-        if (!$data['status']){
-            return Redirect::back()->withInput()->withErrors([
-                'domain_name_error' => $data['data']
-            ]);
+        if(empty($avatar)){
+            $inputs['avatar'] = '/images/profile.png';
+        }else{
+            $size = [
+                'width' => '150',
+                'height' => '150',
+            ];
+            $extension_file_upload = $avatar->getClientOriginalExtension();
+            $path = 'uploads/' . uniqid().$extension_file_upload;
+            $this->resizeImage($this->file_manager, $avatar, $size, public_path($path));
+            $inputs['avatar'] = $path;
         }
-        $inputs['white_list_domain'] = array_unique($data['data']);
         try{
-            if($user->authority == $user_authority['client']){
-                abort('404');
-            }elseif($user->authority == $user_authority['agency']){
-                if(!$this->checkEmbotEnv()){
-                    $max_bot_number = $user->max_bot_number - $this->getCountConnectPage($user->id) - $this->getBotNumberAgency($user->id);
-                    if($inputs['max_bot_number'] > $max_bot_number){
-                        return Redirect::back()->withInput()->withErrors(
-                            ['max_bot_number' => trans('validation.max.numeric', ['attribute' => trans('validation.attributes.max_bot_number'), 'max' => $max_bot_number]) ]
-                        );
-                    }
-                }
-            }else{
-                if(!empty($inputs['bot_template'])){
-                    $inputs['bot_template'] = $this->checkTemplate($inputs['bot_template']);
-                }else{
-                    $inputs['bot_template'] = array();
-                }
-            }
-            if(empty($inputs['sns_type_list'])){
-                $inputs['sns_type_list'] = array();
-            }
-            if($this->checkEmbotEnv() && $inputs['authority'] == $user_authority['client']){
-                $embot_yearly_user = $embot_yearly_user_number = $embot_yearly_fee = null;
-                $embot_plan = $inputs['embot_plan'];
-                if($inputs['embot_plan'] == config('constants.embot_plan.free')){
-                    $embot_yearly_user = config('constants.embot_yearly_user.30');
-                }elseif($inputs['embot_plan'] == config('constants.embot_plan.customize')){
-                    $embot_yearly_user_number = $inputs['embot_yearly_user_number'];
-                    $embot_yearly_fee = $inputs['embot_yearly_fee'];
-                }else{
-                    $embot_yearly_user = $inputs['embot_yearly_user'];
-                }
-                $inputs['embot_plan'] = $embot_plan;
-                $inputs['embot_yearly_user'] = $embot_yearly_user;
-                $inputs['embot_yearly_user_number'] = $embot_yearly_user_number;
-                $inputs['embot_yearly_fee'] = $embot_yearly_fee;
-            }
             $this->repUser->store($inputs, $user->id);
             return redirect('user')->with('alert-success', trans('message.save_success', ['name' => trans('default.user')]));
         } catch(\Exception $e){
             return redirect()->back()->with('alert-danger', trans('message.save_error', ['name' => trans('default.user')]));
         }
+    }
+
+    public function edit($id)
+    {
+        $user = Auth::user();
+        $user_edit = $this->repUser->getById($id);
+        $user_authority = config('constants.authority');
+        if($user_edit && ($user->authority == $user_authority['super_admin'] || $user->id == $user_edit->created_id)){
+            $user = Auth::user();
+            $contacts = $this->repUser->getContact(0, config('constants.per_page')[4]);
+            return view('user.create')->with([
+                'user'              => $user_edit,
+                'users'             => null,
+                'user_login'             => $user,
+                'contacts'             => $contacts,
+                'group' => $this->getAuthorityForUser($user),
+            ]);
+        }
+        abort('404');
+    }
+
+    public function update(UserRequest $request, $id)
+    {
+        $inputs = $request->all();
+        $user = Auth::user();
+        try{
+            $edit_user = $this->repUser->getById($id);
+            $user_authority = config('constants.authority');
+            if($edit_user && ($user->authority == $user_authority['super_admin'] || $user->id == $edit_user->created_id)){
+                if(!empty($inputs['contact'])){
+                    $inputs['contact'] = $this->checkContact(@$inputs['contact']);
+                }
+                $avatar = $request->file('avatar');
+                if(!empty($inputs['user_name']) && !empty($inputs['password'])){
+                    $inputs['confirm_flg'] = config('constants.active.enable');
+                }else{
+                    $inputs['confirm_flg'] = config('constants.active.disable');
+                }
+                if(!empty($avatar)){
+                    $size = [
+                        'width' => '150',
+                        'height' => '150',
+                    ];
+                    $extension_file_upload = $avatar->getClientOriginalExtension();
+                    $path = 'uploads/' . uniqid().$extension_file_upload;
+                    $this->resizeImage($this->file_manager, $avatar, $size, public_path($path));
+                    $inputs['avatar'] = $path;
+                }
+                $this->repUser->update($edit_user, $inputs);
+                return redirect('user')->with('alert-success', trans('message.update_success', ['name' => trans('default.user')]));
+            }
+            abort('404');
+        } catch (\Exception $e){
+            return redirect()->back()->with('alert-danger', trans('message.update_error', ['name' => trans('default.user')]));
+        }
+    }
+
+    public function destroy(Request $request, $id)
+    {
+        Log::info('user destroy');
+        $user_authority = config('constants.authority');
+        $user = Auth::user();
+        $user_destroy = $this->repUser->getById($id);
+        if($user_destroy && $user->id != $id && ($user->authority == $user_authority['super_admin'] ||  $user->id == $user_destroy->created_id)){
+            $this->repUser->destroy($id);
+            return Response::json(array('success' => true), 200);
+        }
+        $errors['msg'] = trans("message.common_error");
+        return Response::json(array(
+            'success' => false,
+            'errors' => $errors
+        ), 400);
     }
 
     public function getAuthorityForUser($user){
@@ -227,5 +284,22 @@ class UserController extends Controller
         ]);
         $contact2 = [$user->_id => $user->name];
         return array_merge($user_super_admin->toArray(), $contact2);
+    }
+
+    public function checkContact($data){
+        $result = [];
+        try{
+            $contact = json_decode($data, true);
+            $contact = array_values($contact);
+            foreach ($contact as $item){
+                $user = $this->repUser->getById($item);
+                if($user){
+                    $result[] = $item;
+                }
+            }
+        }catch(\Exception $e){
+            Log::info(trans('message.user_contact_error'));
+        }
+        return $result;
     }
 }

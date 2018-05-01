@@ -2,7 +2,6 @@
 $connect_page_id =  Route::current()->getParameter('bot');
 $connect_page    = ConnectPage::where('_id', $connect_page_id)->first();
 $scenario_id_current = Route::current()->getParameter('scenario');
-$scenario_current = \App\Mongodb\Scenario::where('_id', $scenario_id_current)->first();
 $scenario_group_id_current = '';
 if (isset($scenario_current->group_id)){$scenario_group_id_current = $scenario_current->group_id;}
 $function_rule = config('constants.function_rule');

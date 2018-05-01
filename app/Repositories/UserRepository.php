@@ -29,12 +29,12 @@ class UserRepository extends BaseRepository
      */
     public function store($inputs, $created_id)
     {
+        Log::info('store');
         $user = new $this->model;
-        $user->password         = bcrypt($inputs['password']);
-        $user->email            = $inputs['email'];
+        $user->phone            = $inputs['phone'];
         $user->authority        = $inputs['authority'];
         $user->created_id       = $created_id;
-        $this->save($user, $inputs);
+        $user = $this->save($user, $inputs);
 
         return $user;
     }
@@ -55,22 +55,25 @@ class UserRepository extends BaseRepository
      */
     private function save($user, $inputs)
     {
-        if(isset($inputs['name'])){
-            $user->name             = $inputs['name'];
-        }
         if(isset($inputs['user_name'])){
-            $user->user_name             = $inputs['user_name'];
+            $user->user_name = $inputs['user_name'];
+        }
+
+        if(isset($inputs['confirm_flg'])){
+            $user->confirm_flg = $inputs['confirm_flg'];
+        }
+        if(isset($inputs['avatar'])){
+            $user->avatar = $inputs['avatar'];
+        }
+        if(isset($inputs['password'])){
+            $user->password = bcrypt($inputs['password']);
+        }
+        if(isset($inputs['contact'])){
+            $user->contact = $inputs['contact'];
         }
         if(isset($inputs['phone'])){
-            $user->phone             = $inputs['phone'];
+            $user->phone = $inputs['phone'];
         }
-        if(isset($inputs['avatar']) && !isset($inputs['avatar'])){
-            $user->avatar             = $inputs['avatar'];
-        }
-        if(isset($inputs['confirmation_token'])){
-            $user->confirmation_token = $inputs['confirmation_token'];
-        }
-        
         $user->save();
         return $user;
     }
@@ -85,18 +88,8 @@ class UserRepository extends BaseRepository
         if(isset($inputs['password'])){
             $user->password     = bcrypt($inputs['password']);
         }
-        if(isset($inputs['email'])){
-            $user->email     = $inputs['email'];
-        }
         if (isset($inputs['authority'])) {
             $user->authority  = $inputs['authority'];
-        }
-        if (isset($inputs['plan'])) {
-            $user->plan  = $inputs['plan'];
-        }
-        $user_authority = config('constants.authority');
-        if(isset($inputs['created_id']) && Auth::user()->authority == $user_authority['admin'] && $user->authority == $user_authority['client']){
-            $user->created_id = $inputs['created_id'];
         }
         $this->save($user, $inputs);
     }
@@ -136,6 +129,15 @@ class UserRepository extends BaseRepository
         }else if($user_login->authority != config('constants.authority.super_admin')){
             $model = $model->where('created_id', $user_login->id);
         }
+        $model = $model->skip($offset)
+            ->take($limit)
+            ->orderBy('created_at', 'DESC');
+        return $model->get();
+    }
+
+    public function getContact($offset = 0, $limit = 10){
+        $model = new $this->model;
+        $model = $model->where('confirm_flg', '<>', config('constants.active.disable'));
         $model = $model->skip($offset)
             ->take($limit)
             ->orderBy('created_at', 'DESC');

@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'per_page'  => [5, 10, 15, 20],
+    'per_page'  => [5, 10, 15, 20, 50],
     'authority' => [
         'super_admin' => '001',
         'admin_lv1' => '002',

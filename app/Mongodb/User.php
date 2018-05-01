@@ -45,6 +45,7 @@ class User extends Moloquent implements AuthenticatableContract, AuthorizableCon
         'validate_token',
         'avatar',
         'user_name',
+        'contact',
         'code','confirmation_token' ,'created_id'
     ];
 

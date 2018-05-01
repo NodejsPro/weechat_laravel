@@ -17,6 +17,7 @@ class Authority
      */
     public function handle($request, Closure $next)
     {
+        Log::info('Authority');
         if(Auth::check()){
             $authority = config('constants.authority');
             if(Auth::user()->authority == $authority['client']){

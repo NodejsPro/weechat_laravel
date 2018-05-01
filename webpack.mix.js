@@ -13,6 +13,7 @@ let mix = require('laravel-mix');
 
 var paths = {
     'jquery': 'vendor/bower_dl/jquery/dist',
+    'jquery_validation': 'vendor/bower_dl/jquery-validation/dist',
     'bootstrap': 'vendor/bower_dl/bootstrap',
     'fontawesome': 'vendor/bower_dl/font-awesome',
     'moment' :  'vendor/bower_dl/moment/',
@@ -98,6 +99,18 @@ mix.scripts([
 mix.styles([
     'public/css/jquery.steps.css',
 ], 'public/build/css/jquery.steps.css','./');
+
+/**
+ * jquery validation
+ * */
+mix.styles([
+    paths.jquery_validation + '/jquery.validate.js',
+    paths.jquery_validation + '/additional-methods.js',
+    'public/customize.js',
+], 'public/build/js/jquery.validation.js','./');
+
+
+
 mix.scripts([
     'public/js/jquery.steps.js',
 ], 'public/build/js/jquery.steps.js','./');
@@ -112,4 +125,5 @@ mix.version([
     'public/build/js/template_upload.js',
     'public/build/css/jquery.steps.css',
     'public/build/js/jquery.steps.js',
+    'public/build/js/jquery.validation.js',
 ]);

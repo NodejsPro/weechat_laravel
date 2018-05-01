@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use Closure;
 use App\Repositories\ConnectPageRepository;
 use App\Repositories\ConnectRepository;
-use App\Repositories\ScenarioRepository;
 use App\Repositories\BotRoleRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -19,13 +18,11 @@ class ConnectPage
     public function __construct(
         ConnectPageRepository $connectPage,
         ConnectRepository $connect,
-        ScenarioRepository $scenario,
         BotRoleRepository $botRole
     )
     {
         $this->repConnectPage   = $connectPage;
         $this->repConnect       = $connect;
-        $this->repScenario      = $scenario;
         $this->repBotRole       = $botRole;
     }
 

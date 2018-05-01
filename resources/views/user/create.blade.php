@@ -72,21 +72,39 @@
                             bottom: 5px;
                             right:0px;
                         }
+                        .kv-file-content{
+                            max-height: 200px !important;
+                            max-width: 200px !important;
+                        }
                     </style>
                     <div id="user-wizard">
+                        @if(!empty($errors))
+                            {{Log::info($errors)}}
+                        @endif
                         <h2>{{trans('user.first_step')}}</h2>
                         <section>
-                            <div class="form-horizontal">
+                            @if(ends_with(Route::currentRouteAction(), 'UserController@create'))
+                                {!! Form::open(['url' => 'user', 'class' => 'cmxform form-horizontal form-action', 'role' => 'form', 'enctype' => 'multipart/form-data']) !!}
+                            @elseif(ends_with(Route::currentRouteAction(), 'UserController@edit'))
+                                {!! Form::model($user,[ 'route' => ['user.update', $user->id], 'method' => 'PUT', 'class' => 'cmxform form-horizontal form-action form-user-edit', 'role' => 'form' , 'enctype' => 'multipart/form-data']) !!}
+                            @endif
                                 <div class="form-group">
+                                    <input type="hidden" name="contact" value="" id="contact"/>
                                     <label class="col-lg-2 control-label">{{trans('user.field_phone')}}</label>
                                     <div class="col-lg-8">
-                                        <input type="text" name="phone" class="form-control" id="input_phone" placeholder="{{trans('user.field_phone')}}" data-error_required="{{trans('validation.required', ['attribute' => trans('user.field_phone')])}}">
+                                        {!! Form::text('phone', null, ['id' => 'input_phone','class' => 'form-control required', 'placeholder' => trans('user.field_phone')]) !!}
+                                        @if ($errors->has('phone'))
+                                            <label for="inputPhone" class="error">{{ $errors->first('phone') }}</label>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">{{trans('user.field_user_name')}}</label>
                                     <div class="col-lg-8">
-                                        <input type="text" name='user_name' class="form-control" id="input_user_name" placeholder="{{trans('user.field_user_name')}}" data-error_required="{{trans('validation.required', ['attribute' => trans('user.field_user_name')])}}">
+                                        {!! Form::text('user_name', null, ['id' => 'input_user_name','class' => 'form-control required', 'placeholder' => trans('user.field_user_name')]) !!}
+                                        @if ($errors->has('user_name'))
+                                            <label for="inputUserName" class="error">{{ $errors->first('user_name') }}</label>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -101,7 +119,10 @@
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">{{trans('user.field_password')}}</label>
                                     <div class="col-lg-8">
-                                        <input type="text" name="password" class="form-control" id="input_password" placeholder="{{trans('user.field_password')}}" data-error_required="{{trans('validation.required', ['attribute' => trans('user.field_password')])}}">
+                                        {!! Form::password('password', ['id' => 'input_password','class' => 'form-control required', 'placeholder' => trans('user.field_password')]) !!}
+                                        @if ($errors->has('password'))
+                                            <label for="inputPassword" class="error">{{ $errors->first('password') }}</label>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -113,32 +134,49 @@
                                         <div id="error-avatar"></div>
                                     </div>
                                 </div>
-                            </div>
+                                {!! Form::close() !!}
                         </section>
                         <h2>{{trans('user.last_step')}}</h2>
                         <section class="contact-list">
-                            @php
-                                $contacts = [1,2,3,4, 5,6,7,8,9,10,11,12];
-                            @endphp
                             @if(isset($contacts))
                                 <div class="form-horizontal clearfix">
-                                    @foreach($contacts as $contact)
-                                        <div class="col-md-3 contact-item" data-contact-id="{{$contact}}">
-                                            <div class="feed-box text-center pannel-content">
-                                                <section class="panel">
-                                                    <div class="panel-body">
-                                                        <a class="image_box" href="javascript:void 0" >
-                                                            <img class="profile_img" alt="" src="{{asset('images/profile.png') }}">
-                                                        </a>
-                                                        <div class="description">
-                                                            <div class="user-name">user-name</div>
-                                                            <div class="phone">phone</div>
+                                    @if(isset($user))
+                                        @foreach($contacts as $contact)
+                                            <div class="col-md-3 contact-item {{in_array($contact->_id, $user->contact) ? 'active' : ''}}" data-contact-id="{{$contact->_id}}">
+                                                <div class="feed-box text-center pannel-content">
+                                                    <section class="panel">
+                                                        <div class="panel-body">
+                                                            <a class="image_box" href="javascript:void 0" >
+                                                                <img class="profile_img" alt="" src="{{asset($contact->avatar)}}">
+                                                            </a>
+                                                            <div class="description">
+                                                                <div class="user-name">{{$contact->user_name}}</div>
+                                                                <div class="phone">{{$contact->phone}}</div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </section>
+                                                    </section>
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endforeach
+                                        @endforeach
+                                    @else
+                                        @foreach($contacts as $contact)
+                                            <div class="col-md-3 contact-item" data-contact-id="{{$contact->_id}}">
+                                                <div class="feed-box text-center pannel-content">
+                                                    <section class="panel">
+                                                        <div class="panel-body">
+                                                            <a class="image_box" href="javascript:void 0" >
+                                                                <img class="profile_img" alt="" src="{{asset($contact->avatar)}}">
+                                                            </a>
+                                                            <div class="description">
+                                                                <div class="user-name">{{$contact->user_name}}</div>
+                                                                <div class="phone">{{$contact->phone}}</div>
+                                                            </div>
+                                                        </div>
+                                                    </section>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @endif
                                 </div>
                                 <div class="contact-paging col-md-12">
                                     <ul class = "pagination pull-right">
@@ -159,6 +197,7 @@
             </section>
         </div>
     </div>
+    <script src="{{ mix('build/js/jquery.validation.js') }}"></script>
     <script src="{{ mix('build/js/template_upload.js') }}"></script>
     <script src="{{ mix('build/js/iCheck.js') }}"></script>
     <script src="{{ mix('build/js/jquery.steps.js') }}"></script>
@@ -168,13 +207,42 @@
     @endif
     <script type="text/javascript">
         $(document).ready(function () {
+            @if(empty($user->contact))
             var contacts = {};
+            @else
+                var contacts = {};
+                    @php
+                        $contacts = [];
+                    @endphp
+                @foreach($user->contact as $item)
+                    @php
+                        $contacts[$item] = $item;
+                    @endphp
+                @endforeach
+                contacts = <?php echo json_encode($contacts)?>;
+            console.log(contacts);
+            @endif
+            console.log('start: ', contacts);
             function resizeJquerySteps() {
-                var height = $('.body.current .form-horizontal').outerHeight() + 60;
+                var height = $('.body.current .form-horizontal').outerHeight() + 65;
                 console.log('resizeJquerySteps height: ', height);
                 $('#user-wizard .content').animate({ height: height }, "fast");
             }
             var form = $("#user-wizard");
+
+            $.validator.methods.phone = function( value, element ) {
+                return this.optional( element ) || /(09|01[2|6|8|9])+([0-9]{8})\b/.test( value );
+            };
+
+            $.validator.methods.userNameStrong = function( value, element ) {
+                console.log(this.optional( element ));
+                return this.optional( element ) || /([a-zA-Z0-9\-\_\.]+)/.test( value );
+            };
+
+            $.validator.methods.passwordStrong = function( value, element ) {
+                return this.optional( element ) || /^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/.test( value );
+            };
+
             form.steps({
                 headerTag: "h2",
                 bodyTag: "section",
@@ -183,58 +251,77 @@
                     if (currentIndex > newIndex){
                         return true;
                     }
-                    $('.form-horizontal label.error').remove();
-                    console.log('onStepChanging: ');
-                    console.log('currentIndex: ' + currentIndex, 'newIndex', newIndex);
-                    if(currentIndex == 0){
-                        var errors = validateUser();
-                        console.log('errors: ', errors);
-                        if(errors.length == 0){
-                            return true;
-                        }else{
-                            for(var i = 0; i < errors.length ; i++){
-                                console.log('error: ' + errors[i]);
-                                var element = $('#input_' + errors[i]);
-                                showMessageError(element, element.data('error_required'))
-                            }
-                        }
-                    }else{
-//                        return true
+                    if (currentIndex < newIndex)
+                    {
+                        // To remove error styles
+                        form.find(".body:eq(" + newIndex + ") label.error").remove();
+                        form.find(".body:eq(" + newIndex + ") .error").removeClass("error");
                     }
+                    var form_validate = form.find(".body:eq(" + currentIndex + ") form");
+                    //            phone user_name password authority
+
+                    if(form_validate.length){
+                        form_validate.validate({
+                            rules:{
+                                'phone':{
+                                    required: true,
+                                    phone: true
+                                },
+                                'user_name':{
+                                    required: function () {
+                                        return isEmpty($("#input_password").val()) ? false : true;
+                                    },
+                                    minlength: 6,
+                                    userNameStrong: true
+                                },
+                                'password':{
+                                    required: function () {
+                                        return isEmpty($("#input_user_name").val()) ? false : true;
+                                    },
+                                    minlength: 6,
+                                    passwordStrong: true
+                                }
+                            },
+                            messages:{
+                                'phone':{
+                                    required: '{{trans('validation.required', ['attribute' => trans('user.field_phone')])}}',
+                                    phone: '{{trans('user.msg_field_not_format', ['name' => trans('user.field_phone')])}}',
+                                },
+                                'user_name':{
+                                    required: '{{trans('validation.required', ['attribute' => trans('user.field_user_name')])}}',
+                                    userNameStrong: '{{trans('user.msg_name_not_strong')}}',
+                                },
+                                'password':{
+                                    required: '{{trans('validation.required', ['attribute' => trans('user.field_password')])}}',
+                                    passwordStrong: '{{trans('user.msg_password_not_strong')}}',
+                                },
+                            }
+                        });
+                    }else{
+                        return true;
+                    }
+                    resizeJquerySteps();
+                    return form.find(".body:eq(" + currentIndex + ") form").valid();
                 },
                 onStepChanged: function (event, currentIndex, priorIndex){
                     resizeJquerySteps();
-//                    // Used to skip the "Warning" step if the user is old enough.
-//                    console.log('onStepChanged');
-//                    console.log('currentIndex: ' + currentIndex, 'newIndex', priorIndex, 'event', event);
-////                    if (currentIndex === 2 && Number($("#age-2").val()) >= 18)
-//                    if (currentIndex === 0 ){
-//                        form.steps("next");
-//                    }
-//                    // Used to skip the "Warning" step if the user is old enough and wants to the previous step.
-//                    if (currentIndex === 1 && priorIndex === 2){
-//                        form.steps("previous");
-//                    }
                 },
                 onFinishing: function (event, currentIndex)
                 {
                     console.log('onFinishing');
-                    return false;
-//                    resizeJquerySteps();
-//                    form.validate().settings.ignore = ":disabled";
-//                    return form.valid();
+                    return true;
                 },
                 onFinished: function (event, currentIndex)
                 {
-                    console.log('onFinished');
-//                    resizeJquerySteps();
-                    alert("Submitted!");
+                    $('#contact').val(JSON.stringify(contacts));
+                    console.log('send data: ', contacts);
+                    $('#user-wizard form').submit();
                 }
             });
 
             setTimeout(function () {
                 resizeJquerySteps();
-            }, 1200);
+            }, 500);
 
             $('.user-create select.select2-init').select2({
                 "language": {
@@ -285,6 +372,10 @@
                 allowedFileExtensions: ['jpg', 'png', 'jpeg']
             });
 
+//            $( window ).resize(function() {
+//                resizeJquerySteps();
+//            });
+
             $('.contact-item').on('click', function(){
                 $(this).toggleClass('active');
                 var contact_id = $(this).data('contact-id');
@@ -305,31 +396,6 @@
                         $('#created_id').val('');
                     }else{
                         event.preventDefault();
-                        var url_change = '{{action('UserController@changeManager', ['user_id' => $user->_id, 'manager_id' => ':manager_id'])}}';
-                        url_change = url_change.replace(':manager_id', $('#created_id').val());
-                        var data = {
-                            '_token' : '{{csrf_token()}}',
-                            'user_authority' : $('#selectAuthority').val()
-                        };
-                        @if(isset($user) && $user->created_id == Auth::user()->_id)
-                            data.white_list_domain = $('#white-list-domain').val();
-                        @endif
-                        $.ajax({
-                            method: "POST",
-                            url: url_change,
-                            data: data,
-                            success: function (data) {
-                                var success = data.success;
-                                if(success){
-                                    $('.change-domain-modal').modal({
-                                        backdrop: 'static',
-                                        keyboard: false
-                                    }).show();
-                                }else{
-                                    $('.form-user-edit').submit();
-                                }
-                            }
-                        });
                     }
                 });
             @endif

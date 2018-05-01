@@ -42,7 +42,7 @@ class UserController extends Controller
         UserRepository $user
     ){
         $this->repUser = $user;
-        $this->middleware('authentication.api', ['except' => ['userLogin', 'create']]);
+        $this->middleware('authentication.api', ['except' => ['userLogin', 'create', 'checkPhone']]);
     }
     /**
      * Display a listing of the resource.
@@ -146,7 +146,7 @@ class UserController extends Controller
         ), 400);
     }
 
-    public function createByPhone(Request $request){
+    public function checkPhone(Request $request){
         $inputs = $request->all();
         $validator = Validator::make(
             $inputs,
@@ -165,10 +165,11 @@ class UserController extends Controller
         if($user){
             if(isset($user->confirm_flg) && $user->confirm_flg){
                 $msg = trans('user.user_exists');
+                $user_arr = [$user];
                 return response([
                     "success" => true,
                     'msg' => $msg,
-                    'data' => $this->convertUserData($user)
+                    'data' => $this->convertUserData($user_arr)
                 ], 200);
             }else{
                 return response([
@@ -207,7 +208,7 @@ class UserController extends Controller
             $inputs,
             array(
                 'phone' => 'required',
-                'user-name' => 'required',
+                'user-name' => 'required|unique:users,email,NULL,id,deleted_at,NULL',
                 'password' => 'required',
             )
         );
@@ -232,7 +233,7 @@ class UserController extends Controller
             $inputs = [
               'user_name' => $user_name,
               'password' => $password,
-              'confirm_flg' => $active['disable']
+              'confirm_flg' => $active['enable']
             ];
             $this->repUser->storeApi($user, $inputs);
             return Response::json([

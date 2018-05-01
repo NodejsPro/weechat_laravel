@@ -2,29 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Common\Common;
-use App\Http\Requests\BotRequest;
 use App\Mongodb\LogMessage;
 use App\Repositories\BotRoleRepository;
 use App\Repositories\ConnectPageRepository;
 use App\Repositories\ConnectRepository;
-use App\Repositories\GoogleSheetUserRepository;
-use App\Repositories\LibraryRepository;
-use App\Repositories\MasterRepository;
-use App\Repositories\MenuRepository;
-use App\Repositories\ScenarioRepository;
-use App\Repositories\ScenarioGroupRepository;
-use App\Repositories\TimezoneRepository;
-use App\Repositories\UserRepository;
-use App\Repositories\PlanRepository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Facebook\Exceptions\FacebookResponseException as FacebookResponseException;
-use Facebook\Exceptions\FacebookSDKException as FacebookSDKException;
-use Facebook\Facebook as Facebook;
-use Facebook\FacebookRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Lang;
@@ -34,10 +19,6 @@ use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
-use Intervention\Image\ImageManager;
-use MicrosoftAzure\Storage\Common\Exceptions\ServiceException;
-use MicrosoftAzure\Storage\Common\ServicesBuilder;
-
 class BotController extends Controller
 {
     protected $repConnect;
@@ -60,35 +41,11 @@ class BotController extends Controller
 
     public function __construct(
         ConnectRepository $connect,
-        ConnectPageRepository $connectPage,
-        UserRepository $user,
-        ScenarioRepository $scenario,
-        ScenarioGroupRepository $scenarioGroup,
-        MenuRepository $menu,
-        MasterRepository $master,
-        Common $common,
-        TimezoneRepository $timezone,
-        PlanRepository $plan,
-        LibraryRepository $library,
-        GoogleSheetUserRepository $googleSheetUser,
-        BotRoleRepository $botRole
+        ConnectPageRepository $connectPage
     )
     {
         $this->repConnect = $connect;
         $this->repConnectPage = $connectPage;
-        $this->repUser = $user;
-        $this->repScenario = $scenario;
-        $this->repMenu = $menu;
-        $this->repMaster = $master;
-        $this->common = $common;
-        $this->repTimezone = $timezone;
-        $this->repPlan = $plan;
-        $this->repBotRole = $botRole;
-        $this->repScenarioGroup = $scenarioGroup;
-        $this->repLibrary = $library;
-        $this->repGoogleSheetUser = $googleSheetUser;
-        $this->file_manager = new ImageManager(array('driver' => 'gd'));
-        $this->middleware('user.signup', ['only' => ['createWebEmbedBot', 'createWebEmbed', 'createChatworkBot', 'createChatwork']]);
     }
 
     public function index($view_user_id = null)
@@ -318,8 +275,9 @@ class BotController extends Controller
         abort(404);
     }
 
-    public function store(BotRequest $request)
+    public function store(Request $request)
     {
+        dd('store');
         $user = Auth::user();
         $service_list = config('constants.group_type_service');
         $service_code = $service_list['facebook'];

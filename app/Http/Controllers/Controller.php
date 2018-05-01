@@ -22,10 +22,11 @@ class Controller extends BaseController
         if(!empty($user_data)){
             foreach ($user_data as $user){
                 $result[] = [
+                    'id' => $user->id,
                     'phone' => $user->phone,
                     'avatar' => $user->avatar,
                     'is_login' => isset($user->is_login) && $user->is_login ? $user->is_login : false,
-                    'name' => $user->name,
+                    'user_name' => $user->user_name,
                 ];
             }
         }
@@ -43,5 +44,20 @@ class Controller extends BaseController
             }
         }
         return $result;
+    }
+
+    public function resizeImage($file_manage, $file, $size, $path, $is_aspectRatio = false){
+        if(!empty($file)){
+            $file_save = $file_manage->make($file);
+            if($is_aspectRatio){
+                $file_save = $file_save->resize($size['width'], $size['height'], function ($c){
+                    $c->aspectRatio();
+                    $c->upsize();
+                });
+            } else{
+                $file_save = $file_save->resize($size['width'], $size['height']);
+            }
+            $file_save->orientate()->save($path);
+        }
     }
 }
