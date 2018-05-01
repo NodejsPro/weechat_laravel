@@ -62,8 +62,10 @@ class UserRequest extends Request
             $validation['password'] = 'min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
             // create user
         }else{
-            $validation['user_name'] = 'required|min:6|unique:users,phone,NULL,id,deleted_at,NULL';
-            $validation['password'] = 'required|min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
+            if(isset($input['user_name']) || isset($input['password'])){
+                $validation['user_name'] = 'required|min:6|unique:users,phone,NULL,id,deleted_at,NULL';
+                $validation['password'] = 'required|min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
+            }
         }
         $authority_arr = config('constants.authority');
         if($authority == $user_authority['super_admin']){
