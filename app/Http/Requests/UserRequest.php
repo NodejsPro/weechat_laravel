@@ -59,7 +59,9 @@ class UserRequest extends Request
         //edit user
         if(isset($user_id)){
             $validation['user_name'] = "required|min:6|unique:users,phone,$user_id,_id,deleted_at,NULL";
-            $validation['password'] = 'min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
+            if(isset($input['password'])){
+                $validation['password'] = 'min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
+            }
             // create user
         }else{
             if(isset($input['user_name']) || isset($input['password'])){

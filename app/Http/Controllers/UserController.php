@@ -212,17 +212,6 @@ class UserController extends Controller
                     $inputs['contact'] = $this->checkContact(@$inputs['contact']);
                 }
                 $avatar = $request->file('avatar');
-                if($inputs['user_name'] != $edit_user->user_name){
-
-                }
-                if(!empty($inputs['user_name']) && !empty($inputs['password'])){
-                    $inputs['confirm_flg'] = config('constants.active.enable');
-                }else{
-                    $inputs['confirm_flg'] = config('constants.active.disable');
-                }
-                if($inputs['user_name']){
-
-                }
                 if(!empty($avatar)){
                     $size = [
                         'width' => '150',
