@@ -119,7 +119,7 @@
                                 <div class="form-group">
                                     <label class="col-lg-2 control-label">{{trans('user.field_password')}}</label>
                                     <div class="col-lg-8">
-                                        {!! Form::password('password', ['id' => 'input_password','class' => 'form-control required', 'placeholder' => trans('user.field_password')]) !!}
+                                        {!! Form::password('password', ['id' => 'input_password','class' => 'form-control', 'placeholder' => trans('user.field_password')]) !!}
                                         @if ($errors->has('password'))
                                             <label for="inputPassword" class="error">{{ $errors->first('password') }}</label>
                                         @endif
@@ -142,7 +142,7 @@
                                 <div class="form-horizontal clearfix">
                                     @if(isset($user))
                                         @foreach($contacts as $contact)
-                                            <div class="col-md-3 contact-item {{in_array($contact->_id, $user->contact) ? 'active' : ''}}" data-contact-id="{{$contact->_id}}">
+                                            <div class="col-md-3 contact-item {{!empty($user->contact) && in_array($contact->id, $user->contact) ? 'active' : ''}}" data-contact-id="{{$contact->_id}}">
                                                 <div class="feed-box text-center pannel-content">
                                                     <section class="panel">
                                                         <div class="panel-body">
@@ -258,8 +258,6 @@
                         form.find(".body:eq(" + newIndex + ") .error").removeClass("error");
                     }
                     var form_validate = form.find(".body:eq(" + currentIndex + ") form");
-                    //            phone user_name password authority
-
                     if(form_validate.length){
                         form_validate.validate({
                             rules:{
@@ -267,6 +265,16 @@
                                     required: true,
                                     phone: true
                                 },
+                                @if(isset($user))
+                                    'user_name':{
+                                        minlength: 6,
+                                        userNameStrong: true
+                                    },
+                                    'password':{
+                                        minlength: 6,
+                                        passwordStrong: true
+                                    },
+                                @else
                                 'user_name':{
                                     required: function () {
                                         return isEmpty($("#input_password").val()) ? false : true;
@@ -281,6 +289,7 @@
                                     minlength: 6,
                                     passwordStrong: true
                                 }
+                                @endif
                             },
                             messages:{
                                 'phone':{

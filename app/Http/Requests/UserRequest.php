@@ -49,21 +49,21 @@ class UserRequest extends Request
     }
 
     public function validateAction($input, $user_id = null){
+        if ($user_id != null) {
+            $user = User::where('_id', $user_id)->first();
+        }
         $user_authority = config('constants.authority');
         $authority = Auth::user()->authority;
         $validation = array();
         $validation['authority'] = 'required';
+        //edit user
         if(isset($user_id)){
             $validation['user_name'] = "required|min:6|unique:users,phone,$user_id,_id,deleted_at,NULL";
+            $validation['password'] = 'min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
+            // create user
         }else{
             $validation['user_name'] = 'required|min:6|unique:users,phone,NULL,id,deleted_at,NULL';
-        }
-        $validation['password'] = 'required|min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
-        $input_user_name = @$input['user_name'];
-        $input_password = @$input['password'];
-        if(!isset($input_password) && !isset($input_user_name)){
-            unset($validation['user_name']);
-            unset($validation['password']);
+            $validation['password'] = 'required|min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
         }
         $authority_arr = config('constants.authority');
         if($authority == $user_authority['super_admin']){
