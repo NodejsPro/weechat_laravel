@@ -20,7 +20,8 @@ var paths = {
     'moment_timezone' :  'vendor/bower_dl/moment-timezone',
     'fusioncharts' :  'vendor/bower_dl/fusioncharts/',
     'bootstrap_fileinput' :  'vendor/bower_dl/bootstrap-fileinput',
-    'fileUpload' : 'public/js/bucketadmin/fileUpload'
+    'fileUpload' : 'public/js/bucketadmin/fileUpload',
+    'sass' : 'resources/assets/sass',
 };
 
 // mix.copy(paths.bootstrap + '/fonts/', 'public/build/fonts');
@@ -28,7 +29,12 @@ var paths = {
 mix.copy('public/images', 'public/build/images');
 mix.copy('public/img', 'public/build/img');
 mix.copy(paths.jquery + '/jquery.min.js', 'public/build/js/');
-mix.sass('resources/assets/sass/app.scss', 'public/build/css/app.css');
+mix.sass(paths.sass + '/app.scss', 'public/build/css/app.css');
+
+mix.sass(paths.sass + '/conversation.scss', 'public/build/css/conversation.css');
+mix.sass(paths.sass + '/conversation-efo.scss', 'public/build/css/conversation-efo.css');
+mix.sass(paths.sass + '/conversation-content-left.scss', 'public/build/css/conversation-content-left.css');
+
 mix.styles([
     paths.bootstrap + '/dist/css/bootstrap-grid.css',
     paths.bootstrap + '/dist/css/bootstrap-reboot.css',
@@ -93,6 +99,17 @@ mix.scripts([
     'public/js/dataTables.bootstrap.min.js'
 ], 'public/build/js/jquery.dataTables.js','./');
 
+mix.scripts([
+    'public/js/socket_io/socket.io.js',
+], 'public/build/js/socket.io.js','./');
+
+mix.styles([
+    // 'public/css/slick.css',
+    // 'public/css/slick-theme.css',
+    'public/build/css/conversation.css',
+    'public/build/css/conversation-content-left.css',
+], 'public/build/css/conversation.css','./');
+
 /**
  * jquery step
  * */
@@ -109,8 +126,6 @@ mix.styles([
     'public/customize.js',
 ], 'public/build/js/jquery.validation.js','./');
 
-
-
 mix.scripts([
     'public/js/jquery.steps.js',
 ], 'public/build/js/jquery.steps.js','./');
@@ -126,4 +141,6 @@ mix.version([
     'public/build/css/jquery.steps.css',
     'public/build/js/jquery.steps.js',
     'public/build/js/jquery.validation.js',
+    'public/build/js/socket.io.js',
+    'public/build/css/conversation.css',
 ]);

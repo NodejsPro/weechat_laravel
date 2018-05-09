@@ -28,7 +28,7 @@ return [
 
     'env' => env('APP_ENV', 'production'),
     'code_sms' => env('CODE_SMS', '123456'),
-
+    'url_socket' => env('APP_URL_SOCKET', 'https://admin.botchan.chat:5005'),
     /*
     |--------------------------------------------------------------------------
     | Application Debug Mode

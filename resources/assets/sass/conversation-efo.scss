@@ -1,0 +1,892 @@
+.conversation_index, .scenario-edit{
+  .conversation_container {
+    padding: 0 0 5px 0;
+  }
+  .filter_box {
+    border-bottom: 1px solid #e6e6e6;
+    margin-bottom: 5px;
+  }
+  .panel-filter{
+    margin-bottom: 0;
+    .filter-content {
+      padding-left: 0;
+      padding-right: 0;
+      > .cmxform > .col-md-12 {
+        padding-left: 0;
+        padding-right: 0;
+
+        > .form-group {
+          padding-left: 0;
+          padding-right: 0;
+        }
+      }
+    }
+    .icon-up, .icon-down{
+      cursor: pointer;
+    }
+    .panel-heading{
+      font-size: 14px;
+    }
+    .bookmark-group{
+      display: inline-block;
+      .bookmark-user{
+        padding-top: 5px;
+      }
+    }
+    .icheckbox_minimal{
+      margin-top: 7px;
+    }
+    .input-group{
+      display: flex;
+      .input-group-prepend{
+        margin-top: 7px;
+      }
+      .minimal{
+        min-width: 80px;
+        margin-left: 10px;
+        input.checkbox{
+          margin-top: 18px;
+        }
+      }
+    }
+  }
+  .conversation-efo{
+    padding-left: 0;
+    padding-right: 0;
+
+    .panel_right_conversation {
+      margin-bottom: 0;
+    }
+    .clear_margin{
+      margin-right: 0px;
+      margin-left: 0px;
+      margin-bottom: 0px;
+    }
+    .clear_padding{
+      padding-left: 0px;
+      padding-right: 0px;
+    }
+    .item{
+      font-family: "Hiragino Sans", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      padding: 0px;
+      &:first-child:not(:last-child){
+        margin-top: 5px;
+      }
+      .title{
+        margin-bottom: 5px;
+      }
+      .first_title{
+        white-space: pre-line;
+        padding: 0px;
+        &.one_option{
+          padding-top: 5px;
+          padding-right: 5px;
+        }
+        &.two_option{
+          padding-bottom: 5px;
+        }
+      }
+      .last_title{
+        padding: 0px;
+        &.one_option{
+          padding-top: 5px;
+          padding-left: 5px;
+        }
+        &.two_option{
+          padding-top: 5px;
+        }
+        white-space: pre-line;
+      }
+      select{
+        font-family: "Hiragino Sans", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", メイリオ, Meiryo, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
+        font-size: 13px;
+        font-weight: 400;
+      }
+      .input-box{
+        padding: 0px;
+        .input-content{
+          padding: 0px;
+        }
+        &.text_box{
+          .input_content_text_0{
+              margin-right: 1.5px;
+              width: calc(50% - 1.5px);
+            }
+          .input_content_text_1{
+              margin-left: 1.5px;
+              width: calc(50% - 1.5px);
+            }
+          }
+        &.phone_box{
+          .input_content_tel_0{
+            margin-right: 1.5px;
+            width: calc(33.33% - 3px);
+          }
+          .input_content_tel_1{
+            margin-right: 1.5px;
+            margin-left: 1.5px;
+            width: calc(33.33% - 3px);
+          }
+          .input_content_tel_2{
+            margin-left: 1.5px;
+            width: calc(33.33% - 3px);
+          }
+        }
+      }
+      .input-content.input-confirmation-0{
+        margin-bottom: 5px;
+        padding: 0px;
+      }
+      .select-box{
+        &.date-box{
+          margin-bottom: 3px;
+        }
+        &.date-box, &.time-box, &.birthday-box, &.period-time-item, &.customize-one-box{
+          padding: 0px;
+        }
+        &.customize-one-box{
+          .first_title, .last_title{
+            max-width: 20px;
+          }
+          .last_title{
+            text-align: left;
+            padding-left: 5px;
+          }
+          select{
+            border-radius: 4px;
+          }
+          .form-group{
+            display: inline;
+            .input-group{
+              width: 100%;
+            }
+          }
+          .input-group-addon{
+            background: none;
+            border: none;
+          }
+        }
+        .select-year-box{
+          padding-left: 0px;
+          padding-right: 3px;
+        }
+        .select-month-box{
+          padding: 0px;
+        }
+        .select-dates-box{
+          padding-left: 3px;
+          padding-right: 0px;
+        }
+        .select-hour-box{
+          padding-left: 0px;
+          padding-right: 3px;
+        }
+        .select-minute-box{
+          padding-left: 3px;
+          padding-right: 0px;
+        }
+        .select-day-box{
+          padding-left: 3px;
+          padding-right: 0px;
+        }
+      }
+      .towns_and_villages_box{
+        .form-inline {
+          .input-group{
+            width: 100%;
+          }
+          .form-group{
+            display: inline;
+          }
+        }
+        .first_title{
+          padding-right: 3px;
+        }
+        .last_title{
+          padding-left: 3px;
+        }
+      }
+      .radio-image-container{
+        .radio-image-box{
+          .radio-image-item{
+            .icheck{
+              padding-left: 5px;
+              position: absolute;
+              .iradio_minimal{
+                border-radius: 10px;
+                margin-left: 0px;
+                background-color: #ECF5FA;
+              }
+            }
+            .label-title{
+              text-align: center;
+              padding: 3px 0px;
+              width: 100%;
+            }
+            .image-url{
+              border-style: solid;
+              border-width: 1px;
+              max-width: 100%;
+              max-height: 250px;
+              border-radius: 2px;
+              -moz-border-radius: 2px;
+              -webkit-border-radius: 2px;
+              //margin-top: -22px;
+              float: left;
+            }
+          }
+          &.radio-box-1{
+            .image-url{
+              width: 100%;
+            }
+          }
+          &.radio-box-2{
+            .radio-item-0{
+              padding-right: 3px;
+            }
+            .radio-item-1{
+              padding-left: 3px;
+            }
+          }
+          &.radio-box-3{
+            .radio-item-0{
+              padding-right: 1.5px;
+            }
+            .radio-item-1{
+              padding-left: 1.5px;
+              padding-right: 1.5px;
+            }
+            .radio-item-2{
+              padding-left: 3px;
+            }
+          }
+        }
+      }
+      .file_user_select_container{
+        margin-top: 5px;
+        .btn_user_select{
+          width: 100%;
+          .fa-cloud-upload{
+            color: #FFFFFF;
+            display: inline-block;
+          }
+        }
+        .file_user_answer{
+          margin-top: 5px;
+          .label-title{
+            &:hover{
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+    .conversation-list li{
+      margin-bottom: 5px;
+    }
+    .icheckbox_minimal, .iradio_minimal{
+      background: url('/images/blue.png') no-repeat;
+    }
+    .chat_content{
+      padding: 0 5px 0 10px;
+      .chat-conversation{
+        background-color: #f1f2f7;
+        padding: 4px 3px;
+        .slimScrollDiv{
+          margin-bottom: 10px;
+          margin-top: 10px;
+        }
+      }
+    }
+    .prefectures, .municipality, .street_number, .building_name{
+      padding-top: 8px;
+    }
+    .chat-avatar{
+      width: 52px;
+      height: 52px;
+      .time_of_message{
+        font-size: 12px;
+        margin-top: 2px;
+        margin-bottom: 5px;
+      }
+    }
+    .bot_chat{
+      .chat-avatar{
+        display: inline-block;
+        text-align: center;
+        float: left!important;
+      }
+      .conversation-text{
+        text-align: left;
+        width: 50% !important;
+        .label-title{
+          width: calc(100% - 28px);
+          margin-bottom: 0px;
+        }
+      }
+      .bot-border{
+        border-top-right-radius: 1.3em;
+        border-bottom-right-radius: 1.3em;
+        border-bottom-left-radius: 1.3em;
+        background-color: white !important;
+        padding: 10px;
+        &:after{
+          border: none;
+        }
+      }
+      .icheck{
+        padding: 8px;
+        margin-bottom: 2px;
+        &.checked{
+          .icheckbox_minimal{
+            background-position: -42px -2px;
+          }
+        }
+        .iradio_minimal{
+          background-position: -102px -2px;
+          border-radius: 25px;
+        }
+      }
+    }
+    .user_chat{
+      .conversation-text{
+        width: auto !important;
+      }
+      .user-border{
+        border-bottom-right-radius: 1.3em;
+        border-bottom-left-radius: 1.3em;
+        padding: 10px;
+        border-top-right-radius: 1.3em;
+        &:after{
+          border: none;
+        }
+      }
+    }
+    .text-area, .terms-text-area{
+      font-size: 13px;
+      width: 100%;
+      min-height: 100px;
+      resize: none;
+      border-radius: 2px;
+      box-sizing: border-box;
+      padding: 8px;
+      -moz-border-radius: 2px;
+      -webkit-border-radius: 2px;
+      -webkit-overflow-scrolling: touch !important;
+      -moz-overflow-scrolling: touch !important;
+      -o-overflow-scrolling: touch !important;
+      -ms-overflow-scrolling: touch !important;
+      overflow-scrolling: touch !important;
+    }
+
+    .pull-down-item{
+      padding: 0px;
+      .padding-bottom{
+        padding-bottom: 5px;
+        &:last-child {
+          padding-bottom: 0px;
+        }
+      }
+      .time-spacing-to{
+        span{
+          margin-top: 10px;
+        }
+      }
+      .time-spacing{
+        overflow: hidden;
+        text-align: center;
+        span{
+          font-size: 14px;
+          display: inline-block;
+        }
+      }
+
+      .brithday_y_m_container{
+        .select-year-box{
+          padding-right: 3px;
+        }
+        .select-month-box{
+          padding-left: 3px;
+          padding-right: 3px;
+        }
+      }
+
+      .towns_and_villages_container{
+        .input-group-addon{
+          background-color: white;
+          border: none;
+        }
+        select{
+          border-radius: 4px;
+        }
+      }
+
+      .date_container{
+        .select-year-box{
+          padding-right: 3px;
+        }
+        .select-month-box{
+          padding-left: 3px;
+          padding-right: 3px;
+        }
+        .select-dates-box{
+          padding-left: 3px;
+        }
+      }
+
+      .month_date_container{
+        .select-month-box{
+          padding-right: 3px;
+        }
+        .select-dates-box{
+          padding-left: 3px;
+          padding-right: 3px;
+        }
+      }
+
+      .date_time_container{
+        .date-box{
+          .select-year-box{
+            padding-right: 3px;
+          }
+          .select-month-box{
+            padding-left: 3px;
+            padding-right: 3px;
+          }
+          .select-dates-box{
+            padding-left: 3px;
+          }
+        }
+        .time-box{
+          margin-top: 10px;
+          .select-hour-box{
+            padding-right: 3px;
+          }
+          .select-minute-box{
+            padding-left: 3px;
+            padding-right: 3px;
+          }
+        }
+      }
+
+      .brithday_container{
+        .select-year-box{
+          padding-right: 3px;
+        }
+        .select-month-box{
+          padding-left: 3px;
+          padding-right: 3px;
+        }
+        .select-dates-box{
+          padding-left: 3px;
+        }
+      }
+
+      .period_of_time_container{
+        .select-hour-box{
+          padding-right: 3px;
+        }
+        .select-minute-box{
+          padding-left: 3px;
+          padding-right: 3px;
+          border-radius: 4px;
+        }
+        select{
+          border-radius: 4px;
+        }
+        .input-group-addon{
+          background-color: white;
+          border: none;
+        }
+      }
+
+      .period_of_day_container{
+        .select-year-box{
+          padding-right: 3px;
+        }
+        .select-month-box{
+          padding-left: 3px;
+          padding-right: 3px;
+        }
+        .select-dates-box{
+          padding-left: 3px;
+        }
+      }
+
+      .the_provinces_of_japan_container{
+        .first_title{
+          display: inline-block;
+          padding-bottom: 5px;
+        }
+        .last_title{
+          display: inline-block;
+          padding-top: 5px;
+        }
+      }
+
+      .time_container{
+        .select-hour-box{
+          padding-right: 3px;
+        }
+        .select-minute-box{
+          padding-right: 3px;
+          padding-left: 3px;
+        }
+      }
+
+      .customize_container{
+        .customize-two-box {
+          .first_title{
+            padding-bottom: 5px;
+          }
+          .last_title{
+            padding-top: 5px;
+          }
+          .first_title, .last_title{
+            text-align: left;
+          }
+          padding: 0px;
+          .form-group{
+            display: inline;
+            margin-bottom: 0px;
+            margin-left: 0px;
+            margin-right: 0px;
+            .input-group-addon{
+              background: none;
+              border: none;
+            }
+            .input-group{
+              width: 100%;
+            }
+            select{
+              border-radius: 4px;
+            }
+          }
+        }
+        .customize-item-box{
+          padding-left: 0px;
+          padding-right: 0px;
+        }
+      }
+
+      .pull-down-label{
+        white-space: pre-line;
+        display: inline-block;
+        padding-left: 3px;
+        padding-top: 8px;
+      }
+    }
+
+    .request_document_container{
+      ul{
+        padding: 0px;
+        li{
+          list-style: none;
+          .input-group-addon{
+            padding: 0px;
+            background-color: white;
+            border: none;
+          }
+          &.li-item{
+            padding-top: 5px;
+            padding-bottom: 10px;
+            img{
+              margin-top: -4px;
+            }
+            .document-title{
+              font-weight: 700;
+            }
+          }
+        }
+        &.title_subtitle_container, &.title_only_container{
+          .item-content{
+            padding-left: 0px;
+          }
+        }
+        &.image_title_subtitle_container{
+          .item-content{
+            padding-left: 10px;
+            padding-right: 10px;
+          }
+        }
+      }
+    }
+    .card-payment-box{
+      .card_box{
+        &.card_number{
+          .title{
+            padding-top: 0px;
+          }
+        }
+        padding-left: 0px;
+        padding-right: 0px;
+        padding-top: 8px;
+        .title{
+          padding-top: 8px;
+        }
+        &.card_expiration_date{
+          .month{
+            padding-left: 0px;
+            padding-right: 3px;
+          }
+          .year{
+            padding-left: 3px;
+            padding-right: 0px;
+          }
+        }
+      }
+    }
+
+    .carousel_box{
+      padding-left: 0px;
+      padding-right: 0px;
+      .image_box img{
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        //object-position: top;
+      }
+      .carousel_item{
+        overflow: hidden;
+        border-radius: 1.3em;
+      }
+      .select_box{
+        padding-bottom: 10px;
+        padding-top: 5px;
+        text-align: center;
+        max-width: 100%;
+        overflow: hidden;
+        button{
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          max-width: 80%;
+        }
+      }
+      .title_box{
+        height: 65px;
+        overflow: hidden;
+        text-align: left;
+        text-overflow: ellipsis;
+        .item_title{
+          font-weight: bold;
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          margin-bottom: 0;
+          padding: 0px 10px;
+        }
+        .item_subtitle{
+          width: 100%;
+          line-height: 16px;
+          max-height: 38px;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          padding: 5px 10px;
+        }
+      }
+      .carousel-slick-control{
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        top: 45%;
+        background: white;
+        &.left{
+          left: 0px;
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+        &.right{
+          right: 0px;
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+        }
+        .glyphicon{
+          top: 7px !important;
+          left: 7px !important;
+        }
+      }
+    }
+    .label-text{
+      word-break: break-all;
+    }
+    .content-left{
+      min-width: 200px;
+      max-width: 400px;
+    }
+    .content-right{
+      min-width: 330px;
+      max-width: 400px;
+      margin-left: 180px;
+      background-color: white !important;
+    }
+    .chat-avatar{
+      float: left;
+    }
+    .conversation-text{
+      float: left !important;
+      .text_message > .item{
+        margin-bottom: 10px;
+        &.item-text{
+          margin-bottom: -5px;
+        }
+      }
+      .text_message .item:only-child, .text_message .item:last-child{
+        margin-bottom: 0px;
+      }
+      .btn-action{
+        //margin-top: 10px;
+        text-align: center;
+        .button.disabled{
+            background-color: #D0D6DC;
+          }
+      }
+      .button{
+        min-width: 80px;
+        min-height: 30px;
+        //margin-top: 6px;
+        padding: 0px 14px;
+        box-sizing: content-box;
+        border: none;
+        border-radius: 25px;
+        -moz-border-radius: 25px;
+        -webkit-border-radius: 25px;
+        outline: none;
+      }
+      input, textarea{
+        font-size: 13px;
+      }
+    }
+    .text_message{
+      color: white;
+    }
+    .calendar .input-group-addon{
+      cursor: pointer;
+    }
+    .calendar_embed {
+      .bootstrap-datetimepicker-widget{
+        width: 264px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .calendar_box_from{
+      padding-right: 3px;
+      padding-left: 0px;
+    }
+    .calendar_box_to{
+      padding-right: 0px;
+      padding-left: 1px;
+    }
+    .bootstrap-datetimepicker-widget{
+      .list-unstyled{
+        padding-left: 0px;
+      }
+      .table-condensed{
+        th.prev, th.picker-switch, th.next, th.dow, td.day:not(.active), td .month:not(.active), td .year:not(.active), td .decade:not(.active){
+          color: #767676;
+          &.new {
+            display: none;
+          }
+          &.old{
+            visibility: hidden;
+          }
+        }
+      }
+    }
+  }
+  .blue-template{
+    .left-text{
+      background: #26B9FF !important;
+    }
+    .input-unchecked{
+      background-color: #ECF5FA !important;
+    }
+    .input-checked {
+      background-color: #CDEFFF !important;
+    }
+    .label-text{
+      color: #6789A6;
+    }
+    .bot_chat{
+      input, select, textarea{
+        border: 2px solid #8AC5FF;
+        background-color: #FFFFE7;
+        color: #6789A6;
+      }
+    }
+    .button{
+      background-color: #0084FF;
+      color: white;
+    }
+    .icheck{
+      .icheckbox_minimal{
+        border: 2px solid #8AC5FF;
+      }
+      .iradio_minimal{
+        border: 2px solid #8AC5FF;
+        &.checked{
+          background-position: -142px -2px;
+        }
+      }
+      .iradio_minimal-blue{
+        border-radius: 10px;
+        background-color: #ECF5FA;
+      }
+    }
+    .radio-image-item{
+      &.active{
+        img{
+          border-color: #0084FF;
+        }
+      }
+      &:not(.active){
+        img{
+          border-color: transparent;
+        }
+      }
+    }
+    .text-area, .terms-text-area{
+      color: #6789A6;
+      &::placeholder{
+        color: #6789A6;
+      }
+    }
+    .carousel_item {
+      border: 1px solid #CDEFFF;
+      &.active{
+        border: 1px solid #0084FF;
+      }
+    }
+    .calendar .input-group-addon{
+      background-color: #53bee6;
+      border-color: #53BEE6;
+      color: #FFFFFF;
+    }
+    .request_document_container{
+      .li-item{
+        border-top: 1.5px solid #8AC5FF;
+        &:last-child{
+          border-bottom: 1.5px solid #8AC5FF;
+        }
+      }
+    }
+  }
+}
+
+@media(max-width: 432px) {
+  .conversation_index{
+    .panel-filter{
+      .input-group{
+        .minimal{
+          min-width: 25px;
+        }
+      }
+    }
+  }
+}

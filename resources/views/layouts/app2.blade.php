@@ -11,6 +11,7 @@
         <meta name="author" content="hailt"/>
         <link href="{{ mix('build/css/app.css') }}" rel="stylesheet">
     @yield('styles')
+    @yield('styles_conversation')
 
     <!-- Fonts -->
         <link href='//fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
