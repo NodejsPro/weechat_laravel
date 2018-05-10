@@ -31,9 +31,8 @@
 </div>
 @endsection
 @section('scripts2')
-    {{--<script src="{{ mix('build/js/socket.io.js') }}"></script>--}}
-    <script src="{{ mix('js/socket.io-1.4.5.js') }}"></script>
-{{--    <script src="{{ mix('/build/js/iCheck.js') }}"></script>--}}
+    <script src="{{ mix('build/js/socket.io.js') }}"></script>
+    <script src="{{ mix('/build/js/iCheck.js') }}"></script>
     <script type="text/javascript">
         'use strict';
         var default_timezone = '{{config('app.timezone')}}';
@@ -42,6 +41,8 @@
             var user_id,
                 socket = io('{{config('app.url_socket')}}'),
                 user_add_flg = [],
+                log_last_time = null,
+                message_limit_flg = true,
                 users_show_count = parseInt('{{ 3 }}'), //get number of users are showing
                 users_count_all = undefined, //number total of users
                 chat_input_element = $('#chat-input');
@@ -222,13 +223,10 @@
             });
 
             $(document).on('click', '.conversation_index .user_item', function (e) {
-                if (user_id != $(this).data('user_id') && !$(e.target).parents('.more_info_box').length) {
+                var user_id_item = $(this).data('user_id');
+                if (user_id != user_id_item && user_id_item != '' && !$(e.target).parents('.more_info_box').length) {
                     user_id = $(this).data('user_id');
-                    $('#btn_modal_check_authenticate').addClass('content_chat');
-                    $('#btn_modal_check_authenticate').removeClass('btn_modal_check_authenticate');
-                    $('#btn_modal_check_authenticate').removeClass('user_filter');
-                    $('#conversation_authenticate_modal #inputPassword').val('');
-
+                    showContentChat(user_id);
                 }
             });
 
@@ -395,7 +393,8 @@
                 initUserScroll('active');
                 var filter_height = $('.conversation_index .panel-filter').innerHeight(),
                     conversation_height = $('.conversation_index .conversation_header').innerHeight();
-                $('.conversation_index .panel_right_conversation, .conversation_index .panel_left_conversation').css('min-height', ($(window).height() - conversation_height - filter_height - 96) + 'px');
+                console.log(($(window).height() - conversation_height  - 96));
+                $('.conversation_index .panel_right_conversation, .conversation_index .panel_left_conversation').css('min-height', ($(window).height() - conversation_height) + 'px');
                 var conversation_list = $('.conversation_index .conversation-list'),
                     send_height = $('.conversation_index .right_conversation .send_wrapper').innerHeight();
 
@@ -554,7 +553,7 @@
             function getMessage(user_id, appendHead) {
                 if(message_limit_flg != void 0 && message_limit_flg){
                     message_limit_flg = false;
-                    var url_get_message = '{{ 'bot.conversation.message'}}';
+                    var url_get_message = '{{url('api/demo/getConversation')}}';
                     $.ajax({
                         url: url_get_message,
                         data: {
@@ -579,21 +578,15 @@
                                 if(data_log_message.length != 0){
                                     message_limit_flg = true;
                                 }
-                                request_document_arr = data.log_request_document;
                                 $.each(data_log_message, function(index, msg_data) {
                                     if(msg_data != void 0){
-                                        showMessage(msg_data, request_document_arr, false, appendHead);
-
-                                    if(index >= (data.log_messages.length - 1)) {
-                                        last_date = msg_data.created_at;
+                                        if(index >= (data.log_messages.length - 1)) {
+                                            last_date = msg_data.created_at;
+                                        }
                                     }
-                                }
-                            });
-                            $('.conversation_index .chat_content').removeClass('hidden');
-
-                            //re init carousel after element append
-                            initCarousel();
-                        }
+                                });
+                                $('.conversation_index .chat_content').removeClass('hidden');
+                            }
                             //scroll
                             if(appendHead != void 0 && appendHead){
                                 if(!message_limit_flg){
@@ -605,9 +598,6 @@
                                 initConversationScroll(true);
                             }
                             changeHeightConversation();
-                            setBorderChatEfo();
-//                            default_chat_conversation = $('.chat-conversation').outerHeight();
-//                            console.log('get messsage', default_chat_conversation);
                         },
                         error: function(error){
                             console.log(error);
@@ -723,7 +713,7 @@
                     var new_user = $('.template_message .user .user_item').clone();
                     var user_list_all = $('.conversation_index .user_list_all');
                     var user_name;
-                    var profile_pic = '{{('/images/no_avatar.png')}}';
+                    var profile_pic = '{{('build/images/no_avatar.png')}}';
                     //set info
                     new_user.attr('data-user_id', user_data.user_id);
                     new_user.addClass('user_' + user_data.user_id);

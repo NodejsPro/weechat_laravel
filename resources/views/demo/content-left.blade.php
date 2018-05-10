@@ -8,19 +8,20 @@
             <div class="tab-content">
                 @if(isset($user_profiles))
                     @foreach($user_profiles as $user_list_type => $user_profile)
-                        <div class="tab-pane col-md-12 {{ ($user_list_type == $user_tab_active) ? 'active' : '' }}" id="user_{{ $user_list_type }}">
+                        <div class="tab-pane col-md-12 active" id="user_{{ $user_list_type }}">
                             <ul class="nav nav-pills nav-stacked mail-nav ">
                                 @if(count($user_profile) > 0)
                                     @foreach($user_profile as $index => $user)
                                         @php
-                                            $user_profile_pic = ('/images/no_avatar.png');
+                                            $user_profile_pic = ('build/images/no_avatar.png');
                                         @endphp
-                                        <li class="user_item" data-user_id="{{ $user->user_id }}" data-user_avatar="{{ $user_profile_pic }}">
+                                        <li class="user_item" data-user_id="{{ $user->id }}" data-user_avatar="{{ $user_profile_pic }}">
                                             <a href="javascript:;">
                                                 <span class="pull-left"><i class="fa fa-star icon_pin {{ $user->bookmark_flg == 1 ? 'active' : ''}}"></i></span>
                                                 <img src="{{ $user_profile_pic }}" width="150" height="150">
                                                 <p class="user_name">
-                                                    {{trans('default.user').' '.($user->number_index)}}
+                                                    {{trans('default.user').' '.($user->user_name)}}<br/>
+                                                    {{$user->phone}}
                                                 </p>
                                                 <?php
                                                 $last_time = $user->updated_at;
@@ -41,7 +42,7 @@
                                             </a>
                                         </li>
                                     @endforeach
-                                    <p class="load_more_user" style="display: block">{{trans('field.load_more')}}</p>
+                                    <p class="load_more_user" style="display: none">{{trans('field.load_more')}}</p>
                                 @endif
                             </ul>
                         </div>
