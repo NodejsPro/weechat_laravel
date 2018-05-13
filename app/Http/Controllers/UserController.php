@@ -184,7 +184,8 @@ class UserController extends Controller
         $user_authority = config('constants.authority');
         if($user_edit && ($user->authority == $user_authority['super_admin'] || $user->id == $user_edit->created_id)){
             $user = Auth::user();
-            $contacts = $this->repUser->getContact(0, config('constants.per_page')[4]);
+            $contacts = $this->repUser->getFull(0, config('constants.per_page')[4]);
+            dd($contacts);
             return view('user.create')->with([
                 'user'              => $user_edit,
                 'users'             => null,

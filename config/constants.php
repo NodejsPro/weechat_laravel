@@ -22,4 +22,8 @@ return [
       'width' => 150,
       'height' => 150
     ],
+    'room_type' => [
+      'one_one' => '001',
+      'one_many' => '002',
+    ],
 ];

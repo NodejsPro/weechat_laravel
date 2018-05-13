@@ -54,13 +54,19 @@ class DemoController extends Controller
         $date_format = new \DateTime();
         $date_format_js_str = '';
         $date_format_str = '';
-        if($user->authority == $authority['super_admin']){
+        //if($user->authority == $authority['super_admin']){
 
                 //get all user
-                $user_profiles['all'] = $this->repUser->getAll($user, 0, config('constants.conversation_option.user_load_in_part'));
+                $user_profiles['all'] = $this->repUser->getFull(0, 50);
+//                if($user->contact){
+//                    $user_profiles['all'] = $this->repUser->getContact($user->contact, 0, config('constants.conversation_option.user_load_in_part'));
+//                    $user_super_admin = $this->repUser->getAllByField('authority', $authority['super_admin']);
+//                    $user_profiles['all'] = $user_profiles['all']->merge($user_super_admin);
+//                }
+
 
                 //count all user for load ajax users
-                $count_user_profiles = $this->repUser->getCount($user);
+                $count_user_profiles = 50;
 
                 $date_format = new \DateTime();
 
@@ -71,8 +77,8 @@ class DemoController extends Controller
                 'user_profiles' => $user_profiles,
                 'count_user_profiles' => $count_user_profiles,
             ]);
-        }
-        abort(404);
+        //}
+        //abort(404);
     }
 
     public function getListBotTransfer() {

@@ -9,7 +9,7 @@
                 @if(isset($user_profiles))
                     @foreach($user_profiles as $user_list_type => $user_profile)
                         <div class="tab-pane col-md-12 active" id="user_{{ $user_list_type }}">
-                            <ul class="nav nav-pills nav-stacked mail-nav ">
+                            <ul class="nav nav-pills nav-stacked mail-nav user_list_all">
                                 @if(count($user_profile) > 0)
                                     @foreach($user_profile as $index => $user)
                                         @php

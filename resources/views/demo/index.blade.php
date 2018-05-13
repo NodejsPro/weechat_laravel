@@ -39,35 +39,40 @@
         var request_document_arr = new Object();
         $(function (){
             var user_id,
+                user_login_id='{{Auth::user()->id}}',
                 socket = io('{{config('app.url_socket')}}'),
                 user_add_flg = [],
                 log_last_time = null,
                 message_limit_flg = true,
                 users_show_count = parseInt('{{ 3 }}'), //get number of users are showing
                 users_count_all = undefined, //number total of users
-                chat_input_element = $('#chat-input');
+                chat_input_element = $('#chat-input'),
+                room_id = null;
             socket.on('connect', function() {
-                socket.emit('join', { user_id: user_id });
-            });
-            socket.on('receive_new_user', function (data) {
-                var show_user = true;
-                if(show_user){
-                    getNewUser(data, false);
-                }
-            });
+                console.log();
+                socket.emit('user_join', { user_id: user_login_id });
 
-            socket.on('receive_new_message', function (data) {
-                var show_msg_flg = true;
-                if(data.preview_flg == void 0 && user_add_flg.indexOf(data.user_id) == -1) {
-                    show_msg_flg = getUser(data);
-                }
+                socket.on('status_join', function (data) {
+                    console.log('status_join: ', data);
+                });
 
-                if(show_msg_flg) {
-                    checkShowNewMessage(data);
-                }
-                if(data.time_of_message){
-                    updateUserActiveTime(data.user_id, data.time_of_message);
-                }
+                socket.on('status_join_room', function (data) {
+                    console.log('status_join_room: ', data);
+                    room_id = data.room_id;
+                });
+
+                socket.on('receive_new_user', function (data) {
+                    var show_user = true;
+                    if(show_user){
+                        getNewUser(data, false);
+                    }
+                });
+
+                socket.on('server_send_message', function (data) {
+                    console.log('server_send_message', data);
+                    var user_send = $('<div>').html(data.user_id + ' send message: ' + data.message);
+                    $('.conversation-list').append(user_send);
+                });
             });
 
             initSizeConversation();
@@ -226,6 +231,13 @@
                 var user_id_item = $(this).data('user_id');
                 if (user_id != user_id_item && user_id_item != '' && !$(e.target).parents('.more_info_box').length) {
                     user_id = $(this).data('user_id');
+                    var msg = {
+                        user_id: user_login_id,
+                        room_type: '{{config('constants.room_type.one_one')}}',
+                        member : [user_login_id, user_id]
+                    };
+                    console.log('send to server: ', msg);
+                    socket.emit('user_join_room', msg);
                     showContentChat(user_id);
                 }
             });
@@ -315,55 +327,13 @@
             });
             $('.conversation_index .chat-send').on('click', function () {
                 var message = chat_input_element.val(),
-                        dataObj = [];
-                if ($('.webui-popover').length) {
-                    var media_message = $('.webui-popover .scenario_block  textarea.messages_bot_content').val(),
-                            type_message = $('.webui-popover .scenario_block  input.messages_bot_type').val();
-                    if (media_message != void 0 && media_message.length > 0) {
-                        media_message = $.parseJSON(media_message);
-                        if(message != void 0 && message.trim().length > 0){
-                            message = message.trim();
-                            dataObj.push(
-                                    {
-                                        'type' : '{{config("constants.facebook_content_type.text")}}',
-                                        'message': (sns_type == '{{'$line_sns'}}') ? {"type":"text", 'text': message}: {'text': message}
-                                    },
-                                    {
-                                        'type' : type_message,
-                                        'message': media_message.message
-                                    }
-                            );
-                        }else {
-                            dataObj.push({
-                                'type' : type_message,
-                                'message': media_message.message
-                            });
-                        }
-                        if (dataObj != void 0 && dataObj.length > 0) {
-                            sendCrtData(user_id, dataObj);
-                            clearMessageSend();
-                            $('.webui-popover .scenario_block  textarea.messages_bot_content').val('');
-                            $('.right_conversation .scenario .badge.up').css('display', 'none');
-                            $('.webui-popover .fixedsidebar select#bot_content_type').val(0).trigger('change');
-                        }
-                    } else if (message != void 0 && message.length > 0) {
-                        dataObj.push({
-                            'type' : '{{config("constants.facebook_content_type.text")}}',
-                            'message': (sns_type == '{{'$line_sns'}}') ? {"type":"text", 'text': message}: {'text': message}
-                        });
-                        sendCrtData(user_id, dataObj);
-                        clearMessageSend();
-                    }
-                }else{
-                    if(message != void 0 && message.trim().length > 0){
-                        message = message.trim();
-                        dataObj.push({
-                            'type' : '{{config("constants.facebook_content_type.text")}}',
-                            'message': (sns_type == '{{'$line_sns'}}') ? {"type":"text", 'text': message}: {'text': message}
-                        });
-                        sendCrtData(user_id, dataObj);
-                        clearMessageSend();
-                    }
+                        dataObj = {};
+                if(room_id != void 0 && message != void 0 && message.trim().length > 0){
+                    message = message.trim();
+                    dataObj.message_type = '001';
+                    dataObj.message = message;
+                    sendCrtData(room_id, user_id, dataObj);
+                    clearMessageSend();
                 }
             });
 
@@ -394,7 +364,7 @@
                 var filter_height = $('.conversation_index .panel-filter').innerHeight(),
                     conversation_height = $('.conversation_index .conversation_header').innerHeight();
                 console.log(($(window).height() - conversation_height  - 96));
-                $('.conversation_index .panel_right_conversation, .conversation_index .panel_left_conversation').css('min-height', ($(window).height() - conversation_height) + 'px');
+                $('.conversation_index .panel_right_conversation, .conversation_index .panel_left_conversation').css('min-height', (200) + 'px');
                 var conversation_list = $('.conversation_index .conversation-list'),
                     send_height = $('.conversation_index .right_conversation .send_wrapper').innerHeight();
 
@@ -763,8 +733,8 @@
                 chat_input_element.val('').attr('placeholder', '{{trans('message.send_text')}}');
             }
 
-            function sendCrtData(user_id, dataObj) {
-                socket.emit('send_new_message', { room_id: room_id, user_id: user_id, data: dataObj});
+            function sendCrtData(room_id, user_id, dataObj) {
+                socket.emit('user_send_message', { room_id: room_id, user_id: user_id, data: dataObj});
             }
 
             function initSizeConversation() {
@@ -774,8 +744,9 @@
                 var filter_height = $('.conversation_index .panel-filter').innerHeight();
                 var conversation_height = $('.conversation_index .conversation_header').innerHeight();
 
-                $('.conversation_index .panel_right_conversation, .conversation_index .panel_left_conversation').css('min-height', ($(window).height() - conversation_height - filter_height - 96) + 'px');
+                $('.conversation_index .panel_right_conversation, .conversation_index .panel_left_conversation').css('min-height', (200) + 'px');
                 $('.conversation_index .conversation_container').removeClass('hidden');
+                console.log($(window).height() , '-', conversation_height);
 
             }
 
@@ -786,8 +757,9 @@
                 // if(tab_category == 'active') {
                 //     user_list_all = $('.conversation_index .user_list_active');
                 // }
+                console.log( ($(window).height() - conversation_height) );
                 user_list_all.slimscroll({
-                    height : ($(window).height() - conversation_height - filter_height - 160) + 'px',
+                    height : ($(window).height() - conversation_height - 160) + 'px',
                     wheelStep: 20
                 });
             }
@@ -803,7 +775,7 @@
                 }
 
                 conversation_list.slimscroll({
-                    height : ($(window).height() - conversation_height - filter_height - send_height - 120) + 'px',
+                    height : ($(window).height() - conversation_height - filter_height - send_height - 140) + 'px',
                     scrollTo: scroll_pos,
                     wheelStep: 20
                 });
