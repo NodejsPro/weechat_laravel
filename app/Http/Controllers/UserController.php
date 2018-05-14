@@ -64,7 +64,7 @@ class UserController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $contacts = $this->repUser->getContact(0, config('constants.per_page')[4]);
+        $contacts = $this->repUser->getFull(0, config('constants.per_page')[4]);
         return view('user.create')->with([
             'users'             => null,
             'user_login'             => $user,

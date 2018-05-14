@@ -26,4 +26,5 @@ return [
       'one_one' => '001',
       'one_many' => '002',
     ],
+    'log_message_limit' => 100,
 ];
