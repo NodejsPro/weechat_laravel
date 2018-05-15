@@ -39,7 +39,7 @@
                         </div>
                     </div>
                     <div class="columns separator"></div>
-                    <div class="form-group">
+                    <div class="form-group" style="display: none">
                         <div class="col-md-offset-2 col-md-6">
                             {!! Form::submit(trans('button.save'), ['class' => 'btn btn-info']) !!}
                         </div>
