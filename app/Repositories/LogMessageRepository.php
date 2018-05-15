@@ -18,22 +18,16 @@ class LogMessageRepository extends BaseRepository
 		$this->model = $logMessage;
 	}
 
-    public function getMessage($connect_page_id, $user_id, $position, $created_at = null, $limit = null, $last_time_of_message = null) {
+    public function getMessage($room_id, $created_at = null, $limit = null, $last_time_of_message = null) {
         $model = new $this->model;
-        $model->setCollection($connect_page_id . $this->base_collection);
+        $model->setCollection($room_id . $this->base_collection);
         if(empty($limit)){
             $limit = config('constants.log_message_limit');
         }
-        $model = $model->where('connect_page_id', $connect_page_id)
-            ->where('user_id', $user_id)
-            ->whereNull('background_flg')
-            ->whereNull('error_flg')
+        $model = $model->where('room_id', $room_id)
             ->take($limit);
         if($last_time_of_message) {
             $model = $model->where('created_at', '>', $last_time_of_message);
-        }
-        if(isset($position)){
-            $model = $model->where('b_position', '<=', $position);
         }
         if(!empty($created_at)){
             $created_at = new \MongoDB\BSON\UTCDateTime($created_at * 1000);

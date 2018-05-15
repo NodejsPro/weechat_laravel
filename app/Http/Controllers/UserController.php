@@ -290,4 +290,13 @@ class UserController extends Controller
         }
         return $result;
     }
+
+    public function accountEdit()
+    {
+        $user = Auth::user();
+        $current_lang = Lang::locale();
+        return view('user.my_edit')->with([
+            'user' => $user,
+        ]);
+    }
 }

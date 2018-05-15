@@ -421,7 +421,7 @@
                 $('#user-change-option, .error-user-change').hide();
                 $('#change_white_domain').val('');
             });
-            
+
             function validateUser() {
                 var error_arr = [];
                 var check_element = ['phone', 'user_name', 'authority', 'password'];

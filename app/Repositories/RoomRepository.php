@@ -109,4 +109,21 @@ class RoomRepository extends BaseRepository
         return $model->get();
     }
 
+    public function checkRoom($user_id, $room_id, $member = []){
+        $model = new $this->model;
+        $member_arr = [$user_id];
+        if(!empty($member)){
+            $member_arr = array_merge($member_arr, $member);
+        }
+        $model = $model->where('_id', $room_id);
+        $model = $model->whereIn('member', $member_arr);
+    }
+
+    public function getRoomByMember($member){
+        $model = new $this->model;
+        $model = $model->whereIn('member', $member);
+        $model = $model->where('member', 'size', 2);
+        return $model->first();
+    }
+
 }
