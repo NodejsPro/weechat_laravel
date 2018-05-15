@@ -96,8 +96,8 @@ class UserRepository extends BaseRepository
 
     public function updateAccount($user, $inputs)
     {
-        $user->name = $inputs['name'];
-        $user->locale = $inputs['language'];
+        $user->user_name = $inputs['user_name'];
+        $user->phone = $inputs['phone'];
         if(isset($inputs['password'])){
             $user->password = bcrypt($inputs['password']);
         }

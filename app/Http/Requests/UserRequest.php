@@ -37,6 +37,17 @@ class UserRequest extends Request
                 $validation = array_merge($validation, $this->validateAction($input, $userId));
             }
             return $validation;
+        }elseif(Request::is('account/*') ){
+                //update my account with link is account/edit
+            $user_id = Auth::user()->id;
+            $rule = [
+                'user_name'                  => "required|min:6|unique:users,user_name,$user_id,_id,deleted_at,NULL",
+                'phone'                   => "required|max:50|unique:users,phone,$user_id,_id,deleted_at,NULL",
+            ];
+            if(!empty($input['password'])){
+                $rule['password'] = 'min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
+            }
+            return $rule;
         }else {
             //create  new user
             $validation = [
@@ -58,14 +69,14 @@ class UserRequest extends Request
         $validation['authority'] = 'required';
         //edit user
         if(isset($user_id)){
-            $validation['user_name'] = "required|min:6|unique:users,phone,$user_id,_id,deleted_at,NULL";
+            $validation['user_name'] = "required|min:6|unique:users,user_name,$user_id,_id,deleted_at,NULL";
             if(isset($input['password'])){
                 $validation['password'] = 'min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
             }
             // create user
         }else{
             if(isset($input['user_name']) || isset($input['password'])){
-                $validation['user_name'] = 'required|min:6|unique:users,phone,NULL,id,deleted_at,NULL';
+                $validation['user_name'] = 'required|min:6|unique:users,user_name,NULL,id,deleted_at,NULL';
                 $validation['password'] = 'required|min:6|regex:/^.*(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[\`\~\!\@\#\$\%\^\&\*\(\)\_\+\=\-]).*$/';
             }
         }

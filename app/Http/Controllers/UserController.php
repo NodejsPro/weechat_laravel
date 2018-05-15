@@ -299,4 +299,19 @@ class UserController extends Controller
             'user' => $user,
         ]);
     }
+
+    public function accountUpdate(UserRequest $request)
+    {
+        $user = Auth::user();
+        $inputs = $request->all();
+        if(empty($inputs['password'])){
+            unset($inputs['password']);
+        }
+        try{
+            $this->repUser->updateAccount($user, $inputs);
+            return redirect()->back()->with('alert-success', trans('message.update_success', ['name' => trans('default.profile')]));
+        } catch (\Exception $e){
+            return redirect()->back()->with('alert-danger', trans('message.update_error', ['name' => trans('default.profile')]));
+        }
+    }
 }
