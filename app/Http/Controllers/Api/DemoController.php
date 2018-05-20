@@ -7,6 +7,8 @@ use App\Mongodb\LogMessage;
 use App\Repositories\BotRoleRepository;
 use App\Repositories\ConnectPageRepository;
 use App\Repositories\ConnectRepository;
+use App\Repositories\LogMessageRepository;
+use App\Repositories\RoomRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
@@ -27,6 +29,8 @@ class DemoController extends Controller
     protected $repConnectPage;
     protected $repUser;
     protected $repScenario;
+    protected $repRoom;
+    protected $repLogMessage;
     protected $repScenarioGroup;
 
     protected $repTest;
@@ -42,10 +46,14 @@ class DemoController extends Controller
     protected $repGoogleSheetUser;
 
     public function __construct(
-        UserRepository $user
+        UserRepository $user,
+        RoomRepository $room,
+        LogMessageRepository $logMessage
     )
     {
         $this->repUser = $user;
+        $this->repRoom = $room;
+        $this->repLogMessage = $logMessage;
     }
 
     public function index($view_user_id = null){
@@ -76,9 +84,56 @@ class DemoController extends Controller
     }
 
     public function getConversation(Request $request){
+        $inputs = $request->all();
+        $user_id = @$inputs['user_id'];
+        $room_id = @$inputs['room_id'];
+        $member = $request->get('member', []);
+        $valid_arr = array(
+            'user_id' => 'required',
+            'member' => 'required|Array',
+            'room_id' => 'required',
+        );
+        if(isset($room_id)){
+            unset($valid_arr['member']);
+        }else{
+            unset($valid_arr['room_id']);
+        }
+        $validator = Validator::make(
+            $inputs,
+          $valid_arr
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $user = $this->repUser->getById($user_id);
+        if(!$user){
+            return response([
+                "success" => false,
+                'msg' => 'User valid'
+            ], 422);
+        }
+        if(!isset($room_id)){
+            if(!in_array($user_id, $member)){
+                return response([
+                    "success" => false,
+                    'msg' => 'Room valid'
+                ], 422);
+            }
+            $room = $this->repRoom->getRoomByMember($member);
+            if($room){
+                $room_id = $room->id;
+            }
+        }
+        $log = [];
+        if($room_id){
+            $log = $this->repLogMessage->getMessage($room_id, null, config('constants.log_message_limit'), $user->created_at);
+        }
         return Response::json([
             'success' => true,
-            'log_messages' => []
+            'log_messages' => $log
         ], 200);
     }
 

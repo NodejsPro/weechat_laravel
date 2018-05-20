@@ -276,6 +276,7 @@ class UserController extends Controller
                 'password' => '$2y$10$bJGmXuUkx2hfURc2/fNj9O0ViaKgpUGsqzZNHNL6/QFCx8yEhI/yS',
                 'phone' => '01656228578',
                 'validate_token' => null,
+                'confirm_flg' => 1,
                 'avatar' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzaLMnex1QwV83TBQgxLTaoDAQlFswsYy62L3mO4Su-CMkk3jX',
                 'user_name' => 'super_admin',
             ]);
@@ -292,6 +293,7 @@ class UserController extends Controller
                 'validate_token' => null,
                 'avatar' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzaLMnex1QwV83TBQgxLTaoDAQlFswsYy62L3mO4Su-CMkk3jX',
                 'user_name' => 'admin_lv1',
+                'confirm_flg' => 1,
                 'code' => null,
                 'confirmation_token' => null,
             ]);
@@ -309,6 +311,7 @@ class UserController extends Controller
                 'validate_token' => null,
                 'avatar' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzaLMnex1QwV83TBQgxLTaoDAQlFswsYy62L3mO4Su-CMkk3jX',
                 'user_name' => 'admin_lv2',
+                'confirm_flg' => 1,
                 'code' => null,
                 'confirmation_token' => null,
             ]);
@@ -327,6 +330,7 @@ class UserController extends Controller
                 'avatar' => 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzaLMnex1QwV83TBQgxLTaoDAQlFswsYy62L3mO4Su-CMkk3jX',
                 'user_name' => 'client',
                 'code' => null,
+                'confirm_flg' => 1,
                 'confirmation_token' => null,
             ]);
         }

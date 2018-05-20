@@ -231,6 +231,7 @@
                 var user_id_item = $(this).data('user_id');
                 if (user_id != user_id_item && user_id_item != '' && !$(e.target).parents('.more_info_box').length) {
                     user_id = $(this).data('user_id');
+                    console.log('msg: ', user_id);
                     var msg = {
                         user_id: user_login_id,
                         room_type: '{{config('constants.room_type.one_one')}}',
@@ -529,7 +530,8 @@
                         data: {
                             "_token": "{{ csrf_token() }}",
                             "user_id" : user_id,
-                            'log_last_time': log_last_time
+                            'log_last_time': log_last_time,
+                            "member" : [user_login_id, user_id]
                         },
                         type: 'POST',
                         success: function(data) {
