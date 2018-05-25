@@ -42,7 +42,7 @@ class UserController extends Controller
         UserRepository $user
     ){
         $this->repUser = $user;
-        $this->middleware('authentication.api', ['except' => ['userLogin', 'create', 'checkPhone']]);
+        $this->middleware('authentication.api', ['except' => ['userLogin', 'create', 'checkPhone', 'userTest']]);
     }
     /**
      * Display a listing of the resource.
