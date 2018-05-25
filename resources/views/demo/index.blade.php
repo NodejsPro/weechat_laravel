@@ -333,7 +333,13 @@
                     message = message.trim();
                     dataObj.message_type = '001';
                     dataObj.message = message;
-                    sendCrtData(room_id, user_id, dataObj);
+                    // sendCrtData(room_id, user_id, dataObj);
+                    socket.emit('user_send_message', {
+                        room_id: room_id,
+                        user_id: user_id,
+                        message_type: '001',
+                        message: message,
+                    });
                     clearMessageSend();
                 }
             });
