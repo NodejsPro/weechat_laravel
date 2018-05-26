@@ -109,6 +109,26 @@ class RoomRepository extends BaseRepository
         return $model->get();
     }
 
+    public function getByUserID($user_id, $room_arr, $room_type, $offset = 0, $limit = 10)
+    {
+        $model = new $this->model;
+        if(!empty($room_arr)){
+            $model = $model->whereIn('_id', $room_arr);
+        }
+        if(isset($room_type)){
+            $model = $model->where('room_type', $room_type);
+        }
+        $model = $model->where(function ($model) use ($user_id) {
+            $model->where("user_id", $user_id)
+                ->orWhereIn("member", [$user_id]);
+        });
+        $model = $model
+            ->skip($offset)
+            ->take($limit)
+            ->orderBy('created_at', 'DESC');
+        return $model->get();
+    }
+
     public function checkRoom($user_id, $room_id, $member = []){
         $model = new $this->model;
         $member_arr = [$user_id];

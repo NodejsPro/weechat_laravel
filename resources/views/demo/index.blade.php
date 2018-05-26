@@ -49,7 +49,7 @@
                 chat_input_element = $('#chat-input'),
                 room_id = null;
             socket.on('connect', function() {
-                console.log();
+                console.log('socket on connect');
                 socket.emit('user_join', { user_id: user_login_id });
 
                 socket.on('status_join', function (data) {

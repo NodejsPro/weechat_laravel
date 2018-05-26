@@ -267,11 +267,10 @@ class UserController extends Controller
     }
 
     public function userTest(){
-        $user_check = $this->repUser->getOneByField("email", 'supper_admin@weechat.com');
+        $user_check = $this->repUser->getOneByField("user_name", 'super_admin');
         if(!$user_check){
             \App\Mongodb\User::create([
                 'authority' => '001',
-                'email' => 'supper_admin@weechat.com',
                 'name' => 'supper admin',
                 'password' => '$2y$10$bJGmXuUkx2hfURc2/fNj9O0ViaKgpUGsqzZNHNL6/QFCx8yEhI/yS',
                 'phone' => '01656228578',
@@ -282,11 +281,10 @@ class UserController extends Controller
             ]);
         }
 
-        $user_check = $this->repUser->getOneByField("email", 'admin_lv1@weechat.com');
+        $user_check = $this->repUser->getOneByField("user_name", 'admin_lv1');
         if(!$user_check){
             \App\Mongodb\User::create([
                 'authority' => '002',
-                'email' => 'admin_lv1@weechat.com',
                 'name' => 'admin lv1',
                 'password' => '$2y$10$bJGmXuUkx2hfURc2/fNj9O0ViaKgpUGsqzZNHNL6/QFCx8yEhI/yS',
                 'phone' => '01656228579',
@@ -300,11 +298,10 @@ class UserController extends Controller
 
         }
 
-         $user_check = $this->repUser->getOneByField("email", 'admin_lv2@weechat.com');
+         $user_check = $this->repUser->getOneByField("user_name", 'admin_lv2');
         if(!$user_check){
             \App\Mongodb\User::create([
                 'authority' => '003',
-                'email' => 'admin_lv2@weechat.com',
                 'name' => 'admin lv2',
                 'password' => '$2y$10$bJGmXuUkx2hfURc2/fNj9O0ViaKgpUGsqzZNHNL6/QFCx8yEhI/yS',
                 'phone' => '01656228580',
@@ -318,11 +315,10 @@ class UserController extends Controller
         }
 
 
-        $user_check = $this->repUser->getOneByField("email", 'client@weechat.com');
+        $user_check = $this->repUser->getOneByField("user_name", 'client');
         if(!$user_check){
             \App\Mongodb\User::create([
                 'authority' => '004',
-                'email' => 'client@weechat.com',
                 'name' => 'client',
                 'password' => '$2y$10$bJGmXuUkx2hfURc2/fNj9O0ViaKgpUGsqzZNHNL6/QFCx8yEhI/yS',
                 'phone' => '01656228581',

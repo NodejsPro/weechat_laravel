@@ -121,6 +121,15 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
+    public function getListByPhone($phones)
+    {
+        $model = new $this->model;
+        if(!empty($phones)){
+            $model = $model->whereIn('phone', $phones);
+        }
+        return $model->get();
+    }
+
     public function getAll($user_login, $offset = 0, $limit = 10)
     {
         $model = new $this->model;
@@ -292,5 +301,13 @@ class UserRepository extends BaseRepository
         $user->validate_token = $token;
         $user->save();
         return $user;
+    }
+
+    public function getUserByPhone($phone){
+        $model = new $this->model;
+        $model = $model->where('phone', $phone)
+            ->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->first();
+        return $model;
     }
 }
