@@ -70,8 +70,17 @@
 
                 socket.on('server_send_message', function (data) {
                     console.log('server_send_message', data);
-                    var user_send = $('<div>').html(data.user_id + ' send message: ' + data.message);
-                    $('.conversation-list').append(user_send);
+                    var member_name = data.member_name;
+                    if(member_name != void 0 && Array.isArray(member_name)){
+                        for(var i = 0; i < member_name.length; i++){
+                            if(member_name[i]['id'] == data.user_id){
+                                var user_send = $('<div>').html(member_name[i]['name'] + ' send message: ' + data.message);
+                                $('.conversation-list').append(user_send);
+                                return;
+                            }
+                        }
+                    }
+                    console.log('member empty');
                 });
             });
 
@@ -333,13 +342,11 @@
                     message = message.trim();
                     dataObj.message_type = '001';
                     dataObj.message = message;
+                    dataObj.room_id = room_id;
+                    dataObj.user_id = user_login_id;
                     // sendCrtData(room_id, user_id, dataObj);
-                    socket.emit('user_send_message', {
-                        room_id: room_id,
-                        user_id: user_id,
-                        message_type: '001',
-                        message: message,
-                    });
+                    console.log('user_send_message', dataObj);
+                    socket.emit('user_send_message', dataObj);
                     clearMessageSend();
                 }
             });
