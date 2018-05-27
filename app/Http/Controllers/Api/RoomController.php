@@ -103,11 +103,12 @@ class RoomController extends Controller
         $member = $inputs['member'];
         if(in_array($phone, $member)){
             $user = $this->repUser->getUserByPhone($phone);
-            if($user){
-                $user_member = $this->repUser->getListByPhone($member);
-                if(!empty($user_member)){
-
-                }
+            dd($user->contact);
+            dd(array_intersect($member, $user->contact));
+            if($user && !empty($user->contact) && !empty(array_intersect($member, $user->contact))){
+                $member_fix = array_intersect($member, $user->contact);
+                dd($member_fix);
+                $this->repRoom->store();
             }
         }
         return Response::json(array(

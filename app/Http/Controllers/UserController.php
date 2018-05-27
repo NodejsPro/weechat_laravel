@@ -64,7 +64,8 @@ class UserController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $contacts = $this->repUser->getFull(0, config('constants.per_page')[4]);
+        $user_id_except = [];
+        $contacts = $this->repUser->getFull($user_id_except, 0, config('constants.per_page')[4]);
         return view('user.create')->with([
             'users'             => null,
             'user_login'             => $user,
@@ -184,8 +185,8 @@ class UserController extends Controller
         $user_authority = config('constants.authority');
         if($user_edit && ($user->authority == $user_authority['super_admin'] || $user->id == $user_edit->created_id)){
             $user = Auth::user();
-            $contacts = $this->repUser->getFull(0, config('constants.per_page')[4]);
-            dd($contacts);
+            $user_id_except = [$user_edit->id];
+            $contacts = $this->repUser->getFull($user_id_except, 0, config('constants.per_page')[5]);
             return view('user.create')->with([
                 'user'              => $user_edit,
                 'users'             => null,

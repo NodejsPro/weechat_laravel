@@ -144,10 +144,12 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
-    public function getFull($offset = 0, $limit = 10){
+    public function getFull($id_except_arr, $offset = 0, $limit = 10){
         $model = new $this->model;
         $model = $model->where('confirm_flg', '<>', config('constants.active.disable'));
-        $model = $model->where('_id', '<>', Auth::user()->id);
+        if(!empty($id_except_arr)){
+            $model = $model->whereNotIn('_id', $id_except_arr);
+        }
         $model = $model->skip($offset)
             ->take($limit)
             ->orderBy('created_at', 'DESC');

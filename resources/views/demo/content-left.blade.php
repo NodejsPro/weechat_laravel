@@ -34,7 +34,7 @@
                                                 ?>
                                                 <p class="user_date">{{$date_format->format($date_format_str.' H:i:s')}}</p>
                                                 <div class="right_content pull-right">
-                                                    <span class="badge bg-important pull-left notification notification_{{$user->user_id}} {{(isset($user->unread_cnt) && $user->unread_cnt > 0)  ? '' : 'hide'}}">{{(isset($user->unread_cnt) && $user->unread_cnt > 0) ? $user->unread_cnt : ''}}</span>
+                                                    <span class="badge bg-important pull-left notification notification_{{$user->_id}} {{(isset($user->unread_cnt) && $user->unread_cnt > 0)  ? '' : 'hide'}}">{{(isset($user->unread_cnt) && $user->unread_cnt > 0) ? $user->unread_cnt : ''}}</span>
                                                     <div class="more_info_box pull-right">
                                                         <span class="more_info pull-right" data-toggle="popover"><i class="fa fa-info-circle" aria-hidden="true"></i></span>
                                                     </div>

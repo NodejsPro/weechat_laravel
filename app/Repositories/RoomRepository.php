@@ -30,43 +30,30 @@ class RoomRepository extends BaseRepository
      */
     public function store($inputs, $created_id)
     {
-        $user = new $this->model;
-        $user->password         = bcrypt($inputs['password']);
-        $user->email            = $inputs['email'];
-        $user->authority        = $inputs['authority'];
-        $user->created_id       = $created_id;
-        $this->save($user, $inputs);
+        $model = new $this->model;
+        $model->user_id = $created_id;
+        $this->save($model, $inputs);
 
-        return $user;
+        return $model;
     }
 
     /**
      * Save the User.
      *
-     * @param  App\User $user
+     * @param  App\User $model
      * @param  Array  $inputs
-     * @return void
+     * @return $model
      */
-    private function save($user, $inputs)
+    private function save($model, $inputs)
     {
         if(isset($inputs['name'])){
-            $user->name             = $inputs['name'];
+            $model->name = $inputs['name'];
         }
-        if(isset($inputs['user_name'])){
-            $user->user_name             = $inputs['user_name'];
+        if(isset($inputs['member'])){
+            $model->member = $inputs['member'];
         }
-        if(isset($inputs['phone'])){
-            $user->phone             = $inputs['phone'];
-        }
-        if(isset($inputs['avatar']) && !isset($inputs['avatar'])){
-            $user->avatar             = $inputs['avatar'];
-        }
-        if(isset($inputs['confirmation_token'])){
-            $user->confirmation_token = $inputs['confirmation_token'];
-        }
-        
-        $user->save();
-        return $user;
+        $model->save();
+        return $model;
     }
 
     /**

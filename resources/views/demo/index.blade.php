@@ -71,16 +71,33 @@
                 socket.on('server_send_message', function (data) {
                     console.log('server_send_message', data);
                     var member_name = data.member_name;
+                    $('.conversation_index .notification_' + user_id).html('0');
                     if(member_name != void 0 && Array.isArray(member_name)){
-                        for(var i = 0; i < member_name.length; i++){
-                            if(member_name[i]['id'] == data.user_id){
-                                var user_send = $('<div>').html(member_name[i]['name'] + ' send message: ' + data.message);
-                                $('.conversation-list').append(user_send);
-                                return;
+                        var user_chat_id = getUserChat(member_name);
+                        if(user_chat_id == user_id){
+                            var notification_current = $('.conversation_index .notification_' + user_id);
+                            notification_current.addClass('hide');
+                            for(var i = 0; i < member_name.length; i++){
+                                if(member_name[i]['id'] == data.user_id){
+                                    var user_send = $('<div>').html(member_name[i]['name'] + ' send message: ' + data.message);
+                                    $('.conversation-list').append(user_send);
+                                    return;
+                                }
+                            }
+                            console.log('member empty');
+                        }else{
+                            var notification_current = $('.conversation_index .notification_' + user_chat_id);
+                            notification_current.addClass('hide');
+                            if(notification_current.length){
+                                notification_current.removeClass('hide');
+                                var notification_number = 0;
+                                if(notification_current.html().trim().length > 0){
+                                    notification_number = parseInt(notification_current.html()) + 1;
+                                }
+                                notification_current.html(notification_number);
                             }
                         }
                     }
-                    console.log('member empty');
                 });
             });
 
@@ -116,6 +133,17 @@
                         getNotificationNewMessage(data);
                     }
                 }
+            }
+
+            function getUserChat(member){
+                var user_chat_id = null;
+                for(var i = 0; i < member.length; i++){
+                    if(member[i]['id'] != user_login_id){
+                        user_chat_id = member[i]['id'];
+                        break;
+                    }
+                }
+                return user_chat_id;
             }
 
             $(document).on('click', '.conversation_index .load_more_user', function (e) {
