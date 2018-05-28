@@ -125,15 +125,22 @@ class DemoController extends Controller
             $room = $this->repRoom->getRoomByMember($member);
             if($room){
                 $room_id = $room->id;
+                if(empty($member)){
+                    $member = $room->member;
+                }
             }
         }
-        $log = [];
+        $log = $member_name = [];
         if($room_id){
-            $log = $this->repLogMessage->getMessage($room_id, null, config('constants.log_message_limit'), $user->created_at);
+            $log = $this->repLogMessage->getMessage($room_id, config('constants.log_message_limit'));
+            $user_member = $this->repUser->getList($member, 0, config('constants.per_page.5'));
+            $member_name = $this->convertUserData($user_member);
         }
         return Response::json([
             'success' => true,
-            'log_messages' => $log
+            'log_messages' => $log,
+            'member_name' => $member_name,
+            'room_id' => $room_id
         ], 200);
     }
 

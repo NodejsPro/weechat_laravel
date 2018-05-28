@@ -128,7 +128,7 @@ class RoomRepository extends BaseRepository
 
     public function getRoomByMember($member){
         $model = new $this->model;
-        $model = $model->whereIn('member', $member);
+        $model = $model->where('member', 'all', $member);
         $model = $model->where('member', 'size', 2);
         return $model->first();
     }

@@ -4,6 +4,9 @@
 @section('styles')
     <link href="{{ mix('build/css/iCheck.css') }}" rel="stylesheet">
 @endsection
+@php
+$bot_picture = empty(Auth::user()->avatar) ? 'images/profile.png' : Auth::user()->avatar;
+@endphp
 @section('content')
 <div class="row conversation_index">
     <div class="col-md-12">
@@ -29,6 +32,12 @@
         </section>
     </div>
 </div>
+<div class="sample hidden">
+    <div class="user-profile-chat">
+        <img src="" class="img-user-profile" width="150" height="150"/>
+        <span class="name-user-profile"></span>
+    </div>
+</div>
 @endsection
 @section('scripts2')
     <script src="{{ mix('build/js/socket.io.js') }}"></script>
@@ -37,6 +46,7 @@
         'use strict';
         var default_timezone = '{{config('app.timezone')}}';
         var request_document_arr = new Object();
+        var user_profile = {};
         $(function (){
             var user_id,
                 user_login_id='{{Auth::user()->id}}',
@@ -79,8 +89,8 @@
                             notification_current.addClass('hide');
                             for(var i = 0; i < member_name.length; i++){
                                 if(member_name[i]['id'] == data.user_id){
-                                    var user_send = $('<div>').html(member_name[i]['name'] + ' send message: ' + data.message);
-                                    $('.conversation-list').append(user_send);
+                                    var avatar = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTzaLMnex1QwV83TBQgxLTaoDAQlFswsYy62L3mO4Su-CMkk3jX';
+                                    setMessage(member_name[i]['name'], avatar, data.user_id, data.message, false);
                                     return;
                                 }
                             }
@@ -583,20 +593,42 @@
                                     log_last_time = data.log_last_time;
                                 }
                                 var data_log_message;
+                                var room_id_current = data.room_id;
+                                var member_name = data.member_name;
                                 if(appendHead != void 0 && appendHead){
                                     data_log_message = data.log_messages;
                                 }else{
                                     data_log_message = data.log_messages.reverse();
                                 }
+                                if(!isEmpty(room_id_current) && !isEmpty(member_name)){
+                                    user_profile[room_id_current] = {};
+                                    for(var i = 0; i < member_name.length ; i++){
+                                        var member_item = member_name[i];
+                                        user_profile[room_id_current][member_item['id']] = {};
+                                        user_profile[room_id_current][member_item['id']]['user_name'] = member_item['user_name'];
+                                        user_profile[room_id_current][member_item['id']]['avatar'] = member_item['avatar'];
+                                    }
+                                }
                                 if(data_log_message.length != 0){
                                     message_limit_flg = true;
                                 }
                                 $.each(data_log_message, function(index, msg_data) {
-                                    if(msg_data != void 0){
-                                        if(index >= (data.log_messages.length - 1)) {
-                                            last_date = msg_data.created_at;
-                                        }
-                                    }
+                                    console.log(index, msg_data);
+                                    var user_name = user_profile[msg_data['room_id']][msg_data['user_id']]['user_name'];
+                                    var avatar = user_profile[msg_data['room_id']][msg_data['user_id']]['avatar'];
+                                    console.log('23123123123');
+                                    setMessage(user_name, avatar, msg_data.user_id, msg_data.message, false);
+                                    // var message_clone;
+                                    // if(msg_data.user_id == user_login_id){
+                                    //     message_clone = $('.template_message .bot_chat').clone();
+                                    // }else{
+                                    //     message_clone = $('.template_message .user_chat').clone();
+                                    //     message_clone.find('.chat-avatar .user_avatar').attr('src', user_profile[msg_data['room_id']][msg_data['user_id']]['avatar'])
+                                    // }
+                                    // message_clone.find('.text_message').html(msg_data.message);
+                                    // $('.conversation_index .chat_content .conversation-list').append(message_clone);
+                                    // var user_send = $('<div>').html(member_name[i]['name'] + ' send message: ' + data.message);
+                                    // $('.conversation-list').append(user_send);
                                 });
                                 $('.conversation_index .chat_content').removeClass('hidden');
                             }
@@ -867,6 +899,23 @@
                 box_chat.append(conversation_file);
 
                 return box_chat;
+            }
+
+            function setMessage(name, avatar, user_id, message, appendHead) {
+                var message_clone;
+                if(user_id == user_login_id){
+                    message_clone = $('.template_message .bot_chat').clone();
+                }else{
+                    message_clone = $('.template_message .user_chat').clone();
+                    message_clone.find('.user_avatar').attr('src', avatar)
+                }
+                message_clone.find('.text_message').html(message);
+                message_clone.find('.user_name').html(name);
+                if(isEmpty(appendHead) && appendHead){
+                    $('.conversation_index .chat_content .conversation-list').prepend(message_clone);
+                }else{
+                    $('.conversation_index .chat_content .conversation-list').append(message_clone);
+                }
             }
 
             function viewGeneric(box_chat, message_data) {
@@ -1301,6 +1350,14 @@
             if(max_width > 300){
                 borderChat.width(max_width)
             }
+        }
+
+        function isEmpty(data) {
+            var result = false;
+            if(data == void 0 || data == '' || (Array.isArray(data) && data.length == 0)){
+                result = true;
+            }
+            return result;
         }
 
 
