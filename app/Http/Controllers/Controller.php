@@ -39,7 +39,8 @@ class Controller extends BaseController
             foreach ($room_data as $item){
                 $result[] = [
                     'name' => $item->name,
-                    'id' => $item->_id
+                    'id' => $item->_id,
+                    'member' => $item->member
                 ];
             }
         }

@@ -312,4 +312,12 @@ class UserRepository extends BaseRepository
         $model = $model->first();
         return $model;
     }
+
+    public function getUserById($user_id){
+        $model = new $this->model;
+        $model = $model->where('_id', $user_id)
+            ->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->first();
+        return $model;
+    }
 }

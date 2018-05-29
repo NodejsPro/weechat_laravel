@@ -32,6 +32,7 @@ class RoomRepository extends BaseRepository
     {
         $model = new $this->model;
         $model->user_id = $created_id;
+        $model->room_type = $inputs['room_type'];
         $this->save($model, $inputs);
 
         return $model;
@@ -59,27 +60,12 @@ class RoomRepository extends BaseRepository
     /**
      * Update a user.
      *
-     * @return void
+     * @return $model
      */
-    public function update($user, $inputs)
+    public function update($room, $inputs)
     {
-        if(isset($inputs['password'])){
-            $user->password     = bcrypt($inputs['password']);
-        }
-        if(isset($inputs['email'])){
-            $user->email     = $inputs['email'];
-        }
-        if (isset($inputs['authority'])) {
-            $user->authority  = $inputs['authority'];
-        }
-        if (isset($inputs['plan'])) {
-            $user->plan  = $inputs['plan'];
-        }
-        $user_authority = config('constants.authority');
-        if(isset($inputs['created_id']) && Auth::user()->authority == $user_authority['admin'] && $user->authority == $user_authority['client']){
-            $user->created_id = $inputs['created_id'];
-        }
-        $this->save($user, $inputs);
+        $model = $this->save($room, $inputs);
+        return $model;
     }
 
     public function getAll($room_arr, $offset = 0, $limit = 10)
@@ -126,10 +112,15 @@ class RoomRepository extends BaseRepository
         $model = $model->whereIn('member', $member_arr);
     }
 
-    public function getRoomByMember($member){
+    public function getRoomByMember($member, $room_type){
         $model = new $this->model;
         $model = $model->where('member', 'all', $member);
-        $model = $model->where('member', 'size', 2);
+        $model = $model->where('room_type', $room_type);
+        if($room_type == config('constants.room_type.one_one')){
+            $model = $model->where('member', 'size', 2);
+        }else{
+            $model = $model->where('member', 'size', count($member));
+        }
         return $model->first();
     }
 

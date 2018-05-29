@@ -87,10 +87,12 @@ class DemoController extends Controller
         $inputs = $request->all();
         $user_id = @$inputs['user_id'];
         $room_id = @$inputs['room_id'];
+        $room_type = @$inputs['room_type'];
         $member = $request->get('member', []);
         $valid_arr = array(
             'user_id' => 'required',
             'member' => 'required|Array',
+            'room_type' => 'required|in:' . implode(',' , config('constants.room_type')),
             'room_id' => 'required',
         );
         if(isset($room_id)){
@@ -122,7 +124,7 @@ class DemoController extends Controller
                     'msg' => 'Room valid'
                 ], 422);
             }
-            $room = $this->repRoom->getRoomByMember($member);
+            $room = $this->repRoom->getRoomByMember($member, $room_type);
             if($room){
                 $room_id = $room->id;
                 if(empty($member)){

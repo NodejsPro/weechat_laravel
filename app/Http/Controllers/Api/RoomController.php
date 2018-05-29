@@ -89,7 +89,7 @@ class RoomController extends Controller
         $validator = Validator::make(
             $inputs,
             array(
-                'phone' => 'required',
+                'user_id' => 'required',
                 'member' => 'required|array',
             )
         );
@@ -99,24 +99,95 @@ class RoomController extends Controller
                 'msg' => $validator->errors()->getMessages()
             ], 422);
         }
-        $phone = $inputs['phone'];
+        $user_id = $inputs['user_id'];
         $member = $inputs['member'];
-        if(in_array($phone, $member)){
-            $user = $this->repUser->getUserByPhone($phone);
-            dd($user->contact);
-            dd(array_intersect($member, $user->contact));
+        $msg = trans('message.phone_not_in_member');
+        if(in_array($user_id, $member)){
+            $user = $this->repUser->getUserById($user_id);
             if($user && !empty($user->contact) && !empty(array_intersect($member, $user->contact))){
                 $member_fix = array_intersect($member, $user->contact);
-                dd($member_fix);
-                $this->repRoom->store();
+                $inputs['member'] = array_merge($member_fix, [$user_id]);
+                $member_name = $this->repUser->getList($inputs['member'], 0, config('constants.per_page.5'));
+                $name = [];
+                foreach ($member_name as $item_name){
+                    $name[] = $item_name->user_name;
+                }
+                $inputs['name'] = implode(',', $name);
+                $inputs['room_type'] = config('constants.room_type.one_many');
+                $room = $this->repRoom->store($inputs, $user->id);
+                return Response::json(array(
+                    'success' => true,
+                    'room' => $this->convertRoomData([$room])
+                ), 200);
             }
+            $msg = trans('message.some_phone_not_exists_or_not_contact');
         }
         return Response::json(array(
-                'success' => false
+                'success' => false,
+                'msg' => $msg
             ), 400);
     }
 
     public function show(){
 
+    }
+
+    public function update(Request $request){
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'user_id' => 'required',
+                'room_id' => 'required',
+                'member' => 'array',
+//                'room_name' => 'array',
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $user_id = $inputs['user_id'];
+        $room_id = $inputs['room_id'];
+        $member = @$inputs['member'];
+        $msg = trans('message.phone_not_in_member');
+        if(empty($member) || (!empty($member) && in_array($user_id, $member))){
+            $room = $this->repRoom->getById($room_id);
+            if($room && $this->validateMember($member, $room)){
+                $user_room = $this->repUser->getById($room->user_id);
+                if($user_room){
+                    $member_fix = array_intersect($member, $user_room->contact);
+                    $inputs['member'] = array_merge($member_fix, [$user_id]);
+                    $user = $this->repUser->getUserById($user_id);
+                    if($user && ($user_room->id == $user->id || $user_room->created_id == $user->id || $user->authority == config('constants.authority.super_admin'))){
+                        $inputs['name'] = $inputs['room_name'];
+                        $room = $this->repRoom->update($room, $inputs);
+                        return Response::json(array(
+                            'success' => true,
+                            'room' => $this->convertRoomData([$room])
+                        ), 200);
+                    }
+                }
+            }
+            $msg = trans('message.room_not_in_member');
+        }
+        return Response::json(array(
+            'success' => false,
+            'msg' => $msg
+        ), 400);
+    }
+
+    public function validateMember($member, $room){
+        if(empty($member)){
+            return true;
+        }
+        $result = false;
+        $room_type_constants = config('constants.room_type');
+        if($room->room_type == $room_type_constants['one_many']){
+            $result = true;
+        }
+        return $result;
     }
 }
