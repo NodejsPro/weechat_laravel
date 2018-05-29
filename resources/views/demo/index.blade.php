@@ -582,7 +582,8 @@ $bot_picture = empty(Auth::user()->avatar) ? 'images/profile.png' : Auth::user()
                             "_token": "{{ csrf_token() }}",
                             "user_id" : user_id,
                             'log_last_time': log_last_time,
-                            "member" : [user_login_id, user_id]
+                            "member" : [user_login_id, user_id],
+                            "room_type" : '001',
                         },
                         type: 'POST',
                         success: function(data) {
