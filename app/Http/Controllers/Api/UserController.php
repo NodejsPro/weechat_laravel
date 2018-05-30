@@ -104,6 +104,47 @@ class UserController extends Controller
                 ), 400);
     }
 
+    public function userLoginRemember(Request $request){
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'phone' => 'required',
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $phone = $inputs['phone'];
+        $header = $request->header();
+        $validate_token_header = $header['validate-token'][0];
+        $user = $this->repUser->getUserByField('phone', $phone);
+        if($user){
+            if($user->validate_token_header != $validate_token_header || !$user->is_remember){
+                return Response::json(
+                    array(
+                        'success' => false,
+                        'msg' => trans('user.validate_token_expire')
+                    ), 400);
+            }
+            $user_arr = [$user];
+            $data = [
+                'success' => true,
+                'data' => $this->convertUserData($user_arr),
+                'validate_token' => $user->validate_token
+            ];
+            return Response::json($data, 200);
+        }
+        return Response::json(
+            array(
+                'success' => false,
+                'msg' => trans('user.msg_login_fail')
+            ), 400);
+    }
+
     /**
      * Hàm chức năng xác thực người dùng qua sms sau khi login
      *

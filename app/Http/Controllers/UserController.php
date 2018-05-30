@@ -157,6 +157,8 @@ class UserController extends Controller
         $user = Auth::user();
         $avatar = $request->file('avatar');
         $inputs['created_id'] = Auth::user()->id;
+        $active = config('constants.active');
+        $inputs['is_remember'] = isset($inputs['is_remember']) ? $inputs['is_remember'] : $active['enable'];
         if(!empty($inputs['user_name']) && !empty($inputs['password'])){
             $inputs['confirm_flg'] = config('constants.active.enable');
         }else{

@@ -34,6 +34,7 @@ class UserRepository extends BaseRepository
         $user->phone            = $inputs['phone'];
         $user->authority        = $inputs['authority'];
         $user->created_id       = $created_id;
+        $user->is_remember       = $inputs['is_remember'];
         $user = $this->save($user, $inputs);
 
         return $user;
@@ -43,7 +44,9 @@ class UserRepository extends BaseRepository
         $user->user_name = $inputs['user_name'];
         $user->password = $inputs['password'];
         $user->confirm_flg = $inputs['confirm_flg'];
+        $user->is_remember = $inputs['is_remember'];
         $user->save();
+        return $user;
     }
 
     /**
