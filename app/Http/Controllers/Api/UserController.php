@@ -109,11 +109,12 @@ class UserController extends Controller
      *
      * */
     public function authentication(Request $request){
+        $header = $request->header();
+        $validate_token = $header['validate-token'][0];
         $inputs = $request->all();
         $validator = Validator::make(
             $inputs,
             array(
-                'phone' => 'required',
                 'code' => 'required'
             )
         );
@@ -123,10 +124,9 @@ class UserController extends Controller
                 'msg' => $validator->errors()->getMessages()
             ], 422);
         }
-        $phone_number = $inputs['phone'];
         $code = $inputs['code'];
-        $user = $this->repUser->getUserCode($phone_number, $code);
-        if($user){
+        $user = $this->repUser->getUserByField('validate_token', $validate_token);
+        if($user && $user->code == $code){
             $inputs = [
                 'code' => '',
                 'is_login' => true,
