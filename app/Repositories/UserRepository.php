@@ -34,7 +34,7 @@ class UserRepository extends BaseRepository
         $user->phone            = $inputs['phone'];
         $user->authority        = $inputs['authority'];
         $user->created_id       = $created_id;
-        $user->is_remember       = $inputs['is_remember'];
+        $user->remember_flg       = $inputs['remember_flg'];
         $user = $this->save($user, $inputs);
 
         return $user;
@@ -44,7 +44,7 @@ class UserRepository extends BaseRepository
         $user->user_name = $inputs['user_name'];
         $user->password = $inputs['password'];
         $user->confirm_flg = $inputs['confirm_flg'];
-        $user->is_remember = $inputs['is_remember'];
+        $user->remember_flg = $inputs['remember_flg'];
         $user->save();
         return $user;
     }
@@ -61,7 +61,9 @@ class UserRepository extends BaseRepository
         if(isset($inputs['user_name'])){
             $user->user_name = $inputs['user_name'];
         }
-
+        if(isset($inputs['login_flg'])){
+            $user->login_flg = $inputs['login_flg'];
+        }
         if(isset($inputs['confirm_flg'])){
             $user->confirm_flg = $inputs['confirm_flg'];
         }
@@ -303,8 +305,8 @@ class UserRepository extends BaseRepository
         if(isset($inputs['validate_token'])){
             $user->validate_token = $inputs['validate_token'];
         }
-        if(isset($inputs['is_login'])){
-            $user->is_login = $inputs['is_login'];
+        if(isset($inputs['login_flg'])){
+            $user->login_flg = $inputs['login_flg'];
         }
         $user->save();
         return $user;
@@ -329,6 +331,15 @@ class UserRepository extends BaseRepository
         $model = $model->where('_id', $user_id)
             ->where('confirm_flg', config('constants.active.enable'));
         $model = $model->first();
+        return $model;
+    }
+
+    public function getDataUpdateByDate($date_time){
+        $model = new $this->model;
+        $model = $model->where('updated_at', '<=', $date_time)
+            ->where('remember_flg', '!=', config('constants.active.disable'))
+            ->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->get();
         return $model;
     }
 }

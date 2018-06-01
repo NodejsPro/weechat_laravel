@@ -95,6 +95,7 @@ class UserController extends Controller
                 'success' => true,
                 'validate_token' => $validate_token
             ];
+            $this->sendSMS($user->phone, $code);
             return Response::json($data, 200);
         }
         return Response::json(
@@ -123,7 +124,7 @@ class UserController extends Controller
         $validate_token_header = $header['validate-token'][0];
         $user = $this->repUser->getUserByField('phone', $phone);
         if($user){
-            if($user->validate_token_header != $validate_token_header || !$user->is_remember){
+            if($user->validate_token_header != $validate_token_header || !$user->remember_flg){
                 return Response::json(
                     array(
                         'success' => false,
@@ -131,6 +132,8 @@ class UserController extends Controller
                     ), 400);
             }
             $user_arr = [$user];
+            $inputs['login_flg'] = config('constants.active.enable');
+            $this->repUser->update($user, $inputs);
             $data = [
                 'success' => true,
                 'data' => $this->convertUserData($user_arr),
@@ -170,7 +173,7 @@ class UserController extends Controller
         if($user && $user->code == $code){
             $inputs = [
                 'code' => '',
-                'is_login' => true,
+                'login_flg' => true,
             ];
             $user = $this->repUser->updateStatus($user, $inputs);
             $user_arr = [$user];

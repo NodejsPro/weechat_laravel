@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use GuzzleHttp\Client;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -25,7 +26,7 @@ class Controller extends BaseController
                     'id' => $user->id,
                     'phone' => $user->phone,
                     'avatar' => $user->avatar ? asset($user->avatar) : asset('images/profile.png'),
-                    'is_login' => isset($user->is_login) && $user->is_login ? $user->is_login : false,
+                    'login_flg' => isset($user->login_flg) && $user->login_flg ? $user->login_flg : false,
                     'user_name' => $user->user_name,
                 ];
             }
@@ -60,5 +61,56 @@ class Controller extends BaseController
             }
             $file_save->orientate()->save($path);
         }
+    }
+
+    public function sendRequest($url, $method, $header = [], $body = [], $param=[]){
+        $result = [
+          'success' => false,
+        ];
+        try{
+            $client = new Client();
+            $params = [];
+            if(!empty($header) && is_array($header)){
+                $params['headers'] = $header;
+            }
+            if(!empty($body) && is_array($body)){
+                $params['form_params'] = $body;
+            }
+            $params = array_merge($params, $param);
+            $res = $client->$method($url, $params);
+            $result['data'] = $res->getBody();
+            $result['response'] = json_decode($res->getBody(), true);
+            if($res->getStatusCode() == 200) {
+                Log::info('success');
+                $result['success'] = true;
+            } else {
+                Log::info('false');
+                $result['code'] = $res->getStatusCode();
+            }
+        }catch (\Exception $e) {
+            $result['code'] = $e->getCode();
+            $body = json_decode($e->getResponse()->getBody(true));
+            $message = isset($body->message) ? $body->message : ((isset($body->error) && isset($body->error->message)) ? $body->error->message : trans('message.common_error'));
+            $result['error'] = $message;
+            Log::info(print_r($body, true));
+        }
+        Log::info($result);
+        return $result;
+    }
+
+    public function sendSMS($phone, $code){
+        $url = config('sms.request.send_sms');
+        $data_replace = [
+            ':host' => config('sms.host'),
+            ':content' => trans('sms.send_message', ['code' => $code]),
+            ':phone' => $phone,
+            ':key' => config('sms.key'),
+        ];
+        foreach ($data_replace as $key => $value){
+            $url = str_replace($key, $value, $url);
+        }
+        Log::info('url: ' . $url);
+        $result = $this->sendRequest($url, 'get');
+        return $result;
     }
 }
