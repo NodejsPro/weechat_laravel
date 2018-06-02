@@ -124,11 +124,12 @@ class UserController extends Controller
         $validate_token_header = $header['validate-token'][0];
         $user = $this->repUser->getUserByField('phone', $phone);
         if($user){
-            if($user->validate_token_header != $validate_token_header || !$user->remember_flg){
+            if($user->validate_token != $validate_token_header || !$user->remember_flg){
                 return Response::json(
                     array(
                         'success' => false,
-                        'msg' => trans('user.validate_token_expire')
+                        'msg' => trans('user.validate_token_expire'),
+                        'login_flg' => config('constants.active.enable')
                     ), 400);
             }
             $user_arr = [$user];
