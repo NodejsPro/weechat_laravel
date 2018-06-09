@@ -64,8 +64,15 @@ class UserController extends Controller
     public function create()
     {
         $user = Auth::user();
-        $user_id_except = [];
-        $contacts = $this->repUser->getFull($user_id_except, 0, config('constants.per_page')[4]);
+        $user_contact = $this->repUser->getAllByField('created_id', $user->id);
+        $user_id_arr = [];
+        foreach($user_contact as $item){
+            $user_id_arr[] = $item->id;
+        }
+        $user_edit_contact = !empty($user->contact) ? $user->contact : [];
+        $user_id_arr = array_merge($user_id_arr, $user_edit_contact);
+        $user_id_arr = array_unique($user_id_arr);
+        $contacts = $this->repUser->getContact($user_id_arr, 0, config('constants.per_page.5'));
         return view('user.create')->with([
             'users'             => null,
             'user_login'             => $user,
@@ -153,7 +160,7 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         $inputs = $request->all();
-        $inputs['contact'] = $this->checkContact(@$inputs['contact']);
+        $contact_list = $this->checkContact(@$inputs['contact']);
         $user = Auth::user();
         $avatar = $request->file('avatar');
         $inputs['created_id'] = Auth::user()->id;
@@ -174,7 +181,8 @@ class UserController extends Controller
             $inputs['avatar'] = $path;
         }
         try{
-            $this->repUser->store($inputs, $user->id);
+            $user = $this->repUser->store($inputs, $user->id);
+            $this->updateContact($contact_list, $user);
             return redirect('user')->with('alert-success', trans('message.save_success', ['name' => trans('default.user')]));
         } catch(\Exception $e){
             return redirect()->back()->with('alert-danger', trans('message.save_error', ['name' => trans('default.user')]));
@@ -188,8 +196,17 @@ class UserController extends Controller
         $user_authority = config('constants.authority');
         if($user_edit && ($user->authority == $user_authority['super_admin'] || $user->id == $user_edit->created_id)){
             $user = Auth::user();
-            $user_id_except = [$user_edit->id];
-            $contacts = $this->repUser->getFull($user_id_except, 0, config('constants.per_page')[5]);
+            $user_contact = $this->repUser->getAllByField('created_id', $user_edit->id);
+            $user_id_arr = [];
+            foreach($user_contact as $item){
+                if($item->id != $id){
+                    $user_id_arr[] = $item->id;
+                }
+            }
+            $user_edit_contact = !empty($user_edit->contact) ? $user_edit->contact : [];
+            $user_id_arr = array_merge($user_id_arr, $user_edit_contact);
+            $user_id_arr = array_unique($user_id_arr);
+            $contacts = $this->repUser->getContact($user_id_arr, 0, config('constants.per_page.5'));
             return view('user.create')->with([
                 'user'              => $user_edit,
                 'users'             => null,
@@ -208,9 +225,10 @@ class UserController extends Controller
         try{
             $edit_user = $this->repUser->getById($id);
             $user_authority = config('constants.authority');
+            $contact_list = [];
             if($edit_user && ($user->authority == $user_authority['super_admin'] || $user->id == $edit_user->created_id)){
                 if(!empty($inputs['contact'])){
-                    $inputs['contact'] = $this->checkContact(@$inputs['contact']);
+                    $contact_list = $this->checkContact(@$inputs['contact']);
                 }
                 $avatar = $request->file('avatar');
                 if(!empty($avatar)){
@@ -219,7 +237,8 @@ class UserController extends Controller
                     $this->resizeImage($this->file_manager, $avatar, config('constants.size_image'), public_path($path));
                     $inputs['avatar'] = $path;
                 }
-                $this->repUser->update($edit_user, $inputs);
+                $edit_user = $this->repUser->update($edit_user, $inputs);
+                $this->updateContact($contact_list, $edit_user);
                 return redirect('user')->with('alert-success', trans('message.update_success', ['name' => trans('default.user')]));
             }
             abort('404');
@@ -283,24 +302,44 @@ class UserController extends Controller
         try{
             $contact = json_decode($data, true);
             $contact = array_values($contact);
-            foreach ($contact as $item){
-                $user = $this->repUser->getById($item);
-                if($user){
-                    $result[] = $item;
-                }
-            }
+            //check all contact
+            $result = $this->repUser->getList($contact, 0, config('constants.per_page.5'));
         }catch(\Exception $e){
             Log::info(trans('message.user_contact_error'));
         }
         return $result;
     }
 
+    public function updateContact($user_contact_list, $user_edit){
+        // Neu user edit co 1 contact trong user user_contact_list
+        // thì user đó cũng phải có contact của user edit
+        $user_edit_id = $user_edit->id;
+        $contact_arr = [];
+        foreach($user_contact_list as $user){
+            $contact = !empty($user->contact) ? $user->contact : [];
+            if(!in_array($user_edit_id, $contact)){
+                $contact[] = $user_edit_id;
+                $this->repUser->updateContact($user, $contact);
+            }
+            $contact_arr[] = $user->id;
+        }
+        $this->repUser->updateContact($user_edit, $contact_arr);
+    }
+
     public function accountEdit()
     {
         $user = Auth::user();
-        $current_lang = Lang::locale();
+        $contacts = [];
+        if(!empty($user->contact)){
+            $contacts = $this->repUser->getContact($user->contact, 0, config('constants.per_page.5'));
+        }
+        $contact_name = [];
+        foreach($contacts as $contact){
+            $contact_name[] = $contact->user_name;
+        }
         return view('user.my_edit')->with([
             'user' => $user,
+            'contact_name' => implode(', ', $contact_name),
         ]);
     }
 

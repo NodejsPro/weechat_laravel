@@ -18,17 +18,21 @@ class Controller extends BaseController
     	return bin2hex(openssl_random_pseudo_bytes(24));
     }
 
-    public function convertUserData($user_data){
+    public function convertUserData($user_data, $return_room_flg = false){
         $result = [];
         if(!empty($user_data)){
             foreach ($user_data as $user){
-                $result[] = [
+                $user_arr = [
                     'id' => $user->id,
                     'phone' => $user->phone,
                     'avatar' => $user->avatar ? asset($user->avatar) : asset('images/profile.png'),
                     'login_flg' => isset($user->login_flg) && $user->login_flg ? $user->login_flg : false,
                     'user_name' => $user->user_name,
                 ];
+                if($return_room_flg){
+                    $room = $this->repRoom->getByUserID($user->id);
+                }
+                $result[] = $user_arr;
             }
         }
         return $result;

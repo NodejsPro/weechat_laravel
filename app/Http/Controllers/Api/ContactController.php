@@ -12,6 +12,7 @@ use App\Repositories\ContactRepository;
 use App\Repositories\EmbotPlanRepository;
 use App\Repositories\MasterRepository;
 use App\Repositories\PlanRepository;
+use App\Repositories\RoomRepository;
 use App\Repositories\UserMongoRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -35,14 +36,18 @@ class ContactController extends Controller
     protected $repUser;
     protected $repMaster;
 	protected $repContact;
+	protected $repRoom;
 
     public function __construct(
         UserRepository $user,
-        ContactRepository $contact
+        ContactRepository $contact,
+        RoomRepository $room
     ){
         $this->repUser = $user;
         $this->repContact = $contact;
+        $this->repRoom = $room;
     }
+
     /**
      * Display a listing of the resource.
      *

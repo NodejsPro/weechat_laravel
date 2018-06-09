@@ -86,7 +86,7 @@ class UserRepository extends BaseRepository
     /**
      * Update a user.
      *
-     * @return void
+     * @return $user
      */
     public function update($user, $inputs)
     {
@@ -97,6 +97,7 @@ class UserRepository extends BaseRepository
             $user->authority  = $inputs['authority'];
         }
         $this->save($user, $inputs);
+        return $user;
     }
 
     public function updateAccount($user, $inputs)
@@ -106,6 +107,11 @@ class UserRepository extends BaseRepository
         if(isset($inputs['password'])){
             $user->password = bcrypt($inputs['password']);
         }
+        $user->save();
+    }
+
+    public function updateContact($user, $contact){
+        $user->contact = $contact;
         $user->save();
     }
 
@@ -161,9 +167,11 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
-    public function getContact($contact, $offset = 0, $limit = 10){
+    public function getContact($contact, $offset = 0, $limit = 10, $confirm_flg = null){
         $model = new $this->model;
-        $model = $model->where('confirm_flg', '<>', config('constants.active.disable'));
+        if(isset($confirm_flg)){
+            $model = $model->where('confirm_flg', '<>', config('constants.active.disable'));
+        }
         $model = $model->whereIn('_id', $contact);
         $model = $model->skip($offset)
             ->take($limit)
