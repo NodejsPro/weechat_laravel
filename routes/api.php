@@ -31,4 +31,5 @@ Route::group(['middleware' => ['authentication.api']], function () {
 });
 
 Route::get('user/userTest', ['uses' => 'Api\UserController@userTest']);
+Route::post('user/fileUpload', ['uses' => 'Api\UserController@fileUpload']);
 Route::any('test', 'Api\ApiController@test');

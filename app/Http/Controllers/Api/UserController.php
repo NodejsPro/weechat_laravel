@@ -467,6 +467,7 @@ class UserController extends Controller
         header('Access-Control-Allow-Origin: *');
         $user_id = $inputs['user_id'];
         $user = $this->repUser->getById($user_id);
+        $msg = trans("message.common_error");
         if ($user) {
             if(isset($inputs['file']) && $_FILES['file']) {
                 $upload_storage = $file_config['file_path_base'] . DIRECTORY_SEPARATOR . $file_config['file_path_client'] . DIRECTORY_SEPARATOR. $user_id . DIRECTORY_SEPARATOR;
@@ -488,11 +489,15 @@ class UserController extends Controller
                         'file_upload' => $data
                     ), 200);
                 }
+            }else{
+                $msg = trans('user.file_miss');
             }
+        }else{
+            $msg = trans('user_not_exits');
         }
         return Response::json(array(
             'success' => false,
-            'errors' => trans("message.common_error")
+            'errors' => $msg
         ), 400);
     }
 
