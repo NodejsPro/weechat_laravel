@@ -63,6 +63,23 @@ class Controller extends BaseController
         }
     }
 
+    public function uploadFile($file_manage, $file, $path){
+        if(!empty($file)){
+            $file_save = $file_manage->make($file);
+            $file_save->save($path);
+            return true;
+        }
+        return false;
+    }
+
+    public function createFolderLocal($folder_name_arr){
+        foreach ($folder_name_arr as $folder){
+            if(!file_exists(public_path($folder))){
+                mkdir(public_path($folder));
+            }
+        }
+    }
+
     public function sendRequest($url, $method, $header = [], $body = [], $param=[]){
         $result = [
           'success' => false,

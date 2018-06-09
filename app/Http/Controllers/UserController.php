@@ -168,7 +168,8 @@ class UserController extends Controller
             $inputs['avatar'] = '/images/profile.png';
         }else{
             $extension_file_upload = $avatar->getClientOriginalExtension();
-            $path = 'uploads/' . uniqid().'.'.$extension_file_upload;
+            $file_config = config('constants.file_upload');
+            $path = $file_config['file_path_base'] . DIRECTORY_SEPARATOR . $file_config['file_path_profile'] . DIRECTORY_SEPARATOR . uniqid().'.'.$extension_file_upload;
             $this->resizeImage($this->file_manager, $avatar, config('constants.size_image'), public_path($path));
             $inputs['avatar'] = $path;
         }

@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cookie;
+use Intervention\Image\ImageManager;
 use Jenssegers\Mongodb\Auth\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -36,12 +37,13 @@ class UserController extends Controller
 	protected $repPlan;
     protected $repConnect;
     protected $repConnectPage;
-    protected $repEmbotPlan;
+    protected $file_manager;
 
     public function __construct(
         UserRepository $user
     ){
         $this->repUser = $user;
+        $this->file_manager = new ImageManager(array('driver' => 'gd'));
         $this->middleware('authentication.api', ['except' => ['userLogin', 'create', 'checkPhone', 'userTest']]);
     }
     /**
@@ -443,6 +445,55 @@ class UserController extends Controller
 
     public function show(){
 
+    }
+
+    protected function fileUpload(Request $request)
+    {
+        $inputs = $request->all();
+        $file_config = config('constants.file_upload');
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'file' => 'required|mimes:'. implode(',', $file_config['file_type']).'|max:' . $file_config['file_size'],
+                'user_id' => 'required',
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        header('Access-Control-Allow-Origin: *');
+        $user_id = $inputs['user_id'];
+        $user = $this->repUser->getById($user_id);
+        if ($user) {
+            if(isset($inputs['file']) && $_FILES['file']) {
+                $upload_storage = $file_config['file_path_base'] . DIRECTORY_SEPARATOR . $file_config['file_path_client'] . DIRECTORY_SEPARATOR. $user_id . DIRECTORY_SEPARATOR;
+                $file = $inputs['file'];
+                $file_name_origin = @$_FILES['file']['name']; //[file_name1.jpg, file_name2.jpg,...]
+                $file_info = pathinfo($file_name_origin);
+                $file_extension = @$file_info['extension'];
+                $file_name = uniqid() . time() . '.' . $file_extension;
+                $this->createFolderLocal([$upload_storage]);
+                $result = $this->uploadFile($this->file_manager, $file, public_path($upload_storage . $file_name));
+                if($result){
+                    $data = [
+                        'path' => url($upload_storage . $file_name),
+                        'name' => $file_name,
+                        'name_origin' => $file_info['basename'],
+                    ];
+                    return Response::json(array(
+                        'success' => true,
+                        'file_upload' => $data
+                    ), 200);
+                }
+            }
+        }
+        return Response::json(array(
+            'success' => false,
+            'errors' => trans("message.common_error")
+        ), 400);
     }
 
     public function checkRequest($request){

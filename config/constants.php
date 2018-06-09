@@ -26,5 +26,13 @@ return [
       'one_one' => '001',
       'one_many' => '002',
     ],
+    'file_upload' =>[
+        'file_type' => ['png', 'jpg', 'jpeg', 'bmp', 'gif', 'pdf', 'webm', 'mp4', 'ogv'],
+        'file_size' => 10000,// 10MB
+        'file_path_client' => 'client',
+        'file_path_profile' => 'profile',
+        'file_path_base' => 'uploads',
+    ],
+    'path_upload' => 'uploads',
     'log_message_limit' => 100,
 ];
