@@ -93,6 +93,14 @@
                 scrollX: true,
                 destroy: true
             });
+
+            $(document).on('input change', '#inputSearch', function (event) {
+                if(event.type == 'input') {
+                    console.log($(this).val());
+                    var get_url = '{!! route('user.list',[]) !!}?keyword=' + $(this).val();
+                    global_datatable.ajax.url(get_url).load();
+                }
+            });
         });
     </script>
 @endsection

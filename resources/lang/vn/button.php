@@ -84,4 +84,5 @@ return [
     'read' => 'Đọc',
     'reread' => 'Đọc lại',
     'default' => 'Mặc định',
+    'room_list' => 'Danh sách nhóm',
 ];

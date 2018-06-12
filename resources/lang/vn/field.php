@@ -211,4 +211,6 @@ return [
     'invoice_action' => 'Hóa đơn',
     'design_type' => 'Kiểu thiết kế',
     'sns_type_all' => 'Tất cả',
+    'phone' => 'Số điện thoại',
+    'contact' => 'Danh bạ',
 ];

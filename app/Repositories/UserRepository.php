@@ -141,9 +141,15 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
-    public function getAll($user_login, $offset = 0, $limit = 10)
+    public function getAll($keyword_search, $user_login, $offset = 0, $limit = 10)
     {
         $model = new $this->model;
+        if(!empty($keyword_search)){
+            $model = $model->where(function ($model) use ($keyword_search) {
+                $model->where("phone", "LIKE","%$keyword_search%")
+                    ->orWhere("user_name", "LIKE", "%$keyword_search%");
+            });
+        }
         if($user_login->authority == config('constants.authority.super_admin')){
             $model = $model->where('_id', "<>", $user_login->id);
         }else if($user_login->authority != config('constants.authority.super_admin')){
@@ -179,8 +185,14 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
-    public function getCount($user_login){
+    public function getCount($keyword_search, $user_login){
         $model = new $this->model;
+        if(!empty($keyword_search)){
+            $model = $model->where(function ($model) use ($keyword_search) {
+                $model->where("phone", "LIKE","%$keyword_search%")
+                    ->orWhere("user_name", "LIKE", "%$keyword_search%");
+            });
+        }
         if($user_login->authority == config('constants.authority.super_admin')){
             $model = $model->where('_id', "<>", $user_login->id);
         }else if($user_login->authority != config('constants.authority.super_admin')){

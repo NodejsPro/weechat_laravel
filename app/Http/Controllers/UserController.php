@@ -92,10 +92,11 @@ class UserController extends Controller
             $inputs = $request->all();
             $start = isset($inputs['start']) ? (int)$inputs['start'] : 0;
             $length = isset($inputs['length']) ? (int)$inputs['length'] : config('constants.per_page')[3];
+            $keyword = isset($inputs['keyword']) ? trim($inputs['keyword']) : '';
             $group = config('constants.authority_lang');
 
-            $rows = $this->repUser->getAll($login_user, $start, $length);
-            $count = $this->repUser->getCount($login_user);
+            $rows = $this->repUser->getAll($keyword, $login_user, $start, $length);
+            $count = $this->repUser->getCount($keyword, $login_user);
             $data = new Collection();
             $cnt = ($start / $length) * $length + 1;
             foreach ($rows as $row) {
@@ -129,7 +130,7 @@ class UserController extends Controller
                         }
                         return '<div class="todo-action-list todo-pending">'.$label_pending . $remote_btn.'</div>';
                     }else{
-                        $bot_list_btn = '<a href="'. action('BotController@index', $row['id']) .'" class="bot-list" target="_blank">'.trans('button.bot_list').'</a>';
+                        $bot_list_btn = '<a href="'. action('RoomController@index', $row['id']) .'" class="room-list" target="_blank">'.trans('button.room_list').'</a>';
                         $edit_btn = '<a href="'. route("user.edit", $row['id']).'" class="btn-edit">'.trans('button.update').'</a>';
                         $remote_btn = '<a class="btn-delete" data-button="'.$row["id"].'" data-from="'. route("user.destroy",":id") .'" href="javascript:void(0)">'.trans('button.delete').'</a>';
                         if($login_user->id == $row['user_created_id'] || !isset($row['user_created_id'])){
@@ -339,7 +340,7 @@ class UserController extends Controller
         }
         return view('user.my_edit')->with([
             'user' => $user,
-            'contact_name' => implode(', ', $contact_name),
+            'contact_name' => empty($contact_name) ? ' ' : implode(', ', $contact_name),
         ]);
     }
 

@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth', 'authentication']], function () {
     Route::resource('bot', 'BotController');
     Route::resource('account', 'UserController@index');
     Route::resource('demo', 'DemoController');
+    Route::resource('room', 'RoomController');
 });
 Route::get('/', 'Auth\LoginController@showLoginForm');
 Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');
