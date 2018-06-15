@@ -86,8 +86,8 @@ class UserController extends Controller
             $length = isset($inputs['length']) ? (int)$inputs['length'] : config('constants.per_page')[3];
             $group = config('constants.authority_lang');
 
-            $rows = $this->repUser->getAll($login_user, $start, $length);
-            $count = $this->repUser->getCount($login_user);
+            $rows = $this->repUser->getAllByNotCreate($login_user, $start, $length);
+            $count = $this->repUser->getCountByNotCreate($login_user);
             $data = new Collection();
             $cnt = ($start / $length) * $length + 1;
             foreach ($rows as $row) {
@@ -96,15 +96,26 @@ class UserController extends Controller
                     'id' => $row->id,
                     'user' => $row,
                     'authority' => @$group[$row->authority],
-                    'user_name' => $row->user_name,
                     'phone' => $row->phone,
                     'login_user' => $login_user,
                     'user_created_id' => $row->created_id,
                     'confirm_flg' => $row->confirm_flg,
                     'contact' => $row->contact,
                 ];
-                    $user_create = $this->repUser->getById($row->created_id);
-                    $data_arr['user_create'] = @$user_create->user_name;
+                $user_create = $this->repUser->getById($row->created_id);
+                $data_arr['user_create'] = @$user_create->user_name;
+                $user_name = $row->user_name;
+
+                $user_child = $this->repUser->getAllByField('created_id', $row->_id);
+                Log::info($user_child);
+                if(count($user_child) > 0){
+                    $detail = '<a class="child-detail" href="'. route('user.show_child_detail', [ $row->id]) .'" target="_blank">'. $user_name .'</a>';
+                    $child_user = ' <span class="child_user pull-right" data-user_id="'.$row->id.'"></span>';
+                    $data_arr['user_name'] = '<div class="user_name_container">'. $detail . $child_user .'</div>';
+                }else{
+                    $data_arr['user_name'] = '<div class="user_name_container">'. $user_name .'</div>';
+                }
+
                 $data->push($data_arr);
             }
             $dt = app('datatables');

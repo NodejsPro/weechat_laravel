@@ -135,6 +135,24 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
+    public function getAllByNotCreate($user_login, $offset = 0, $limit = 10)
+    {
+        $model = new $this->model;
+        if($user_login->authority == config('constants.authority.super_admin')){
+            $model = $model->where(function ($model){
+                $model->whereNull("created_id")
+                    ->orWhere("created_id", "");
+            });
+//            $model = $model->where('_id', "<>", $user_login->id);
+        }else if($user_login->authority != config('constants.authority.super_admin')){
+            $model = $model->where('created_id', $user_login->id);
+        }
+        $model = $model->skip($offset)
+            ->take($limit)
+            ->orderBy('created_at', 'DESC');
+        return $model->get();
+    }
+
     public function getFull($offset = 0, $limit = 10){
         $model = new $this->model;
         $model = $model->where('confirm_flg', '<>', config('constants.active.disable'));
@@ -156,6 +174,16 @@ class UserRepository extends BaseRepository
     }
 
     public function getCount($user_login){
+        $model = new $this->model;
+        if($user_login->authority == config('constants.authority.super_admin')){
+            $model = $model->where('_id', "<>", $user_login->id);
+        }else if($user_login->authority != config('constants.authority.super_admin')){
+            $model = $model->where('created_id', $user_login->id);
+        }
+        return $model->count();
+    }
+
+    public function getCountByNotCreate($user_login){
         $model = new $this->model;
         if($user_login->authority == config('constants.authority.super_admin')){
             $model = $model->where('_id', "<>", $user_login->id);

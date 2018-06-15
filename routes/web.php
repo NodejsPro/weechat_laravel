@@ -23,6 +23,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/account/edit', 'UserController@accountEdit');
     Route::post('/account/update', 'UserController@accountUpdate');
     Route::post('/user/getListUser', ['uses' => 'UserController@getListUser', 'as' => 'user.list']);
+    Route::get('/user/getListUser', ['uses' => 'UserController@getListUser', 'as' => 'user.show_child_detail']);
+    Route::post('/user/child-user', ['uses' => 'UserController@getChildUser', 'as' => 'user.child-user']);
     Route::resource('user', 'UserController');
     Route::resource('bot', 'BotController');
     Route::resource('account', 'UserController@index');

@@ -20,8 +20,8 @@
                             <thead>
                             <tr role="row">
                                 <th >No.</th>
-                                <th >{{{ trans('field.phone') }}}</th>
                                 <th >{{{ trans('field.user_name') }}}</th>
+                                <th >{{{ trans('field.phone') }}}</th>
                                 <th>{{{trans('field.authority')}}}</th>
                                 <th >{{{ trans('field.contact') }}}</th>
                                 <th >{{{ trans('field.user_create') }}}</th>
@@ -63,8 +63,15 @@
                 "dom": '<"top"i>rt<"bottom pull-left"flp><"clear">',
                 columns: [
                     {data: 'no', name: 'no', width: '5px'},
+                    {
+                        data: 'user_name',
+                        name: 'user_name',
+                        class: 'user_name',
+                        mRender: function ( data, type, full ) {
+                            return $("<div/>").html(data).text();
+                        }
+                    },
                     {data: 'phone', name: 'phone', class: 'phone'},
-                    {data: 'user_name', name: 'user_name', class: 'user_name'},
                     {data: 'authority', name: 'authority', class: 'authority'},
                     {data: 'contact', name: 'contact', class: 'contact'},
                     {data: 'user_create', name: 'user_create', class: 'user_create'},
