@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'per_page'  => [5, 10, 15, 20, 50],
+    'per_page'  => [5, 10, 15, 20, 50, 500],
     'authority' => [
         'super_admin' => '001',
         'admin_lv1' => '002',
@@ -26,5 +26,13 @@ return [
       'one_one' => '001',
       'one_many' => '002',
     ],
+    'file_upload' =>[
+        'file_type' => ['png', 'jpg', 'jpeg', 'bmp', 'gif', 'pdf', 'webm', 'mp4', 'ogv'],
+        'file_size' => 10000,// 10MB
+        'file_path_client' => 'client',
+        'file_path_profile' => 'profile',
+        'file_path_base' => 'uploads',
+    ],
+    'path_upload' => 'uploads',
     'log_message_limit' => 100,
 ];

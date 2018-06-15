@@ -16,6 +16,7 @@ return [
     'api' => 'API',
     'support' => 'Trợ giúp',
     'user_test' => 'Test user',
+    'demo' => 'Chat',
     'report' => 'Báo cáo',
     'system_setting' => 'Cài đặt hệ thống',
     'mail' => 'Thư',

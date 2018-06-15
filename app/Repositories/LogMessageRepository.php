@@ -18,7 +18,8 @@ class LogMessageRepository extends BaseRepository
 		$this->model = $logMessage;
 	}
 
-    public function getMessage($room_id, $created_at = null, $limit = null, $last_time_of_message = null) {
+    public function getMessage($room_id, $limit = null, $last_time_of_message = null) {
+        Log::info($room_id.'---' . $limit.'---' .$last_time_of_message);
         $model = new $this->model;
         $model->setCollection($room_id . $this->base_collection);
         if(empty($limit)){
@@ -28,10 +29,6 @@ class LogMessageRepository extends BaseRepository
             ->take($limit);
         if($last_time_of_message) {
             $model = $model->where('created_at', '>', $last_time_of_message);
-        }
-        if(!empty($created_at)){
-            $created_at = new \MongoDB\BSON\UTCDateTime($created_at * 1000);
-            $model = $model->where('created_at' , '<', $created_at);
         }
         $model = $model->orderBy('created_at', 'DESC');
         return $model->get();

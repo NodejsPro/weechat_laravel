@@ -32,6 +32,12 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        {!! Form::label('contact', trans('field.contact'), ['class' => 'col-md-2 control-label']) !!}
+                        <div class="col-md-6">
+                            {!! Form::label('contact', $contact_name, ['class' => 'control-label']) !!}
+                        </div>
+                    </div>
+                    <div class="form-group">
                         {!! Form::label('authority', trans('field.authority'), ['class' => 'col-md-2 control-label']) !!}
                         <div class="col-md-6">
                             <label id="authority" class="control-label">{{{ @array_search($user->authority, config('constants.authority')) }}}</label>

@@ -34,6 +34,7 @@ class UserRepository extends BaseRepository
         $user->phone            = $inputs['phone'];
         $user->authority        = $inputs['authority'];
         $user->created_id       = $created_id;
+        $user->remember_flg       = $inputs['remember_flg'];
         $user = $this->save($user, $inputs);
 
         return $user;
@@ -43,7 +44,9 @@ class UserRepository extends BaseRepository
         $user->user_name = $inputs['user_name'];
         $user->password = $inputs['password'];
         $user->confirm_flg = $inputs['confirm_flg'];
+        $user->remember_flg = $inputs['remember_flg'];
         $user->save();
+        return $user;
     }
 
     /**
@@ -58,7 +61,9 @@ class UserRepository extends BaseRepository
         if(isset($inputs['user_name'])){
             $user->user_name = $inputs['user_name'];
         }
-
+        if(isset($inputs['login_flg'])){
+            $user->login_flg = $inputs['login_flg'];
+        }
         if(isset($inputs['confirm_flg'])){
             $user->confirm_flg = $inputs['confirm_flg'];
         }
@@ -81,7 +86,7 @@ class UserRepository extends BaseRepository
     /**
      * Update a user.
      *
-     * @return void
+     * @return $user
      */
     public function update($user, $inputs)
     {
@@ -92,6 +97,7 @@ class UserRepository extends BaseRepository
             $user->authority  = $inputs['authority'];
         }
         $this->save($user, $inputs);
+        return $user;
     }
 
     public function updateAccount($user, $inputs)
@@ -101,6 +107,11 @@ class UserRepository extends BaseRepository
         if(isset($inputs['password'])){
             $user->password = bcrypt($inputs['password']);
         }
+        $user->save();
+    }
+
+    public function updateContact($user, $contact){
+        $user->contact = $contact;
         $user->save();
     }
 
@@ -121,9 +132,24 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
-    public function getAll($user_login, $offset = 0, $limit = 10)
+    public function getListByPhone($phones)
     {
         $model = new $this->model;
+        if(!empty($phones)){
+            $model = $model->whereIn('phone', $phones);
+        }
+        return $model->get();
+    }
+
+    public function getAll($keyword_search, $user_login, $offset = 0, $limit = 10)
+    {
+        $model = new $this->model;
+        if(!empty($keyword_search)){
+            $model = $model->where(function ($model) use ($keyword_search) {
+                $model->where("phone", "LIKE","%$keyword_search%")
+                    ->orWhere("user_name", "LIKE", "%$keyword_search%");
+            });
+        }
         if($user_login->authority == config('constants.authority.super_admin')){
             $model = $model->where('_id', "<>", $user_login->id);
         }else if($user_login->authority != config('constants.authority.super_admin')){
@@ -153,19 +179,23 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
-    public function getFull($offset = 0, $limit = 10){
+    public function getFull($id_except_arr, $offset = 0, $limit = 10){
         $model = new $this->model;
         $model = $model->where('confirm_flg', '<>', config('constants.active.disable'));
-        $model = $model->where('_id', '<>', Auth::user()->id);
+        if(!empty($id_except_arr)){
+            $model = $model->whereNotIn('_id', $id_except_arr);
+        }
         $model = $model->skip($offset)
             ->take($limit)
             ->orderBy('created_at', 'DESC');
         return $model->get();
     }
 
-    public function getContact($contact, $offset = 0, $limit = 10){
+    public function getContact($contact, $offset = 0, $limit = 10, $confirm_flg = null){
         $model = new $this->model;
-        $model = $model->where('confirm_flg', '<>', config('constants.active.disable'));
+        if(isset($confirm_flg)){
+            $model = $model->where('confirm_flg', '<>', config('constants.active.disable'));
+        }
         $model = $model->whereIn('_id', $contact);
         $model = $model->skip($offset)
             ->take($limit)
@@ -173,8 +203,14 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
-    public function getCount($user_login){
+    public function getCount($keyword_search, $user_login){
         $model = new $this->model;
+        if(!empty($keyword_search)){
+            $model = $model->where(function ($model) use ($keyword_search) {
+                $model->where("phone", "LIKE","%$keyword_search%")
+                    ->orWhere("user_name", "LIKE", "%$keyword_search%");
+            });
+        }
         if($user_login->authority == config('constants.authority.super_admin')){
             $model = $model->where('_id', "<>", $user_login->id);
         }else if($user_login->authority != config('constants.authority.super_admin')){
@@ -296,6 +332,14 @@ class UserRepository extends BaseRepository
         return $model;
     }
 
+    public function getUserByField($field_name, $field_code){
+        $model = new $this->model;
+        $model = $model->where($field_name, $field_code)
+            ->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->first();
+        return $model;
+    }
+
     public function updateCode($user, $code){
         $user->code = $code;
         $user->save();
@@ -309,8 +353,8 @@ class UserRepository extends BaseRepository
         if(isset($inputs['validate_token'])){
             $user->validate_token = $inputs['validate_token'];
         }
-        if(isset($inputs['is_login'])){
-            $user->is_login = $inputs['is_login'];
+        if(isset($inputs['login_flg'])){
+            $user->login_flg = $inputs['login_flg'];
         }
         $user->save();
         return $user;
@@ -320,5 +364,30 @@ class UserRepository extends BaseRepository
         $user->validate_token = $token;
         $user->save();
         return $user;
+    }
+
+    public function getUserByPhone($phone){
+        $model = new $this->model;
+        $model = $model->where('phone', $phone)
+            ->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->first();
+        return $model;
+    }
+
+    public function getUserById($user_id){
+        $model = new $this->model;
+        $model = $model->where('_id', $user_id)
+            ->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->first();
+        return $model;
+    }
+
+    public function getDataUpdateByDate($date_time){
+        $model = new $this->model;
+        $model = $model->where('updated_at', '<=', $date_time)
+            ->where('remember_flg', '!=', config('constants.active.disable'))
+            ->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->get();
+        return $model;
     }
 }

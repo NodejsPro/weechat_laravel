@@ -57,7 +57,8 @@ class DemoController extends Controller
         //if($user->authority == $authority['super_admin']){
 
                 //get all user
-                $user_profiles['all'] = $this->repUser->getFull(0, 50);
+        $user_id_except = [$user->id];
+                $user_profiles['all'] = $this->repUser->getFull($user_id_except, 0, 50);
 //                if($user->contact){
 //                    $user_profiles['all'] = $this->repUser->getContact($user->contact, 0, config('constants.conversation_option.user_load_in_part'));
 //                    $user_super_admin = $this->repUser->getAllByField('authority', $authority['super_admin']);

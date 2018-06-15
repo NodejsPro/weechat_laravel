@@ -30,69 +30,42 @@ class RoomRepository extends BaseRepository
      */
     public function store($inputs, $created_id)
     {
-        $user = new $this->model;
-        $user->password         = bcrypt($inputs['password']);
-        $user->email            = $inputs['email'];
-        $user->authority        = $inputs['authority'];
-        $user->created_id       = $created_id;
-        $this->save($user, $inputs);
+        $model = new $this->model;
+        $model->user_id = $created_id;
+        $model->room_type = $inputs['room_type'];
+        $this->save($model, $inputs);
 
-        return $user;
+        return $model;
     }
 
     /**
      * Save the User.
      *
-     * @param  App\User $user
+     * @param  App\User $model
      * @param  Array  $inputs
-     * @return void
+     * @return $model
      */
-    private function save($user, $inputs)
+    private function save($model, $inputs)
     {
         if(isset($inputs['name'])){
-            $user->name             = $inputs['name'];
+            $model->name = $inputs['name'];
         }
-        if(isset($inputs['user_name'])){
-            $user->user_name             = $inputs['user_name'];
+        if(isset($inputs['member'])){
+            $model->member = $inputs['member'];
         }
-        if(isset($inputs['phone'])){
-            $user->phone             = $inputs['phone'];
-        }
-        if(isset($inputs['avatar']) && !isset($inputs['avatar'])){
-            $user->avatar             = $inputs['avatar'];
-        }
-        if(isset($inputs['confirmation_token'])){
-            $user->confirmation_token = $inputs['confirmation_token'];
-        }
-        
-        $user->save();
-        return $user;
+        $model->save();
+        return $model;
     }
 
     /**
      * Update a user.
      *
-     * @return void
+     * @return $model
      */
-    public function update($user, $inputs)
+    public function update($room, $inputs)
     {
-        if(isset($inputs['password'])){
-            $user->password     = bcrypt($inputs['password']);
-        }
-        if(isset($inputs['email'])){
-            $user->email     = $inputs['email'];
-        }
-        if (isset($inputs['authority'])) {
-            $user->authority  = $inputs['authority'];
-        }
-        if (isset($inputs['plan'])) {
-            $user->plan  = $inputs['plan'];
-        }
-        $user_authority = config('constants.authority');
-        if(isset($inputs['created_id']) && Auth::user()->authority == $user_authority['admin'] && $user->authority == $user_authority['client']){
-            $user->created_id = $inputs['created_id'];
-        }
-        $this->save($user, $inputs);
+        $model = $this->save($room, $inputs);
+        return $model;
     }
 
     public function getAll($room_arr, $offset = 0, $limit = 10)
@@ -109,6 +82,26 @@ class RoomRepository extends BaseRepository
         return $model->get();
     }
 
+    public function getByUserID($user_id, $room_arr, $room_type, $offset = 0, $limit = 10)
+    {
+        $model = new $this->model;
+        if(!empty($room_arr)){
+            $model = $model->whereIn('_id', $room_arr);
+        }
+        if(isset($room_type)){
+            $model = $model->where('room_type', $room_type);
+        }
+        $model = $model->where(function ($model) use ($user_id) {
+            $model->where("user_id", $user_id)
+                ->orWhereIn("member", [$user_id]);
+        });
+        $model = $model
+            ->skip($offset)
+            ->take($limit)
+            ->orderBy('created_at', 'DESC');
+        return $model->get();
+    }
+
     public function checkRoom($user_id, $room_id, $member = []){
         $model = new $this->model;
         $member_arr = [$user_id];
@@ -119,10 +112,15 @@ class RoomRepository extends BaseRepository
         $model = $model->whereIn('member', $member_arr);
     }
 
-    public function getRoomByMember($member){
+    public function getRoomByMember($member, $room_type){
         $model = new $this->model;
-        $model = $model->whereIn('member', $member);
-        $model = $model->where('member', 'size', 2);
+        $model = $model->where('member', 'all', $member);
+        $model = $model->where('room_type', $room_type);
+        if($room_type == config('constants.room_type.one_one')){
+            $model = $model->where('member', 'size', 2);
+        }else{
+            $model = $model->where('member', 'size', count($member));
+        }
         return $model->first();
     }
 

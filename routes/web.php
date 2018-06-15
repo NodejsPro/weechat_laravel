@@ -16,7 +16,7 @@ Auth::routes();
 // http://35.185.190.204:80/user/createApi
 
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth', 'authentication']], function () {
 
     Route::get('/account/account-information', 'UserController@accountInformation');
     Route::post('/account/account-information', 'UserController@updateAccountInformation');
@@ -29,6 +29,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('bot', 'BotController');
     Route::resource('account', 'UserController@index');
     Route::resource('demo', 'DemoController');
+    Route::resource('room', 'RoomController');
 });
 Route::get('/', 'Auth\LoginController@showLoginForm');
 Route::post('/password/email', 'Auth\ForgotPasswordController@sendResetLinkEmail');

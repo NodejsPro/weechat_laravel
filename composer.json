@@ -16,6 +16,7 @@
         "laravelcollective/html": "*",
         "mongodb/mongodb": "*",
         "intervention/image": "^2.0",
+        "guzzlehttp/guzzle": "*",
         "yajra/laravel-datatables-oracle": "~8.0"
     },
     "require-dev": {
