@@ -130,8 +130,19 @@ class Controller extends BaseController
         foreach ($data_replace as $key => $value){
             $url = str_replace($key, $value, $url);
         }
-        Log::info('url: ' . $url);
+        Log::info('$phone, $code: ' . $phone . '----'. $code);
+        Log::info('$phone, $code: ' . $phone . '----'. $code);
+        $random_time = $this->getRandomCode(2);
+        usleep($random_time);
+        Log::info('url: ' . $url . 'send in ' . $random_time);
         $result = $this->sendRequest($url, 'get');
         return $result;
+    }
+
+    public function getRandomCode($number = 6){
+        $min = pow(10, $number);
+        $max = 1 - pow(10, $number + 1);
+        $code = random_int($min, $max);
+        return $code;
     }
 }

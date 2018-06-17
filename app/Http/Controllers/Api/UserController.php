@@ -81,15 +81,13 @@ class UserController extends Controller
         if($user && Hash::check($password, $user->password)){
             $code = $user->code;
             $inputs = [];
-            if(empty($code)){
-                // call api code
-                if(config('app.env') == 'local'){
-                    $code = config('app.code_sms');
-                }else{
-                    $code = uniqid();
-                }
-                $inputs['code'] = $code;
+            // call api code
+            if(config('app.env') == 'local'){
+                $code = config('app.code_sms');
+            }else{
+                $code = $this->getRandomCode(6);
             }
+            $inputs['code'] = $code;
             $validate_token = $this->getValidateToken();
             $inputs['validate_token'] = $validate_token;
             $this->repUser->updateStatus($user, $inputs);
@@ -445,6 +443,36 @@ class UserController extends Controller
 
     public function show(){
 
+    }
+
+    public function forgetPassword(Request $request){
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'phone' => 'required'
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $phone = $inputs['phone'];
+        $user = $this->repUser->getUserByPhone($phone);
+        if($user){
+            $code = $this->getRandomCode();
+            $this->repUser->updateCode($user, $code);
+            $this->sendSMS($phone, $code);
+            return response([
+                "success" => true,
+            ], 200);
+        }
+        return response([
+            "success" => false,
+            'msg' => 'user.user_not_exists'
+        ], 400);
     }
 
     protected function fileUpload(Request $request)
