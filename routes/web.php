@@ -23,6 +23,7 @@ Route::group(['middleware' => ['auth', 'authentication']], function () {
     Route::get('/account/edit', 'UserController@accountEdit');
     Route::post('/account/update', 'UserController@accountUpdate');
     Route::post('/user/getListUser', ['uses' => 'UserController@getListUser', 'as' => 'user.list']);
+    Route::get('user/show_child_detail/{user_created_id}', ['uses' => 'UserController@showChildDetail', 'as' => 'user.show_child_detail']);
     Route::resource('user', 'UserController');
     Route::resource('bot', 'BotController');
     Route::resource('account', 'UserController@index');

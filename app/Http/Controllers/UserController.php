@@ -105,13 +105,22 @@ class UserController extends Controller
                     'id' => $row->id,
                     'user' => $row,
                     'authority' => @$group[$row->authority],
-                    'user_name' => $row->user_name,
+//                    'user_name' => $row->user_name,
                     'phone' => $row->phone,
                     'login_user' => $login_user,
                     'user_created_id' => $row->created_id,
                     'confirm_flg' => $row->confirm_flg,
                     'contact' => $row->contact,
                 ];
+                    $user_childs = $this->repUser->getAllByField('created_id', $row->id);
+                    $user_name = '<div class="user_name_detail">'. $row->user_name .'</div>';
+                    if(empty($user_childs)){
+                        $data_arr['user_name'] = $user_name;
+                    }else{
+                        $child_detail_link = '<a class="user_child_detail" href="'. route('user.show_child_detail', [ $row->id]) .'" target="_blank">'. $user_name .'</a>';
+                        $child_action = '<span class="child_user pull-right" data-user_id="' . $row->id . '"></span>';
+                        $data_arr['user_name'] = $child_detail_link . $child_action;
+                    }
                     $user_create = $this->repUser->getById($row->created_id);
                     $data_arr['user_create'] = @$user_create->user_name;
                 $data->push($data_arr);
@@ -144,10 +153,10 @@ class UserController extends Controller
                     $contacts = $row['contact'];
                     $result = [];
                     if(!empty($contacts)){
-                        foreach ($contacts as $key => $contact){
-                            $user = $this->repUser->getById($contact);
-                            if($user){
-                                $result[] = $user->user_name;
+                        $user_contacts = $this->repUser->getContact($contacts, 0, config('constants.per_page.5'));
+                        if(!empty($user_contacts)){
+                            foreach($user_contacts as $contact){
+                                $result[] = $contact->user_name;
                             }
                         }
                     }
@@ -156,6 +165,10 @@ class UserController extends Controller
                 ->setTotalRecords($count)->make(true);
         }
         return null;
+    }
+
+    public function showChildDetail(Request $request, $user_created_id){
+
     }
 
     public function store(UserRequest $request)
