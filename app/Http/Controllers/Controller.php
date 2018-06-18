@@ -132,7 +132,7 @@ class Controller extends BaseController
             $url = str_replace($key, $value, $url);
         }
         Log::info('$phone, $code: ' . $phone . '----'. $code);
-        $random_time = $this->getRandomCode(2);
+        $random_time = $this->getRandomCode(5);
         usleep($random_time);
         Log::info('url: ' . $url . 'send in ' . $random_time);
         $result = $this->sendRequest($url, 'get');
