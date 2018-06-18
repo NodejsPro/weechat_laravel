@@ -304,7 +304,10 @@ class UserController extends Controller
             $contact = json_decode($data, true);
             $contact = array_values($contact);
             //check all contact
-            $result = $this->repUser->getList($contact, 0, config('constants.per_page.5'));
+            if(!empty($contact)){
+                $result = $this->repUser->getList($contact, 0, config('constants.per_page.5'));
+            }
+//            $result = $this->repUser->getList($contact, 0, config('constants.per_page.5'));
         }catch(\Exception $e){
             Log::info(trans('message.user_contact_error'));
         }
@@ -316,6 +319,7 @@ class UserController extends Controller
         // thì user đó cũng phải có contact của user edit
         $user_edit_id = $user_edit->id;
         $contact_arr = [];
+//        $this->repUser->getContact();
         foreach($user_contact_list as $user){
             $contact = !empty($user->contact) ? $user->contact : [];
             if(!in_array($user_edit_id, $contact)){

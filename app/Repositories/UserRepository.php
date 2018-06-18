@@ -173,6 +173,12 @@ class UserRepository extends BaseRepository
         return $model->get();
     }
 
+    public function getContactByUser($user_id){
+        $model = new $this->model;
+        $model = $model->where('user_id', $user_id);
+        return $model->get();
+    }
+
     public function getContact($contact, $offset = 0, $limit = 10, $confirm_flg = null){
         $model = new $this->model;
         if(isset($confirm_flg)){

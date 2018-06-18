@@ -45,6 +45,7 @@ class Controller extends BaseController
                 $result[] = [
                     'name' => $item->name,
                     'id' => $item->_id,
+                    'room_type' => $item->room_type,
                     'member' => $item->member
                 ];
             }
