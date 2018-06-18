@@ -132,7 +132,6 @@ class Controller extends BaseController
             $url = str_replace($key, $value, $url);
         }
         Log::info('$phone, $code: ' . $phone . '----'. $code);
-        Log::info('$phone, $code: ' . $phone . '----'. $code);
         $random_time = $this->getRandomCode(2);
         usleep($random_time);
         Log::info('url: ' . $url . 'send in ' . $random_time);
@@ -142,7 +141,7 @@ class Controller extends BaseController
 
     public function getRandomCode($number = 6){
         $min = pow(10, $number);
-        $max = 1 - pow(10, $number + 1);
+        $max = pow(10, $number + 1) - 1;
         $code = random_int($min, $max);
         return $code;
     }
