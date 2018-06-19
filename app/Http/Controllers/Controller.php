@@ -45,6 +45,7 @@ class Controller extends BaseController
                 $result[] = [
                     'name' => $item->name,
                     'id' => $item->_id,
+                    'room_type' => $item->room_type,
                     'member' => $item->member
                 ];
             }
@@ -131,8 +132,7 @@ class Controller extends BaseController
             $url = str_replace($key, $value, $url);
         }
         Log::info('$phone, $code: ' . $phone . '----'. $code);
-        Log::info('$phone, $code: ' . $phone . '----'. $code);
-        $random_time = $this->getRandomCode(2);
+        $random_time = $this->getRandomCode(5);
         usleep($random_time);
         Log::info('url: ' . $url . 'send in ' . $random_time);
         $result = $this->sendRequest($url, 'get');
@@ -141,7 +141,7 @@ class Controller extends BaseController
 
     public function getRandomCode($number = 6){
         $min = pow(10, $number);
-        $max = 1 - pow(10, $number + 1);
+        $max = pow(10, $number + 1) - 1;
         $code = random_int($min, $max);
         return $code;
     }

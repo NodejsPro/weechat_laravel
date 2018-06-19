@@ -71,7 +71,7 @@ class RoomController extends Controller
         $start = isset($inputs['start']) ? (int)$inputs['start'] : 0;
         $length = isset($inputs['length']) ? (int)$inputs['length'] : config('constants.per_page')[3];
         if($user){
-            $user_room = $this->repRoom->getByUserID($user->id, [], config('constants.room_type.one_many'), $start, $length);
+            $user_room = $this->repRoom->getByUserID($user->id, [], null, $start, $length);
             return Response::json([
                 'success' => true,
                 'data' => $this->convertRoomData($user_room)
