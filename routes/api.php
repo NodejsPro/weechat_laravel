@@ -18,6 +18,7 @@ use Illuminate\Http\Request;
  });
 Route::post('user/login', ['uses' => 'Api\UserController@userLogin', 'as' => 'user.login.api']);
 Route::post('user/create', ['uses' => 'Api\UserController@create', 'as' => 'user.create.api']);
+Route::post('user/forgetPassword', ['uses' => 'Api\UserController@forgetPassword', 'as' => 'user.forget.password']);
 Route::post('user/checkPhone', ['uses' => 'Api\UserController@checkPhone', 'as' => 'user.check.phone.api']);
 Route::post('demo/getConversation', ['uses' => 'Api\DemoController@getConversation', 'as' => 'demo.get.conversation']);
 Route::group(['middleware' => ['authentication.api']], function () {

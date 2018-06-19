@@ -44,7 +44,7 @@ class UserController extends Controller
     ){
         $this->repUser = $user;
         $this->file_manager = new ImageManager(array('driver' => 'gd'));
-        $this->middleware('authentication.api', ['except' => ['userLogin', 'create', 'checkPhone', 'userTest']]);
+        $this->middleware('authentication.api', ['except' => ['userLogin', 'create', 'checkPhone', 'userTest', 'forgetPassword']]);
     }
     /**
      * Display a listing of the resource.
@@ -210,15 +210,14 @@ class UserController extends Controller
         if($user){
             if(isset($user->confirm_flg) && $user->confirm_flg){
                 $msg = trans('user.user_exists');
-                $user_arr = [$user];
                 return response([
                     "success" => true,
-                    'msg' => $msg,
-                    'data' => $this->convertUserData($user_arr)
+                    "user_exists_flg" => true,
                 ], 200);
             }else{
                 return response([
                     "success" => true,
+                    "user_exists_flg" => false,
                 ], 200);
             }
         }
