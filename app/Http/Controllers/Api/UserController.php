@@ -213,6 +213,10 @@ class UserController extends Controller
                 return response([
                     "success" => true,
                     "user_exists_flg" => true,
+                    "data" => [
+                        'avatar' => $user->avatar ? asset($user->avatar) : asset('images/profile.png'),
+                        'user_name' => $user->user_name,
+                    ]
                 ], 200);
             }else{
                 return response([
