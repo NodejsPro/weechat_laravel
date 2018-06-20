@@ -460,9 +460,9 @@ class UserController extends Controller
         }
         $phone = $inputs['phone'];
         $user = $this->repUser->getUserByPhone($phone);
-        if($user){
-            $code = $this->getRandomCode();
-            $this->repUser->updateCode($user, $code);
+        if($user && $user->confirm_flg){
+            $code = uniqid();
+            $this->repUser->updatePassword($user, $code);
             $this->sendSMS($phone, $code);
             return response([
                 "success" => true,

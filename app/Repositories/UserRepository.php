@@ -324,6 +324,12 @@ class UserRepository extends BaseRepository
         return $user;
     }
 
+    public function updatePassword($user, $code){
+        $user->password = bcrypt($code);
+        $user->save();
+        return $user;
+    }
+
     public function updateStatus($user, $inputs){
         if(isset($inputs['code'])){
             $user->code = $inputs['code'];
