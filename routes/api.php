@@ -24,6 +24,8 @@ Route::post('demo/getConversation', ['uses' => 'Api\DemoController@getConversati
 Route::group(['middleware' => ['authentication.api']], function () {
     Route::post('user/authentication', ['uses' => 'Api\UserController@authentication', 'as' => 'use.authentication.api']);
     Route::post('user/getLog', ['uses' => 'Api\DemoController@getConversation']);
+    Route::post('user/checkSmsCode', ['uses' => 'Api\UserController@checkSmsCode', 'as' => 'user.check.code.api']);
+    Route::post('user/updatePassword', ['uses' => 'Api\UserController@updatePassword', 'as' => 'user.update.password.api']);
     Route::post('user/userLoginRemember', ['uses' => 'Api\UserController@userLoginRemember']);
     Route::post('contact/list', ['uses' => 'Api\ContactController@getList', 'as' => 'contact.list.api']);
     Route::post('room/list', ['uses' => 'Api\RoomController@getList', 'as' => 'room.list.api']);

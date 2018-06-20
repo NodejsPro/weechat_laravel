@@ -465,8 +465,8 @@ class UserController extends Controller
         $phone = $inputs['phone'];
         $user = $this->repUser->getUserByPhone($phone);
         if($user && $user->confirm_flg){
-            $code = uniqid();
-            $this->repUser->updatePassword($user, $code);
+            $code = $this->getRandomCode();
+            $this->repUser->updateCode($user, $code);
             $this->sendSMS($phone, $code);
             return response([
                 "success" => true,
@@ -476,6 +476,69 @@ class UserController extends Controller
             "success" => false,
             'msg' => 'user.user_not_exists'
         ], 400);
+    }
+
+    public function checkSmsCode(Request $request){
+        $header = $request->header();
+        $validate_token = $header['validate-token'][0];
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'code' => 'required'
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $code = $inputs['code'];
+        $user = $this->repUser->getUserByField('validate_token', $validate_token);
+        if($user && $user->code == $code){
+            $data = [
+                'success' => true,
+            ];
+            $code = '';
+            $this->repUser->updateCode($user, $code);
+            return Response::json($data, 200);
+        }
+        return Response::json(array(
+            'success' => false,
+            'msg' => trans('message.common_error')
+        ), 400);
+    }
+
+    public function updatePassword(Request $request){
+        $header = $request->header();
+        $validate_token = $header['validate-token'][0];
+        $inputs = $request->all();
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'password' => 'required'
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $password = $inputs['password'];
+        $user = $this->repUser->getUserByField('validate_token', $validate_token);
+        if($user){
+            $data = [
+                'success' => true,
+            ];
+            $this->repUser->updatePassword($user, $password);
+            return Response::json($data, 200);
+        }
+        return Response::json(array(
+            'success' => false,
+            'msg' => trans('message.common_error')
+        ), 400);
     }
 
     protected function fileUpload(Request $request)
