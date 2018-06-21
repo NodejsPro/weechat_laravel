@@ -43,6 +43,7 @@ class ContactController extends Controller
         ContactRepository $contact,
         RoomRepository $room
     ){
+        Log::info('api ContactController');
         $this->repUser = $user;
         $this->repContact = $contact;
         $this->repRoom = $room;

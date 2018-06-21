@@ -42,6 +42,7 @@ class RoomController extends Controller
     ){
         $this->repUser = $user;
         $this->repRoom = $room;
+        Log::info('api RoomController');
     }
     /**
      * Display a listing of the resource.
@@ -54,6 +55,9 @@ class RoomController extends Controller
 
     public function getList(Request $request){
         $inputs = $request->all();
+        Log::info('api getList');
+        Log::info($inputs);
+
         $validator = Validator::make(
             $inputs,
             array(
@@ -86,6 +90,8 @@ class RoomController extends Controller
     public function create(Request $request){
     	// dd(1);
         $inputs = $request->all();
+        Log::info('api create');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -134,6 +140,8 @@ class RoomController extends Controller
 
     public function update(Request $request){
         $inputs = $request->all();
+        Log::info('api update');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(

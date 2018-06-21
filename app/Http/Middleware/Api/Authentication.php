@@ -26,12 +26,14 @@ class Authentication
      */
     public function handle($request, Closure $next)
     {
-        Log::info('Authentication');
+        Log::info('Middleware Authentication');
         $headers = $request->header();
         $inputs = $request->all();
         $result = false;
         if(isset($headers['validate-token']) && !empty($headers['validate-token'])){
             $validate_token = $headers['validate-token'];
+            Log::info('validate-token');
+            Log::info($validate_token);
             $user = $this->repUser->getOneByField('validate_token', @$validate_token['0']);
             if($user && (!isset($inputs['phone']) || $inputs['phone'] == $user->phone)){
                 $result = true;

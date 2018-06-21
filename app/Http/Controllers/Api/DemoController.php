@@ -54,6 +54,7 @@ class DemoController extends Controller
         $this->repUser = $user;
         $this->repRoom = $room;
         $this->repLogMessage = $logMessage;
+        Log::info('api DemoController');
     }
 
     public function index($view_user_id = null){
@@ -85,6 +86,8 @@ class DemoController extends Controller
 
     public function getConversation(Request $request){
         $inputs = $request->all();
+        Log::info('api getConversation');
+        Log::info($inputs);
         $user_id = @$inputs['user_id'];
         $room_id = @$inputs['room_id'];
         $room_type = @$inputs['room_type'];
