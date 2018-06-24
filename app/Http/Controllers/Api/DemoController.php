@@ -120,33 +120,41 @@ class DemoController extends Controller
                 'msg' => 'User valid'
             ], 422);
         }
-        if(!isset($room_id)){
-            if(!in_array($user_id, $member)){
-                return response([
-                    "success" => false,
-                    'msg' => 'Room valid'
-                ], 422);
-            }
-            $room = $this->repRoom->getRoomByMember($member, $room_type);
+        $flg = false;
+        if(isset($room_id)){
+            $room = $this->repRoom->getOneByField('_id', $room_id);
             if($room){
-                $room_id = $room->id;
-                if(empty($member)){
-                    $member = $room->member;
+                $flg = true;
+            }
+        }else{
+            if(in_array($user_id, $member)){
+                $room = $this->repRoom->getRoomByMember($member, $room_type);
+                if($room){
+                    $room_id = $room->id;
+                    if(empty($member)){
+                        $member = $room->member;
+                    }
+                    if($room){
+                        $flg = true;
+                    }
                 }
             }
         }
-        $log = $member_name = [];
-        if($room_id){
+        if($flg){
             $log = $this->repLogMessage->getMessage($room_id, config('constants.log_message_limit'));
             $user_member = $this->repUser->getList($member, 0, config('constants.per_page.5'));
             $member_name = $this->convertUserData($user_member);
+            return Response::json([
+                'success' => true,
+                'log_messages' => $log,
+                'member_name' => $member_name,
+                'room_id' => $room_id
+            ], 200);
         }
-        return Response::json([
-            'success' => true,
-            'log_messages' => $log,
-            'member_name' => $member_name,
-            'room_id' => $room_id
-        ], 200);
+        return response([
+            "success" => false,
+            'msg' => 'room valid'
+        ], 422);
     }
 
 }
