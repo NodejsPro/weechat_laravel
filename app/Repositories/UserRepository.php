@@ -327,15 +327,17 @@ class UserRepository extends BaseRepository
         return $model;
     }
 
-    public function updateCode($user, $code){
+    public function updateCode($user, $code, $flg = null){
         $user->code = $code;
+        if(isset($flg)){
+            $user->update_pass_flg = $flg;
+        }
         $user->save();
         return $user;
     }
 
     public function forgetPassword($user, $code){
         $user->code = $code;
-        $user->update_pass_flg = config('constants.active.enable');
         $user->save();
         return $user;
     }

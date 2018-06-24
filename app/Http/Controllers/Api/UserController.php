@@ -91,15 +91,22 @@ class UserController extends Controller
                 $code = $this->getRandomCode(6);
             }
             $inputs['code'] = $code;
-            $validate_token = $this->getValidateToken();
-            $inputs['validate_token'] = $validate_token;
-            $this->repUser->updateStatus($user, $inputs);
-            $data = [
-                'success' => true,
-                'validate_token' => $validate_token
-            ];
-            $this->sendSMS($user->phone, $code);
-            return Response::json($data, 200);
+            $sms_status = $this->sendSMS($user->phone, $code);
+            if($sms_status){
+                $validate_token = $this->getValidateToken();
+                $inputs['validate_token'] = $validate_token;
+                $this->repUser->updateStatus($user, $inputs);
+                $data = [
+                    'success' => true,
+                    'validate_token' => $validate_token
+                ];
+                return Response::json($data, 200);
+            }
+            return Response::json(
+                array(
+                    'success' => false,
+                    'msg' => trans('user.send_sms_fail')
+                ), 400);
         }
         return Response::json(
             array(
@@ -483,12 +490,19 @@ class UserController extends Controller
         $phone = $inputs['phone'];
         $user = $this->repUser->getUserByPhone($phone);
         if($user && $user->confirm_flg){
-            $code = $this->getRandomCode();
-            $this->repUser->forgetPassword($user, $code);
-            $this->sendSMS($phone, $code);
-            return response([
-                "success" => true,
-            ], 200);
+            $code = $this->getValidateToken();
+            $sms_status = $this->sendSMS($phone, $code);
+            if($sms_status){
+                $this->repUser->forgetPassword($user, $code);
+                return response([
+                    "success" => true,
+                ], 200);
+            }
+            return Response::json(
+                array(
+                    'success' => false,
+                    'msg' => trans('user.send_sms_fail')
+                ), 400);
         }
         return response([
             "success" => false,
@@ -497,8 +511,6 @@ class UserController extends Controller
     }
 
     public function checkSmsCode(Request $request){
-        $header = $request->header();
-        $validate_token = $header['validate-token'][0];
         $inputs = $request->all();
         Log::info('api checkSmsCode');
         Log::info($inputs);
@@ -515,13 +527,13 @@ class UserController extends Controller
             ], 422);
         }
         $code = $inputs['code'];
-        $user = $this->repUser->getUserByField('validate_token', $validate_token);
-        if($user && $user->code == $code){
+        $user = $this->repUser->getUserByField('code', $code);
+        if($user){
             $data = [
                 'success' => true,
             ];
             $code = '';
-            $this->repUser->updateCode($user, $code);
+            $this->repUser->updateCode($user, $code, config('constants.active.enable'));
             return Response::json($data, 200);
         }
         return Response::json(array(
@@ -531,15 +543,14 @@ class UserController extends Controller
     }
 
     public function updatePassword(Request $request){
-        $header = $request->header();
-        $validate_token = $header['validate-token'][0];
         $inputs = $request->all();
         Log::info('api updatePassword');
         Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
-                'password' => 'required'
+                'phone' => 'required',
+                'password' => 'required',
             )
         );
         if ($validator->fails()){
@@ -549,7 +560,8 @@ class UserController extends Controller
             ], 422);
         }
         $password = $inputs['password'];
-        $user = $this->repUser->getUserUpdatePassword('validate_token', $validate_token);
+        $phone = $inputs['phone'];
+        $user = $this->repUser->getUserUpdatePassword('phone', $phone);
         if($user){
             $data = [
                 'success' => true,
