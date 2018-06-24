@@ -45,7 +45,7 @@ class UserController extends Controller
         Log::info('api userController');
         $this->repUser = $user;
         $this->file_manager = new ImageManager(array('driver' => 'gd'));
-        $this->middleware('authentication.api', ['except' => ['userLogin', 'create', 'checkPhone', 'userTest', 'forgetPassword']]);
+        $this->middleware('authentication.api', ['except' => ['updatePassword', 'checkSmsCode', 'userLogin', 'create', 'checkPhone', 'userTest', 'forgetPassword']]);
     }
     /**
      * Display a listing of the resource.

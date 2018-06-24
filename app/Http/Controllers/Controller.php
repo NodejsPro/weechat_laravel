@@ -122,7 +122,7 @@ class Controller extends BaseController
 
     public function sendSMS($phone, $code){
         Log::info('send sms demo via code ' . $code);
-        return true;
+//        return true;
         $url = config('sms.request.send_sms');
         $data_replace = [
             ':host' => config('sms.host'),
