@@ -30,7 +30,8 @@ class Controller extends BaseController
                     'user_name' => $user->user_name,
                 ];
                 if($return_room_flg){
-                    $room = $this->repRoom->getByUserID($user->id);
+                    $user_arr['unread_message'] = [];
+                    $user_arr['last_message'] = [];
                 }
                 $result[] = $user_arr;
             }

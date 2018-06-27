@@ -10,9 +10,11 @@ use App\Repositories\ConnectPageRepository;
 use App\Repositories\ConnectRepository;
 use App\Repositories\ContactRepository;
 use App\Repositories\EmbotPlanRepository;
+use App\Repositories\LastMessageRepository;
 use App\Repositories\MasterRepository;
 use App\Repositories\PlanRepository;
 use App\Repositories\RoomRepository;
+use App\Repositories\UnreadMessageRepository;
 use App\Repositories\UserMongoRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Http\Request;
@@ -35,13 +37,19 @@ class RoomController extends Controller
 {
     protected $repUser;
     protected $repRoom;
+    protected $repLastMessage;
+    protected $repUnreadMessage;
 
     public function __construct(
         UserRepository $user,
+        LastMessageRepository $last_message,
+        UnreadMessageRepository $unread_message,
         RoomRepository $room
     ){
         $this->repUser = $user;
         $this->repRoom = $room;
+        $this->repLastMessage = $last_message;
+        $this->repUnreadMessage = $unread_message;
         Log::info('api RoomController');
     }
     /**
@@ -76,9 +84,35 @@ class RoomController extends Controller
         $length = isset($inputs['length']) ? (int)$inputs['length'] : config('constants.per_page')[3];
         if($user){
             $user_room = $this->repRoom->getByUserID($user->id, [], null, $start, $length);
+            $data_room = $this->convertRoomData($user_room);
+            foreach ($data_room as $index => $room){
+                $unread = $this->repUnreadMessage->getAllByField('room_id', $room['id']);
+                Log::info($room['id']);
+                Log::info($unread);
+                $data_unread_message = $data_last_message = [];
+                if($unread){
+                    foreach ($unread as $item){
+                        $data_unread_message[] = [
+                            'user_id' => $item->user_id,
+                            'count' => $item->count,
+                        ];
+                    }
+                }
+                $last_message = $this->repLastMessage->getOneByField('room_id', $room['id']);
+                if($last_message){
+                    $data_last_message = [
+                        'user_id' => $last_message->user_id,
+                        'message' => $last_message->message,
+                        'message_type' => $last_message->message_type,
+                    ];
+                }
+                Log::info($last_message);
+                $data_room[$index]['unread_message'] = $data_unread_message;
+                $data_room[$index]['last_message'] = $data_last_message;
+            }
             return Response::json([
                 'success' => true,
-                'data' => $this->convertRoomData($user_room)
+                'data' => $data_room
             ], 200);
         }
         return Response::json([

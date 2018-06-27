@@ -102,6 +102,15 @@ class RoomRepository extends BaseRepository
         return $model->get();
     }
 
+    public function getAllByRoomType($user_id, $room_type){
+        $model = new $this->model;
+        $model = $model->where('member', 'all', [$user_id]);
+        $model = $model->where('room_type', $room_type);
+        $model = $model
+            ->orderBy('created_at', 'DESC');
+        return $model->get();
+    }
+
     public function checkRoom($user_id, $room_id, $member = []){
         $model = new $this->model;
         $member_arr = [$user_id];
