@@ -9,6 +9,7 @@ use App\Repositories\ConnectPageRepository;
 use App\Repositories\ConnectRepository;
 use App\Repositories\LogMessageRepository;
 use App\Repositories\RoomRepository;
+use App\Repositories\UnreadMessageRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,18 +43,22 @@ class DemoController extends Controller
     protected $repBotRole;
     protected $file_manager;
 
+    protected $repUnreadMessage;
+
     protected $repLibrary;
     protected $repGoogleSheetUser;
 
     public function __construct(
         UserRepository $user,
         RoomRepository $room,
+        UnreadMessageRepository $unread_message,
         LogMessageRepository $logMessage
     )
     {
         $this->repUser = $user;
         $this->repRoom = $room;
         $this->repLogMessage = $logMessage;
+        $this->repUnreadMessage = $unread_message;
         Log::info('api DemoController');
     }
 
@@ -121,9 +126,11 @@ class DemoController extends Controller
             ], 422);
         }
         $flg = false;
+        $member_fix = [];
         if(isset($room_id)){
             $room = $this->repRoom->getOneByField('_id', $room_id);
             if($room){
+                $member_fix = $room->member;
                 $flg = true;
             }
         }else{
@@ -133,6 +140,7 @@ class DemoController extends Controller
                     $room_id = $room->id;
                     if(empty($member)){
                         $member = $room->member;
+                        $member_fix = $room->member;
                     }
                     if($room){
                         $flg = true;
@@ -141,13 +149,24 @@ class DemoController extends Controller
             }
         }
         if($flg){
+            $unread = $this->repUnreadMessage->getAllByField('room_id', $room_id);
+            $unread_user = [];
+            if($unread && count($unread)){
+                foreach ($unread as $item){
+                    if(isset($item->count) && $item->count > 0){
+                        $unread_user[] = $item->user_id;
+                    }
+                }
+            }
+            $user_read = array_diff($member_fix, $unread_user);
             $log = $this->repLogMessage->getMessage($room_id, config('constants.log_message_limit'));
-            $user_member = $this->repUser->getList($member, 0, config('constants.per_page.5'));
+            $user_member = $this->repUser->getList($member_fix, 0, config('constants.per_page.5'));
             $member_name = $this->convertUserData($user_member);
             return Response::json([
                 'success' => true,
                 'log_messages' => $log,
                 'member_name' => $member_name,
+                'user_read' => $user_read,
                 'room_id' => $room_id
             ], 200);
         }
