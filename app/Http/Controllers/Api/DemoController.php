@@ -138,8 +138,7 @@ class DemoController extends Controller
                 $room = $this->repRoom->getRoomByMember($member, $room_type);
                 if($room){
                     $room_id = $room->id;
-                    if(empty($member)){
-                        $member = $room->member;
+                    if(!empty($member)){
                         $member_fix = $room->member;
                     }
                     if($room){
@@ -166,7 +165,7 @@ class DemoController extends Controller
                 'success' => true,
                 'log_messages' => $log,
                 'member_name' => $member_name,
-                'user_read' => $user_read,
+                'user_read' => array_values($user_read),
                 'room_id' => $room_id
             ], 200);
         }
