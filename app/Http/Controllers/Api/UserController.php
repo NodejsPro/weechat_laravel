@@ -129,7 +129,7 @@ class UserController extends Controller
                     array(
                         'success' => false,
                         'msg' => trans('user.validate_token_expire'),
-                        'login_flg' => config('constants.active.enable')
+                        'log_out_flg' => config('constants.active.enable')
                     ), 400);
             }
             $user_arr = [$user];
