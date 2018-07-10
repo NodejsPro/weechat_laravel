@@ -42,9 +42,10 @@ class UserController extends Controller
     public function __construct(
         UserRepository $user
     ){
+        Log::info('api userController');
         $this->repUser = $user;
         $this->file_manager = new ImageManager(array('driver' => 'gd'));
-        $this->middleware('authentication.api', ['except' => ['userLogin', 'create', 'checkPhone', 'userTest', 'forgetPassword']]);
+        $this->middleware('authentication.api', ['except' => ['updatePassword', 'checkSmsCode', 'userLogin', 'create', 'checkPhone', 'userTest', 'forgetPassword']]);
     }
     /**
      * Display a listing of the resource.
@@ -60,6 +61,8 @@ class UserController extends Controller
     */
     public function userLogin(Request $request){
         $inputs = $request->all();
+        Log::info('api userLogin');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -88,15 +91,22 @@ class UserController extends Controller
                 $code = $this->getRandomCode(6);
             }
             $inputs['code'] = $code;
-            $validate_token = $this->getValidateToken();
-            $inputs['validate_token'] = $validate_token;
-            $this->repUser->updateStatus($user, $inputs);
-            $data = [
-                'success' => true,
-                'validate_token' => $validate_token
-            ];
-            $this->sendSMS($user->phone, $code);
-            return Response::json($data, 200);
+            $sms_status = $this->sendSMS($user->phone, $code);
+            if($sms_status){
+                $validate_token = $this->getValidateToken();
+                $inputs['validate_token'] = $validate_token;
+                $this->repUser->updateStatus($user, $inputs);
+                $data = [
+                    'success' => true,
+                    'validate_token' => $validate_token
+                ];
+                return Response::json($data, 200);
+            }
+            return Response::json(
+                array(
+                    'success' => false,
+                    'msg' => trans('user.send_sms_fail')
+                ), 400);
         }
         return Response::json(
             array(
@@ -107,6 +117,8 @@ class UserController extends Controller
 
     public function userLoginRemember(Request $request){
         $inputs = $request->all();
+        Log::info('api userLoginRemember');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -157,6 +169,8 @@ class UserController extends Controller
         $header = $request->header();
         $validate_token = $header['validate-token'][0];
         $inputs = $request->all();
+        Log::info('api authentication');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -193,6 +207,8 @@ class UserController extends Controller
 
     public function checkPhone(Request $request){
         $inputs = $request->all();
+        Log::info('api checkPhone');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -233,6 +249,8 @@ class UserController extends Controller
 
     public function createByUserName(Request $request){
         $inputs = $request->all();
+        Log::info('api createByUserName');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -252,6 +270,8 @@ class UserController extends Controller
 
     public function create(Request $request){
         $inputs = $request->all();
+        Log::info('api create');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -297,6 +317,8 @@ class UserController extends Controller
 
     public function edit(Request $request){
         $inputs = $request->all();
+        Log::info('api edit');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -315,6 +337,7 @@ class UserController extends Controller
     }
 
     public function userTest(){
+        Log::info('api userTest');
         $user_check = $this->repUser->getOneByField("user_name", 'super_admin');
         if(!$user_check){
             \App\Mongodb\User::create([
@@ -450,6 +473,8 @@ class UserController extends Controller
 
     public function forgetPassword(Request $request){
         $inputs = $request->all();
+        Log::info('api forgetPassword');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -465,12 +490,19 @@ class UserController extends Controller
         $phone = $inputs['phone'];
         $user = $this->repUser->getUserByPhone($phone);
         if($user && $user->confirm_flg){
-            $code = $this->getRandomCode();
-            $this->repUser->updateCode($user, $code);
-            $this->sendSMS($phone, $code);
-            return response([
-                "success" => true,
-            ], 200);
+            $code = $this->getValidateToken();
+            $sms_status = $this->sendSMS($phone, $code);
+            if($sms_status){
+                $this->repUser->forgetPassword($user, $code);
+                return response([
+                    "success" => true,
+                ], 200);
+            }
+            return Response::json(
+                array(
+                    'success' => false,
+                    'msg' => trans('user.send_sms_fail')
+                ), 400);
         }
         return response([
             "success" => false,
@@ -479,9 +511,9 @@ class UserController extends Controller
     }
 
     public function checkSmsCode(Request $request){
-        $header = $request->header();
-        $validate_token = $header['validate-token'][0];
         $inputs = $request->all();
+        Log::info('api checkSmsCode');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
@@ -495,13 +527,13 @@ class UserController extends Controller
             ], 422);
         }
         $code = $inputs['code'];
-        $user = $this->repUser->getUserByField('validate_token', $validate_token);
-        if($user && $user->code == $code){
+        $user = $this->repUser->getUserByField('code', $code);
+        if($user){
             $data = [
                 'success' => true,
             ];
             $code = '';
-            $this->repUser->updateCode($user, $code);
+            $this->repUser->updateCode($user, $code, config('constants.active.enable'));
             return Response::json($data, 200);
         }
         return Response::json(array(
@@ -511,13 +543,14 @@ class UserController extends Controller
     }
 
     public function updatePassword(Request $request){
-        $header = $request->header();
-        $validate_token = $header['validate-token'][0];
         $inputs = $request->all();
+        Log::info('api updatePassword');
+        Log::info($inputs);
         $validator = Validator::make(
             $inputs,
             array(
-                'password' => 'required'
+                'phone' => 'required',
+                'password' => 'required',
             )
         );
         if ($validator->fails()){
@@ -527,23 +560,26 @@ class UserController extends Controller
             ], 422);
         }
         $password = $inputs['password'];
-        $user = $this->repUser->getUserByField('validate_token', $validate_token);
+        $phone = $inputs['phone'];
+        $user = $this->repUser->getUserUpdatePassword('phone', $phone);
         if($user){
             $data = [
                 'success' => true,
             ];
-            $this->repUser->updatePassword($user, $password);
+            $this->repUser->updatePassword($user, $password, config('constants.active.disable'));
             return Response::json($data, 200);
         }
         return Response::json(array(
             'success' => false,
-            'msg' => trans('message.common_error')
+            'msg' => trans('message.user_not_chage_password')
         ), 400);
     }
 
     protected function fileUpload(Request $request)
     {
         $inputs = $request->all();
+        Log::info('api fileUpload');
+        Log::info($inputs);
         $file_config = config('constants.file_upload');
         $validator = Validator::make(
             $inputs,

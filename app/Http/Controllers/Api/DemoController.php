@@ -9,6 +9,7 @@ use App\Repositories\ConnectPageRepository;
 use App\Repositories\ConnectRepository;
 use App\Repositories\LogMessageRepository;
 use App\Repositories\RoomRepository;
+use App\Repositories\UnreadMessageRepository;
 use App\Repositories\UserRepository;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Collection;
@@ -42,18 +43,23 @@ class DemoController extends Controller
     protected $repBotRole;
     protected $file_manager;
 
+    protected $repUnreadMessage;
+
     protected $repLibrary;
     protected $repGoogleSheetUser;
 
     public function __construct(
         UserRepository $user,
         RoomRepository $room,
+        UnreadMessageRepository $unread_message,
         LogMessageRepository $logMessage
     )
     {
         $this->repUser = $user;
         $this->repRoom = $room;
         $this->repLogMessage = $logMessage;
+        $this->repUnreadMessage = $unread_message;
+        Log::info('api DemoController');
     }
 
     public function index($view_user_id = null){
@@ -85,6 +91,8 @@ class DemoController extends Controller
 
     public function getConversation(Request $request){
         $inputs = $request->all();
+        Log::info('api getConversation');
+        Log::info($inputs);
         $user_id = @$inputs['user_id'];
         $room_id = @$inputs['room_id'];
         $room_type = @$inputs['room_type'];
@@ -117,33 +125,54 @@ class DemoController extends Controller
                 'msg' => 'User valid'
             ], 422);
         }
-        if(!isset($room_id)){
-            if(!in_array($user_id, $member)){
-                return response([
-                    "success" => false,
-                    'msg' => 'Room valid'
-                ], 422);
-            }
-            $room = $this->repRoom->getRoomByMember($member, $room_type);
+        $flg = false;
+        $member_fix = [];
+        if(isset($room_id)){
+            $room = $this->repRoom->getOneByField('_id', $room_id);
             if($room){
-                $room_id = $room->id;
-                if(empty($member)){
-                    $member = $room->member;
+                $member_fix = $room->member;
+                $flg = true;
+            }
+        }else{
+            if(in_array($user_id, $member)){
+                $room = $this->repRoom->getRoomByMember($member, $room_type);
+                if($room){
+                    $room_id = $room->id;
+                    if(!empty($member)){
+                        $member_fix = $room->member;
+                    }
+                    if($room){
+                        $flg = true;
+                    }
                 }
             }
         }
-        $log = $member_name = [];
-        if($room_id){
+        if($flg){
+            $unread = $this->repUnreadMessage->getAllByField('room_id', $room_id);
+            $unread_user = [];
+            if($unread && count($unread)){
+                foreach ($unread as $item){
+                    if(isset($item->count) && $item->count > 0){
+                        $unread_user[] = $item->user_id;
+                    }
+                }
+            }
+            $user_read = array_diff($member_fix, $unread_user);
             $log = $this->repLogMessage->getMessage($room_id, config('constants.log_message_limit'));
-            $user_member = $this->repUser->getList($member, 0, config('constants.per_page.5'));
+            $user_member = $this->repUser->getList($member_fix, 0, config('constants.per_page.5'));
             $member_name = $this->convertUserData($user_member);
+            return Response::json([
+                'success' => true,
+                'log_messages' => $log,
+                'member_name' => $member_name,
+                'user_read' => array_values($user_read),
+                'room_id' => $room_id
+            ], 200);
         }
-        return Response::json([
-            'success' => true,
-            'log_messages' => $log,
-            'member_name' => $member_name,
-            'room_id' => $room_id
-        ], 200);
+        return response([
+            "success" => false,
+            'msg' => 'room valid'
+        ], 422);
     }
 
 }

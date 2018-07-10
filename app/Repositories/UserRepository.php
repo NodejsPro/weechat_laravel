@@ -318,14 +318,33 @@ class UserRepository extends BaseRepository
         return $model;
     }
 
-    public function updateCode($user, $code){
+    public function getUserUpdatePassword($field_name, $field_code){
+        $model = new $this->model;
+        $model = $model->where($field_name, $field_code)
+            ->where('update_pass_flg', config('constants.active.enable'))
+            ->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->first();
+        return $model;
+    }
+
+    public function updateCode($user, $code, $flg = null){
+        $user->code = $code;
+        if(isset($flg)){
+            $user->update_pass_flg = $flg;
+        }
+        $user->save();
+        return $user;
+    }
+
+    public function forgetPassword($user, $code){
         $user->code = $code;
         $user->save();
         return $user;
     }
 
-    public function updatePassword($user, $code){
+    public function updatePassword($user, $code, $flg){
         $user->password = bcrypt($code);
+        $user->update_pass_flg = $flg;
         $user->save();
         return $user;
     }
