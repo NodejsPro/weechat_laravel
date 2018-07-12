@@ -85,10 +85,12 @@ class RoomController extends Controller
         if($user){
             $user_room = $this->repRoom->getByUserID($user->id, [], null, $start, $length);
             $data_room = $this->convertRoomData($user_room);
+            $member_user_id = [];
             foreach ($data_room as $index => $room){
                 $unread = $this->repUnreadMessage->getAllByField('room_id', $room['id']);
                 Log::info($room['id']);
                 Log::info($unread);
+                $member_user_id = array_merge($member_user_id, $room['member']);
                 $data_unread_message = $data_last_message = [];
                 if($unread){
                     foreach ($unread as $item){
@@ -107,8 +109,13 @@ class RoomController extends Controller
                     ];
                 }
                 Log::info($last_message);
-                $data_room[$index]['unread_message'] = $data_unread_message;
-                $data_room[$index]['last_message'] = $data_last_message;
+                $data_room[$index]['unread_message'] = count($data_unread_message) ? $data_unread_message : [""  => ""];
+                $data_room[$index]['last_message'] = count($data_last_message) ? $data_last_message : [""  => ""];
+            }
+            if(count($member_user_id) > 0){
+                $member_name = $this->repUser->getList($member_user_id, 0, config('constants.per_page.5'));
+                $member_data = $this->convertUserData($member_name);
+                $data_room['member_name'] = $member_data;
             }
             return Response::json([
                 'success' => true,
