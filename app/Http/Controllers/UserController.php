@@ -209,11 +209,15 @@ class UserController extends Controller
                 }
             }
             $user_edit_contact = !empty($user_edit->contact) ? $user_edit->contact : [];
-            $user_create = $this->repUser->getAllByField('created_id', $user->id);
-            foreach ($user_create as $item){
-                if($item->id != $id){
-                    $user_id_arr[] = $item->id;
+            $user_create = $this->repUser->getById($user_edit->created_id);
+            if($user_create){
+                $user_contact_create = $this->repUser->getAllByField('created_id', $user_create->id);
+                foreach ($user_contact_create as $item){
+                    if($item->id != $id){
+                        $user_id_arr[] = $item->id;
+                    }
                 }
+                $user_id_arr[] = $user_create->id;
             }
             $user_id_arr = array_merge($user_id_arr, $user_edit_contact);
             $user_id_arr = array_unique($user_id_arr);
