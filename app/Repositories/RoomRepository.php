@@ -69,7 +69,7 @@ class RoomRepository extends BaseRepository
     }
 
     public function updateInfo($room, $inputs){
-        $room->share_key_flag = (int)$inputs['share_key_flag'];
+        $room->share_key_flg = (int)$inputs['share_key_flg'];
         $room->save();
         return $room;
     }

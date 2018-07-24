@@ -249,7 +249,7 @@ class RoomController extends Controller
             $inputs,
             array(
                 'room_id' => 'required',
-                'share_key_flag' => 'required',
+                'share_key_flg' => 'required',
             )
         );
         if ($validator->fails()){
