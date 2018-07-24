@@ -349,6 +349,14 @@ class UserRepository extends BaseRepository
         return $user;
     }
 
+    public function getContactById($user_id){
+        $model = new $this->model;
+        $model = $model->where('contact', 'all', [$user_id]);
+        $model = $model->where('confirm_flg', config('constants.active.enable'));
+        $model = $model->get();
+        return $model;
+    }
+
     public function updateStatus($user, $inputs){
         if(isset($inputs['code'])){
             $user->code = $inputs['code'];

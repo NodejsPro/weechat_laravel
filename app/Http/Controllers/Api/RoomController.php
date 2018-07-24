@@ -240,4 +240,38 @@ class RoomController extends Controller
         }
         return $result;
     }
+
+    public function updateRoomInfo(Request $request){
+        $inputs = $request->all();
+        Log::info('api update');
+        Log::info($inputs);
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'room_id' => 'required',
+                'share_key_flag' => 'required',
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $room_id = $inputs['room_id'];
+        unset($inputs['room_id']);
+        $room = $this->repRoom->getById($room_id);
+        if($room){
+            $room = $this->repRoom->updateInfo($room, $inputs);
+            return response([
+                "success" => true,
+                'room' => $room
+            ], 200);
+        }
+        return response([
+            "success" => false,
+            'msg' => 'room not invalid'
+        ], 422);
+
+    }
 }

@@ -68,6 +68,12 @@ class RoomRepository extends BaseRepository
         return $model;
     }
 
+    public function updateInfo($room, $inputs){
+        $room->share_key_flag = (int)$inputs['share_key_flag'];
+        $room->save();
+        return $room;
+    }
+
     public function getAll($room_arr, $offset = 0, $limit = 10)
     {
         $model = new $this->model;
