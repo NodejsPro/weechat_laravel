@@ -70,6 +70,10 @@ class UserController extends Controller
             $user_id_arr[] = $item->id;
         }
         $user_edit_contact = !empty($user->contact) ? $user->contact : [];
+        $user_create = $this->repUser->getAllByField('created_id', $user->id);
+        foreach ($user_create as $item){
+            $user_id_arr[] = $item->id;
+        }
         $user_id_arr = array_merge($user_id_arr, $user_edit_contact);
         $user_id_arr = array_unique($user_id_arr);
         $contacts = $this->repUser->getContact($user_id_arr, 0, config('constants.per_page.5'));
@@ -205,6 +209,12 @@ class UserController extends Controller
                 }
             }
             $user_edit_contact = !empty($user_edit->contact) ? $user_edit->contact : [];
+            $user_create = $this->repUser->getAllByField('created_id', $user->id);
+            foreach ($user_create as $item){
+                if($item->id != $id){
+                    $user_id_arr[] = $item->id;
+                }
+            }
             $user_id_arr = array_merge($user_id_arr, $user_edit_contact);
             $user_id_arr = array_unique($user_id_arr);
             $contacts = $this->repUser->getContact($user_id_arr, 0, config('constants.per_page.5'));
