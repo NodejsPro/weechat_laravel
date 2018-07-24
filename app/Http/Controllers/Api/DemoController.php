@@ -158,7 +158,10 @@ class DemoController extends Controller
                 }
             }
             $user_read = array_diff($member_fix, $unread_user);
-            $log = $this->repLogMessage->getMessage($room_id, config('constants.log_message_limit'));
+            $log = [];
+            if(isset($room->share_key_flag)){
+                $log = $this->repLogMessage->getMessage($room_id, config('constants.log_message_limit'));
+            }
             $user_member = $this->repUser->getList($member_fix, 0, config('constants.per_page.5'));
             $member_name = $this->convertUserData($user_member);
             return Response::json([

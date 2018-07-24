@@ -60,7 +60,7 @@ $bot_picture = empty(Auth::user()->avatar) ? 'images/profile.png' : Auth::user()
                 room_id = null;
             socket.on('connect', function() {
                 console.log('socket on connect');
-                socket.emit('user_join', { user_id: user_login_id });
+                socket.emit('user_join', { user_id: user_login_id, key: user_login_id });
 
                 socket.on('status_join', function (data) {
                     console.log('status_join: ', data);
@@ -382,6 +382,7 @@ $bot_picture = empty(Auth::user()->avatar) ? 'images/profile.png' : Auth::user()
                     dataObj.message = message;
                     dataObj.room_id = room_id;
                     dataObj.user_id = user_login_id;
+                    dataObj.key = user_login_id;
                     // sendCrtData(room_id, user_id, dataObj);
                     console.log('user_send_message', dataObj);
                     socket.emit('user_send_message', dataObj);

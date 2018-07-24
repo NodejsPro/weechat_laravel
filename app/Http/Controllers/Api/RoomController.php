@@ -109,7 +109,7 @@ class RoomController extends Controller
                     ];
                 }
                 Log::info($last_message);
-                $data_room[$index]['unread_message'] = count($data_unread_message) ? $data_unread_message : [""  => ""];
+                $data_room[$index]['unread_message'] = $data_unread_message;
                 $data_room[$index]['last_message'] = count($data_last_message) ? $data_last_message : [""  => ""];
             }
             if(count($member_user_id) > 0){

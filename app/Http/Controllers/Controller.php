@@ -112,10 +112,14 @@ class Controller extends BaseController
             }
         }catch (\Exception $e) {
             $result['code'] = $e->getCode();
-            $body = json_decode($e->getResponse()->getBody(true));
-            $message = isset($body->message) ? $body->message : ((isset($body->error) && isset($body->error->message)) ? $body->error->message : trans('message.common_error'));
+            if($e->getResponse()){
+                $body = json_decode($e->getResponse()->getBody(true));
+                $message = isset($body->message) ? $body->message : ((isset($body->error) && isset($body->error->message)) ? $body->error->message : trans('message.common_error'));
+            }else{
+                $message = $e->getMessage();
+            }
             $result['error'] = $message;
-            Log::info(print_r($body, true));
+            Log::info($result);
         }
         Log::info($result);
         return $result;
