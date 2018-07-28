@@ -126,6 +126,9 @@ class Controller extends BaseController
     }
 
     public function sendSMS($phone, $code){
+        return [
+            'success' => true,
+        ];
         Log::info('send sms demo via code ' . $code);
 //        return true;
         $url = config('sms.request.send_sms');
