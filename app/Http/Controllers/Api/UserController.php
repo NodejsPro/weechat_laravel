@@ -338,8 +338,8 @@ class UserController extends Controller
 
     public function userTest(){
         Log::info('api userTest');
-        $user_check = $this->repUser->getOneByField("user_name", 'super_admin');
-        if(!$user_check){
+        $user_admin = $this->repUser->getOneByField("user_name", 'super_admin');
+        if(!$user_admin){
             \App\Mongodb\User::create([
                 'authority' => '001',
                 'name' => 'supper admin',
@@ -351,6 +351,7 @@ class UserController extends Controller
                 'user_name' => 'super_admin',
             ]);
         }
+        sleep(10);
 
         $user_check = $this->repUser->getOneByField("user_name", 'admin_lv1');
         if(!$user_check){
@@ -365,6 +366,7 @@ class UserController extends Controller
                 'confirm_flg' => 1,
                 'code' => null,
                 'confirmation_token' => null,
+                'created_id' => $user_admin->id,
             ]);
 
         }
@@ -382,6 +384,7 @@ class UserController extends Controller
                 'confirm_flg' => 1,
                 'code' => null,
                 'confirmation_token' => null,
+                'created_id' => $user_admin->id,
             ]);
         }
 
@@ -398,6 +401,7 @@ class UserController extends Controller
                 'code' => null,
                 'confirm_flg' => 1,
                 'confirmation_token' => null,
+                'created_id' => $user_admin->id,
             ]);
         }
 
@@ -414,6 +418,7 @@ class UserController extends Controller
                 'code' => null,
                 'confirm_flg' => 1,
                 'confirmation_token' => null,
+                'created_id' => $user_admin->id,
             ]);
         }
 
@@ -430,6 +435,7 @@ class UserController extends Controller
                 'code' => null,
                 'confirm_flg' => 1,
                 'confirmation_token' => null,
+                'created_id' => $user_admin->id,
             ]);
         }
 
@@ -446,6 +452,7 @@ class UserController extends Controller
                 'code' => null,
                 'confirm_flg' => 1,
                 'confirmation_token' => null,
+                'created_id' => $user_admin->id,
             ]);
         }
 
@@ -463,6 +470,7 @@ class UserController extends Controller
                 'code' => null,
                 'confirm_flg' => 1,
                 'confirmation_token' => null,
+                'created_id' => $user_admin->id,
             ]);
         }
     }

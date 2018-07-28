@@ -17,6 +17,7 @@ use Illuminate\Http\Request;
      return $request->user();
  });
 Route::post('user/login', ['uses' => 'Api\UserController@userLogin', 'as' => 'user.login.api']);
+Route::post('room/updateInfo', ['uses' => 'Api\RoomController@updateRoomInfo']);
 Route::post('user/create', ['uses' => 'Api\UserController@create', 'as' => 'user.create.api']);
 Route::post('user/forgetPassword', ['uses' => 'Api\UserController@forgetPassword', 'as' => 'user.forget.password']);
 Route::post('user/checkPhone', ['uses' => 'Api\UserController@checkPhone', 'as' => 'user.check.phone.api']);
