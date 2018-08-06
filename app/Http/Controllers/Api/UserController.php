@@ -592,8 +592,9 @@ class UserController extends Controller
         $validator = Validator::make(
             $inputs,
             array(
-                'file' => 'required|mimes:'. implode(',', $file_config['file_type']).'|max:' . $file_config['file_size'],
+                'file' => 'required',
                 'user_id' => 'required',
+                'file_type' => 'required',
             )
         );
         if ($validator->fails()){
@@ -612,8 +613,7 @@ class UserController extends Controller
                 $file = $inputs['file'];
                 $file_name_origin = @$_FILES['file']['name']; //[file_name1.jpg, file_name2.jpg,...]
                 $file_info = pathinfo($file_name_origin);
-                $file_extension = @$file_info['extension'];
-                $file_name = uniqid() . time() . '.' . $file_extension;
+                $file_name = uniqid() . time();
                 $this->createFolderLocal([$upload_storage]);
                 $result = $this->uploadFile($this->file_manager, $file, public_path($upload_storage . $file_name));
                 if($result){
@@ -621,6 +621,7 @@ class UserController extends Controller
                         'path' => url($upload_storage . $file_name),
                         'name' => $file_name,
                         'name_origin' => $file_info['basename'],
+                        'file_type' => @$inputs['file_type'],
                     ];
                     return Response::json(array(
                         'success' => true,
