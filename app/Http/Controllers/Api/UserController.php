@@ -613,7 +613,7 @@ class UserController extends Controller
                 $file = $inputs['file'];
                 $file_name_origin = @$_FILES['file']['name']; //[file_name1.jpg, file_name2.jpg,...]
                 $file_info = pathinfo($file_name_origin);
-                $file_name = uniqid() . time();
+                $file_name = uniqid() . time() . '.'. @$inputs['file_type'];
                 $this->createFolderLocal([$upload_storage]);
                 $result = $this->uploadFile($this->file_manager, $file, public_path($upload_storage . $file_name));
                 if($result){
