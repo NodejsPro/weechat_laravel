@@ -31,7 +31,7 @@ class RoomRepository extends BaseRepository
     public function store($inputs, $created_id)
     {
         $model = new $this->model;
-        $model->user_id = $created_id;
+        $model->admin_id = $created_id;
         $model->room_type = $inputs['room_type'];
         $this->save($model, $inputs);
 
@@ -98,7 +98,7 @@ class RoomRepository extends BaseRepository
             $model = $model->where('room_type', $room_type);
         }
         $model = $model->where(function ($model) use ($user_id) {
-            $model->where("user_id", $user_id)
+            $model->where("admin_id", $user_id)
                 ->orWhereIn("member", [$user_id]);
         });
         $model = $model
@@ -138,5 +138,21 @@ class RoomRepository extends BaseRepository
         }
         return $model->first();
     }
-
+/**
+ * 1 năm: 30.000$ học phí
+ *        12.000$ chi phí sinh hoạt
+ *        800.000.000 cho toàn bộ chi phí 1 năm
+ * 2 năm 1.600.000.000 cho toàn bộ chi phí 2 năm
+ *
+ * Nếu miễn 50%: mình cần 1.000.000.000 cho toàn bộ khóa học 2 năm
+ * Nếu miễn 100% mình cần 450.000.000 cho toàn bộ khóa học 2 năm
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+*/
 }
