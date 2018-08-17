@@ -585,6 +585,7 @@ class UserController extends Controller
 
     protected function fileUpload(Request $request)
     {
+        header('Access-Control-Allow-Origin: *');
         $inputs = $request->all();
         Log::info('api fileUpload');
         Log::info($inputs);
@@ -603,30 +604,33 @@ class UserController extends Controller
                 'msg' => $validator->errors()->getMessages()
             ], 422);
         }
-        header('Access-Control-Allow-Origin: *');
         $user_id = $inputs['user_id'];
         $user = $this->repUser->getById($user_id);
         $msg = trans("message.common_error");
         if ($user) {
             if(isset($inputs['file']) && $_FILES['file']) {
-                $upload_storage = $file_config['file_path_base'] . DIRECTORY_SEPARATOR . $file_config['file_path_client'] . DIRECTORY_SEPARATOR. $user_id . DIRECTORY_SEPARATOR;
-                $file = $inputs['file'];
-                $file_name_origin = @$_FILES['file']['name']; //[file_name1.jpg, file_name2.jpg,...]
-                $file_info = pathinfo($file_name_origin);
-                $file_name = uniqid() . time() . '.'. @$inputs['file_type'];
-                $this->createFolderLocal([$upload_storage]);
-                $result = $this->uploadFile($this->file_manager, $file, public_path($upload_storage . $file_name));
-                if($result){
-                    $data = [
-                        'path' => url($upload_storage . $file_name),
-                        'name' => $file_name,
-                        'name_origin' => $file_info['basename'],
-                        'file_type' => @$inputs['file_type'],
-                    ];
-                    return Response::json(array(
-                        'success' => true,
-                        'file_upload' => $data
-                    ), 200);
+                try{
+                    $upload_storage = $file_config['file_path_base'] . DIRECTORY_SEPARATOR . $file_config['file_path_client'] . DIRECTORY_SEPARATOR. $user_id . DIRECTORY_SEPARATOR;
+                    $file = $inputs['file'];
+                    $file_name_origin = @$_FILES['file']['name']; //[file_name1.jpg, file_name2.jpg,...]
+                    $file_info = pathinfo($file_name_origin);
+                    $file_name = uniqid() . time() . '.'. @$inputs['file_type'];
+                    $this->createFolderLocal([$upload_storage]);
+                    $result = $this->moveFile($file, $file_name);
+                    if($result){
+                        $data = [
+                            'path' => url($upload_storage . $file_name),
+                            'name' => $file_name,
+                            'name_origin' => $file_info['basename'],
+                            'file_type' => @$inputs['file_type'],
+                        ];
+                        return Response::json(array(
+                            'success' => true,
+                            'file_upload' => $data
+                        ), 200);
+                    }
+                }catch (\Exception $e){
+                    $msg = 'error upload file: '. $e->getMessage();
                 }
             }else{
                 $msg = trans('user.file_miss');

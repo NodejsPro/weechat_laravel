@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\UploadHandler\UploadHandler;
 use GuzzleHttp\Client;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Routing\Controller as BaseController;
@@ -67,6 +68,14 @@ class Controller extends BaseController
             }
             $file_save->orientate()->save($path);
         }
+    }
+
+    public function moveFile($file, $file_name){
+        $picture = null;
+        if(!empty($file)){
+            return $file->move('upload', $file_name);
+        }
+        return $picture;
     }
 
     public function uploadFile($file_manage, $file, $path){
