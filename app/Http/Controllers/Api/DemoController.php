@@ -182,8 +182,10 @@ class DemoController extends Controller
         $inputs = $request->all();
         Log::info('api getConversation');
         Log::info($inputs);
+        $user_id = @$inputs['user_id'];
         $room_id = @$inputs['room_id'];
         $valid_arr = array(
+            'user_id' => 'required',
             'room_id' => 'required',
         );
         $validator = Validator::make(
@@ -196,8 +198,15 @@ class DemoController extends Controller
                 'msg' => $validator->errors()->getMessages()
             ], 422);
         }
+        $user = $this->repUser->getById($user_id);
+        if(!$user){
+            return response([
+                "success" => false,
+                'msg' => 'User valid'
+            ], 422);
+        }
         $room = $this->repRoom->getOneByField('_id', $room_id);
-        if($room){
+        if($room && in_array($user_id, $room->member)){
             $unread = $this->repUnreadMessage->getAllByField('room_id', $room_id);
             $unread_user = [];
             if($unread && count($unread)){
