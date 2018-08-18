@@ -184,7 +184,6 @@ class DemoController extends Controller
         Log::info($inputs);
         $room_id = @$inputs['room_id'];
         $valid_arr = array(
-            'user_id' => 'required',
             'room_id' => 'required',
         );
         $validator = Validator::make(
@@ -209,7 +208,9 @@ class DemoController extends Controller
                 }
             }
             $member = $room->member;
-            $log = $this->repLogMessage->getMessage($room_id, config('constants.log_message_limit'));
+            $last_time_of_message = @$inputs['log_last_time '];
+            $limit = isset() ? config('constants.log_message_limit');
+            $log = $this->repLogMessage->getMessage($room_id, $limit, $last_time_of_message);
             $user_member = $this->repUser->getList($member, 0, config('constants.per_page.5'));
             $member_name = $this->convertUserData($user_member);
             return Response::json([
