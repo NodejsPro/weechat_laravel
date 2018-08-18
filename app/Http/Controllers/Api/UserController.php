@@ -616,7 +616,7 @@ class UserController extends Controller
                     $file_info = pathinfo($file_name_origin);
                     $file_name = uniqid() . time() . '.'. @$inputs['file_type'];
                     $this->createFolderLocal([$upload_storage]);
-                    $result = $this->moveFile($file, $file_name);
+                    $result = $this->moveFile($file, $upload_storage, $file_name);
                     if($result){
                         $data = [
                             'path' => url($upload_storage . $file_name),

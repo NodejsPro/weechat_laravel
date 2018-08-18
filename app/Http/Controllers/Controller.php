@@ -70,10 +70,10 @@ class Controller extends BaseController
         }
     }
 
-    public function moveFile($file, $file_name){
+    public function moveFile($file, $file_path, $file_name){
         $picture = null;
         if(!empty($file)){
-            return $file->move('upload', $file_name);
+            return $file->move($file_path, $file_name);
         }
         return $picture;
     }
