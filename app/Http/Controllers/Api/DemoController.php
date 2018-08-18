@@ -89,7 +89,7 @@ class DemoController extends Controller
     public function serviceAdd(Request $request){
     }
 
-    public function getConversation(Request $request){
+    public function getConversation2(Request $request){
         $inputs = $request->all();
         Log::info('api getConversation');
         Log::info($inputs);
@@ -169,6 +169,54 @@ class DemoController extends Controller
                 'log_messages' => $log,
                 'member_name' => $member_name,
                 'user_read' => array_values($user_read),
+                'room_id' => $room_id
+            ], 200);
+        }
+        return response([
+            "success" => false,
+            'msg' => 'room valid'
+        ], 422);
+    }
+
+    public function getConversation(Request $request){
+        $inputs = $request->all();
+        Log::info('api getConversation');
+        Log::info($inputs);
+        $room_id = @$inputs['room_id'];
+        $valid_arr = array(
+            'user_id' => 'required',
+            'room_id' => 'required',
+        );
+        $validator = Validator::make(
+            $inputs,
+            $valid_arr
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $room = $this->repRoom->getOneByField('_id', $room_id);
+        if($room){
+            $unread = $this->repUnreadMessage->getAllByField('room_id', $room_id);
+            $unread_user = [];
+            if($unread && count($unread)){
+                foreach ($unread as $item){
+                    if(isset($item->count) && $item->count > 0){
+                        $unread_user[] = $item->user_id;
+                    }
+                }
+            }
+            $member = $room->member;
+            $log = $this->repLogMessage->getMessage($room_id, config('constants.log_message_limit'));
+            $user_member = $this->repUser->getList($member, 0, config('constants.per_page.5'));
+            $member_name = $this->convertUserData($user_member);
+            return Response::json([
+                'success' => true,
+                'log_messages' => $log,
+                'member_name' => $member_name,
+                'user_read' => $unread_user,
                 'room_id' => $room_id
             ], 200);
         }
