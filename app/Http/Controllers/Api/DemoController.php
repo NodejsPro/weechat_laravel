@@ -208,8 +208,8 @@ class DemoController extends Controller
                 }
             }
             $member = $room->member;
-            $last_time_of_message = @$inputs['log_last_time '];
-            $limit = isset() ? config('constants.log_message_limit');
+            $last_time_of_message = isset($inputs['log_last_time']) ? (int)$inputs['log_last_time'] : null;
+            $limit = isset($inputs['length']) ? (int)$inputs['length'] : config('constants.log_message_limit');
             $log = $this->repLogMessage->getMessage($room_id, $limit, $last_time_of_message);
             $user_member = $this->repUser->getList($member, 0, config('constants.per_page.5'));
             $member_name = $this->convertUserData($user_member);
