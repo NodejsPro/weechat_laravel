@@ -20,12 +20,12 @@
                             <thead>
                             <tr role="row">
                                 <th >No.</th>
-                                <th >{{{ trans('field.phone') }}}</th>
-                                <th >{{{ trans('field.user_name') }}}</th>
-                                <th>{{{trans('field.authority')}}}</th>
-                                <th >{{{ trans('field.contact') }}}</th>
-                                <th >{{{ trans('field.user_create') }}}</th>
-                                <th >{{{ trans('field.action') }}}</th>
+                                <th >{{{ trans('user.field_phone') }}}</th>
+                                <th >{{{ trans('user.field_user_name') }}}</th>
+                                <th>{{{trans('user.field_authority')}}}</th>
+                                <th >{{{ trans('user.field_contact') }}}</th>
+                                <th >{{{ trans('user.field_user_create') }}}</th>
+                                <th >{{{ trans('user.field_action') }}}</th>
                             </tr>
                             </thead>
                             <tbody></tbody>

@@ -312,6 +312,16 @@
   .email-detail{
     word-break: break-all;
   }
+  #datatable_user_wrapper{
+    #datatable_user_paginate{
+      .paginate_button{
+        padding: 0px;
+        border: none;
+        background: none;
+        margin-left: 0px;
+      }
+    }
+  }
 }
 
 .user-create {

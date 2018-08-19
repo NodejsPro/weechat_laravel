@@ -81,7 +81,7 @@
                         @if(!empty($errors))
                             {{Log::info($errors)}}
                         @endif
-                        <h2>{{trans('user.first_step')}}</h2>
+                        <h2>{{trans('user.field_first_step')}}</h2>
                         <section>
                             @if(ends_with(Route::currentRouteAction(), 'UserController@create'))
                                 {!! Form::open(['url' => 'user', 'class' => 'cmxform form-horizontal form-action', 'role' => 'form', 'enctype' => 'multipart/form-data']) !!}
@@ -136,7 +136,7 @@
                                 </div>
                                 {!! Form::close() !!}
                         </section>
-                        <h2>{{trans('user.last_step')}}</h2>
+                        <h2>{{trans('user.field_last_step')}}</h2>
                         <section class="contact-list">
                             @if(isset($contacts))
                                 <div class="form-horizontal clearfix">
