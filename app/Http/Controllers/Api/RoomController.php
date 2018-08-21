@@ -155,12 +155,14 @@ class RoomController extends Controller
             if($user && !empty($user->contact) && !empty(array_intersect($member, $user->contact))){
                 $member_fix = array_intersect($member, $user->contact);
                 $inputs['member'] = array_merge($member_fix, [$user_id]);
-                $member_name = $this->repUser->getList($inputs['member'], 0, config('constants.per_page.5'));
-                $name = [];
-                foreach ($member_name as $item_name){
-                    $name[] = $item_name->user_name;
+                if(empty($inputs['name'])){
+                    $member_name = $this->repUser->getList($inputs['member'], 0, config('constants.per_page.5'));
+                    $name = [];
+                    foreach ($member_name as $item_name){
+                        $name[] = $item_name->user_name;
+                    }
+                    $inputs['name'] = implode(',', $name);
                 }
-                $inputs['name'] = implode(',', $name);
                 $inputs['room_type'] = config('constants.room_type.one_many');
                 $room = $this->repRoom->store($inputs, $user->id);
                 return Response::json(array(

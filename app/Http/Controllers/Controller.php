@@ -48,7 +48,8 @@ class Controller extends BaseController
                     'name' => $item->name,
                     'id' => $item->_id,
                     'room_type' => $item->room_type,
-                    'member' => $item->member
+                    'member' => $item->member,
+                    'admin_id' => $item->admin_id,
                 ];
             }
         }
