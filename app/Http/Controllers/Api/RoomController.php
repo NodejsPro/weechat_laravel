@@ -17,6 +17,7 @@ use App\Repositories\RoomRepository;
 use App\Repositories\UnreadMessageRepository;
 use App\Repositories\UserMongoRepository;
 use App\Repositories\UserRepository;
+use App\Repositories\UserRoomKeyRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
@@ -39,17 +40,20 @@ class RoomController extends Controller
     protected $repRoom;
     protected $repLastMessage;
     protected $repUnreadMessage;
+    protected $repUserRoomKey;
 
     public function __construct(
         UserRepository $user,
         LastMessageRepository $last_message,
         UnreadMessageRepository $unread_message,
+        UserRoomKeyRepository $userRoomKey,
         RoomRepository $room
     ){
         $this->repUser = $user;
         $this->repRoom = $room;
         $this->repLastMessage = $last_message;
         $this->repUnreadMessage = $unread_message;
+        $this->repUserRoomKey = $userRoomKey;
         Log::info('api RoomController');
     }
     /**
@@ -251,7 +255,6 @@ class RoomController extends Controller
             $inputs,
             array(
                 'room_id' => 'required',
-                'share_key_flg' => 'required',
             )
         );
         if ($validator->fails()){
@@ -275,5 +278,57 @@ class RoomController extends Controller
             'msg' => 'room not invalid'
         ], 422);
 
+    }
+
+    public function updateUserKey(Request $request){
+        $inputs = $request->all();
+        Log::info('api updateUserKey');
+        Log::info($inputs);
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'rooms' => 'required',
+                'rooms.*.room_id' => 'required',
+                'rooms.*.admin_id' => 'required',
+                'rooms.*.user_id' => 'required',
+                'rooms.*.share_key_flg' => 'required|in:'.implode(',', array_values(config('constants.active')))
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $input_rooms = $inputs['rooms'];
+        $room_id_arr = 
+        foreach ($input_rooms as $room){
+
+        }
+        $user_share_key_flg = (int)$inputs['share_key_flg'];
+        $room = $this->repRoom->getById($inputs['room_id']);
+        if($room && $room->admin_id == $inputs['admin_id'] && in_array($inputs['user_id'], $room->member)){
+            $share_key_flg = $room->share_key_flg;
+            // chưa share key
+            if(empty($share_key_flg) || !isset($share_key_flg[$inputs['user_id']])){
+                Log::info('add share key new user_id ' . $inputs['user_id'] . ' into room_id ' . $inputs['room_id']);
+                $share_key_flg[$inputs['user_id']] = $user_share_key_flg;
+                $this->repRoom->updateShareKey($room, $share_key_flg);
+            // cap nhat lai trang thai share key
+            }elseif(isset($share_key_flg[$inputs['user_id']]) && $share_key_flg[$inputs['user_id']] != $user_share_key_flg){
+                $share_key_flg[$inputs['user_id']] = $user_share_key_flg;
+                $this->repRoom->updateShareKey($room, $share_key_flg);
+                Log::info('update share key new user_id' . $inputs['user_id'] . ' into room_id' . $inputs['room_id']);
+            }
+            return response([
+                "success" => true,
+                'room' => $this->co,
+                'msg' => 'room share key ok'
+            ], 200);
+        }
+        return response([
+            "success" => false,
+            'msg' => 'room not exits'
+        ], 400);
     }
 }

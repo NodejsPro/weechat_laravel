@@ -45,6 +45,7 @@ class Room extends Moloquent
         'validate_token',
         'avatar',
         'user_name',
+        'share_key_flg',
         'code','confirmation_token' ,'created_id'
     ];
 

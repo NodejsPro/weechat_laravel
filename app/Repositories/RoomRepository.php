@@ -68,6 +68,11 @@ class RoomRepository extends BaseRepository
         return $model;
     }
 
+    public function updateShareKey($model, $share_key_flg){
+        $model->share_key_flg = $share_key_flg;
+        $model->save();
+    }
+
     public function updateInfo($room, $inputs){
         $room->share_key_flg = (int)$inputs['share_key_flg'];
         $room->save();
