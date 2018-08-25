@@ -40,17 +40,20 @@ class Controller extends BaseController
         return $result;
     }
 
-    public function convertRoomData($room_data){
+    public function convertRoomData($room_data, $show_share_key = false){
         $result = [];
         if(!empty($room_data)){
-            foreach ($room_data as $item){
-                $result[] = [
+            foreach ($room_data as $key => $item){
+                $result[$key] = [
                     'name' => $item->name,
                     'id' => $item->_id,
                     'room_type' => $item->room_type,
                     'member' => $item->member,
                     'admin_id' => $item->admin_id,
                 ];
+                if($show_share_key){
+                    $result[$key]['share_key_flg'] = $item->share_key_flg;
+                }
             }
         }
         return $result;
