@@ -71,6 +71,7 @@ class RoomRepository extends BaseRepository
     public function updateShareKey($model, $share_key_flg){
         $model->share_key_flg = $share_key_flg;
         $model->save();
+        return $model;
     }
 
     public function updateInfo($room, $inputs){
@@ -86,7 +87,7 @@ class RoomRepository extends BaseRepository
             $model = $model->whereIn('_id', $room_arr);
         }
         $model = $model
-            ->where('confirm_flg', config('constants.active.enable'))
+//            ->where('confirm_flg', config('constants.active.enable'))
             ->skip($offset)
             ->take($limit)
             ->orderBy('created_at', 'DESC');
