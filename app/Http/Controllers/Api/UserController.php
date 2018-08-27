@@ -645,6 +645,69 @@ class UserController extends Controller
         ), 400);
     }
 
+    protected function fileMultiUpload(Request $request)
+    {
+        header('Access-Control-Allow-Origin: *');
+        $inputs = $request->all();
+        Log::info('api fileUpload');
+        Log::info($inputs);
+        $file_config = config('constants.file_upload');
+        $validator = Validator::make(
+            $inputs,
+            array(
+                'user_id' => 'required',
+                'files.*.file' => 'required',
+                'files.*.file_type' => 'required',
+            )
+        );
+        if ($validator->fails()){
+            return response([
+                "success" => false,
+                'msg' => $validator->errors()->getMessages()
+            ], 422);
+        }
+        $user_id = $inputs['user_id'];
+        $user = $this->repUser->getById($user_id);
+        $msg = trans("message.common_error");
+        if ($user) {
+            if(isset($inputs['files']) && isset($_FILES['files']) && is_array($inputs['files'])) {
+                try{
+                    $upload_storage = $file_config['file_path_base'] . DIRECTORY_SEPARATOR . $file_config['file_path_client'] . DIRECTORY_SEPARATOR. $user_id . DIRECTORY_SEPARATOR;
+                    $data = [];
+                    $this->createFolderLocal([$upload_storage]);
+                    foreach($inputs['files'] as $index => $file){
+                        $file_name_origin = @$_FILES['files']['name'][$index]['file'];
+                        $file_info = pathinfo($file_name_origin);
+                        $file_name = uniqid() . time();
+                        $result = $this->moveFile($file['file'], $upload_storage, $file_name);
+                        if($result){
+                            $data[] = [
+                                'path' => url($upload_storage . $file_name),
+                                'name' => $file_name,
+                                'name_origin' => $file_info['basename'],
+                                'file_type' => @$file['file_type'],
+                            ];
+                        }
+                    }
+                    return Response::json(array(
+                        'success' => true,
+                        'file_upload' => $data
+                    ), 200);
+                }catch (\Exception $e){
+                    $msg = 'error upload file: '. $e->getMessage();
+                }
+            }else{
+                $msg = trans('user.file_miss');
+            }
+        }else{
+            $msg = trans('user_not_exits');
+        }
+        return Response::json(array(
+            'success' => false,
+            'errors' => $msg
+        ), 400);
+    }
+
     public function checkRequest($request){
         $validator = Validator::make(
             $request->all(),
