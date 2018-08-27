@@ -656,6 +656,7 @@ class UserController extends Controller
             $inputs,
             array(
                 'user_id' => 'required',
+                'files' => 'required|array',
                 'files.*.file' => 'required',
                 'files.*.file_type' => 'required',
             )
